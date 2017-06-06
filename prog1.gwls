@@ -1,0 +1,14 @@
+facility op("single");
+queue op;
+mark lol;
+
+entry("3", 0, 0, 100);
+{{
+:inject("main", 8, 3, 0, 0) {};
+:qenter(op);
+lol:fbusy(op);
+:qleave(op);
+:wait(3, 1);
+:ffree(op);
+:reject(0);
+}}
