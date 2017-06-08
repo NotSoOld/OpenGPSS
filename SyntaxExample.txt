@@ -32,7 +32,7 @@ entry(str exitmode, int injectedCounter, int rejectedCounter, int tickLimit);
 {
 :operations
 }
-:name.param_name.add/subt/mult/div/exp(int operand);
+:name.param_name.assign/add/subt/mult/div/exp(int operand);
 :fbusy(facility_name);
 :ffree(facility_name);
 :qenter(queue_name);

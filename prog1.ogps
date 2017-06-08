@@ -2,13 +2,14 @@ facility op("single");
 queue op;
 mark lol;
 
-entry("3", 0, 0, 300);
+entry("3", 0, 0, 200);
 {{
-:inject("main", 5, 2, 0, 0) {};
+:inject("main", 6, 2, 0, 0) {};
 :qenter(op);
 lol:fbusy(op);
 :qleave(op);
-:wait(15, 2);
+:wait(5, 3);
 :ffree(op);
+:travel(lol, 0.7);
 :reject(0);
 }}

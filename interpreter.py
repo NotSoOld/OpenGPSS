@@ -15,6 +15,9 @@ program = []
 injected = 0
 rejected = 0
 curticks = 0
+commands = ['cond', 'fbusy', 'ffree', 
+			'wait', 'qenter', 'qleave',
+			'reject', 'travel']
 
 
 class IntVar:
@@ -114,6 +117,11 @@ def addMark(argstr):
 	name = argstr.partition(';')[0]
 	m = Mark(name, -1)
 	md[name] = m
+	global program
+	strname = '\''+name+'\''
+	for line in program:
+		if 'travel' in line[1]:
+			line[1] = line[1].replace(name, strname)
 	return md
 
 def entry(cond, i, j, k):
@@ -141,18 +149,18 @@ def addMarkedBlock(name, index):
 		sys.exit()
 	marks[name].block = index
 	
-def qenter(qid, xact):
+def qenter(xact, qid):
 	queues[qid].enters += 1
 	queues[qid].curxacts += 1
 	xact.curblk += 1
 	xact.cond = 'canmove'
 	
-def qleave(qid, xact):
+def qleave(xact, qid):
 	queues[qid].curxacts -= 1
 	xact.curblk += 1
 	xact.cond = 'canmove'
 	
-def fbusy(fid, xact):
+def fbusy(xact, fid):
 	if facilities[fid].places > 0:
 		facilities[fid].places -= 1
 		xact.curblk += 1
@@ -161,13 +169,13 @@ def fbusy(fid, xact):
 	else:
 		xact.cond = 'blocked'
 	
-def ffree(fid, xact):
+def ffree(xact, fid):
 	facilities[fid].places += 1
 	facilities[fid].busyxacts.remove(xact)
 	xact.curblk += 1
 	xact.cond = 'passagain'
 	
-def wait(time, tdelta, xact):
+def wait(xact, time, tdelta):
 	global futureChain
 	global curticks
 	futime = curticks + time + random.randint(-tdelta, tdelta)
@@ -176,11 +184,23 @@ def wait(time, tdelta, xact):
 	print 'exit time =', futime
 	futureChain.append([futime, xact])
 	
-def reject(decr, xact):
+def reject(xact, decr):
 	global rejected
 	rejected += decr
 	xact.curblk += 1
 	xact.cond = 'rejected'
+	
+def travel(xact, truemark, prob=None, addmark=None):
+	if prob != None:
+		if random.random() < prob:
+			xact.curblk = marks[truemark].block - 1
+		else:
+			if addmark != None:
+				xact.curblk = marks[addmark].block - 1
+			else:
+				xact.curblk += 1
+	else:
+		xact.curblk = marks[truemark].block - 1
 	
 ###############################################################
 
@@ -214,13 +234,11 @@ for j in range(i):
 		marks.update(addMark(args))
 	if program[j][1].startswith('entry'):
 		eval(program[j][1])
-
-print(program)
 		
-for j in range(i,len(program)):
+for j in range(i, len(program)):
 	t = program[j][1].partition(':')
 	if t[0] != '' and t[1] != '':
-		addMarkedBlock(t[0],program[j][0])
+		addMarkedBlock(t[0], program[j][0])
 	if t[2].startswith('inject'):
 		tt = t[2].partition(')')
 		args = tt[0]
@@ -228,7 +246,13 @@ for j in range(i,len(program)):
 		args += str(j)
 		args += ')'
 		eval(args)
+	if t[2].partition('(')[0] in commands:
+		tup = t[2].partition('(')
+		newline = tup[0]+'(xact, '+tup[2]
+		program[j][1] = t[0]+':'+newline
 		
+for ll in program:
+	print ll[1]
 print(exitCond)
 while True:
 	tempCurrentChain = []
@@ -262,11 +286,8 @@ while True:
 				continue
 			while True:
 				t = program[xact.curblk+1][1].partition(':')[2]
-				t1 = t.partition(')')[0]
-				t1 += ', xact)'
-				t1 += t.partition(')')[2]
-				eval(t1)
-				print 'xact', xact.index, 'entered block', t1
+				eval(t)
+				print 'xact', xact.index, 'entered block', t
 				
 				if xact.cond != 'canmove':
 					if xact.cond == 'passagain':
