@@ -10,7 +10,7 @@ marks = {}
 injectors = {}
 currentChain = []
 tempCurrentChain = []
-futureChain = {}
+futureChain = []
 program = []
 injected = 0
 rejected = 0
@@ -80,7 +80,7 @@ class Injector:
 		if self.tdelay != 0:
 			futime += self.tdelay
 			self.tdelay = 0
-		futureChain[futime] = xa
+		futureChain.append([futime, xa])
 
 def addFacility(argstr):
 	fd = {}
@@ -117,8 +117,12 @@ def addMark(argstr):
 	return md
 
 def entry(cond, i, j, k):
-	cond = cond.replace('||', ' or ').replace('&&', ' and ').replace('1', '%1%').replace('2', '%2%').replace('3', '%3%')
-	cond = cond.replace('%1%', 'injected >= '+str(i)).replace('%2%', 'rejected >= '+str(j)).replace('%3%', 'curticks >= '+str(k))
+	cond = (cond.replace('||', ' or ').replace('&&', ' and ')
+				.replace('1', '%1%').replace('2', '%2%')
+				.replace('3', '%3%'))
+	cond = (cond.replace('%1%', 'injected >= '+str(i))
+				.replace('%2%', 'rejected >= '+str(j))
+				.replace('%3%', 'curticks >= '+str(k)))
 	global exitCond
 	exitCond = cond
 	
@@ -128,10 +132,12 @@ def inject(group, time, tdelta, tdelay, limit, block):
 	
 def addMarkedBlock(name, index):
 	if name not in marks:
-		print 'ERROR in line', index, '!! Mark "', name, '" is undefined.'
+		print('ERROR in line', index, '!! Mark "',
+				name, '" is undefined.')
 		sys.exit()
 	if marks[name].block != -1:
-		print 'ERROR in line', index, '!! Mark "', name, '" is used more than once'
+		print('ERROR in line', index, '!! Mark "',
+				name, '" is used more than once')
 		sys.exit()
 	marks[name].block = index
 	
@@ -168,7 +174,7 @@ def wait(time, tdelta, xact):
 	xact.curblk += 1
 	xact.cond = 'waiting'
 	print 'exit time =', futime
-	futureChain[futime] = xact
+	futureChain.append([futime, xact])
 	
 def reject(decr, xact):
 	global rejected
@@ -178,21 +184,18 @@ def reject(decr, xact):
 	
 ###############################################################
 
-progfile = open('prog1.gwls', 'r')
+progfile = open('prog1.ogps', 'r')
 allprogram = progfile.read()
 temp = allprogram.split(';')
 i = 0
 for line in temp:
-	l = []
-	l.append(i)
-	l.append(line)
-	program.append(l)
+	program.append([i, line])
 	i += 1
 progfile.close()
 i = 0
 flag = 0
 for line in program:
-	line[1] = line[1].replace('\r\n', '')
+	line[1] = line[1].replace('\r', '').replace('\n', '')
 for line in program:
 	if line[1].find('{{') != -1:
 		flag = 1
@@ -231,18 +234,21 @@ while True:
 	tempCurrentChain = []
 	ttt = raw_input()
 	print 'timestep =', curticks
-	print 'Future Events Chain: ', list(xa for xa in futureChain.keys())
-	for k in futureChain.keys():
-		if k == curticks:
-			currentChain.append(futureChain[k])
+	print 'Future Events Chain: ', list(xa[0] for xa in futureChain)
+	for xa in futureChain:
+		if xa[0] == curticks:
+			currentChain.append(xa[1])
 			# Inject new xact if we move injected xact from future events chain.
-			if futureChain[k].cond == 'injected':
-				if injectors[futureChain[k].group].limit != 0:
-					injectors[futureChain[k].group].inject()
-			del futureChain[k]
+			if xa[1].cond == 'injected':
+				if injectors[xa[1].group].limit != 0:
+					injectors[xa[1].group].inject()
+			# Mark for future deleting (because now we don't want 
+			# to modify collection we're iterating)
+			xa[0] = -1
 			# Stop by injecting enough xacts.
 			if eval(exitCond) == True:
 				break
+	futureChain = [xa for xa in futureChain if xa[0] != -1]
 	if len(currentChain) == 0:
 		curticks += 1
 		continue
@@ -270,9 +276,9 @@ while True:
 						tempCurrentChain.append(xact)
 						print 'xact', xact.index, 'was blocked'
 					break
-			print 'CurEvents Chain:', list(xa.index for xa in currentChain)
-			print 'CurTempEv Chain:', list(xa.index for xa in tempCurrentChain)
-			ttt = raw_input()
+			#print 'CurEvents Chain:', list(xa.index for xa in currentChain)
+			#print 'CurTempEv Chain:', list(xa.index for xa in tempCurrentChain)
+			#ttt = raw_input()
 			# Stop by rejecting enough xacts.
 			if eval(exitCond) == True:
 				break
@@ -288,6 +294,7 @@ print(queues)
 print(marks)
 print(exitCond)
 for xact in futureChain:
-	print xact, futureChain[xact].group, futureChain[xact].index, futureChain[xact].curblk, futureChain[xact].cond
+	print(xact[0], xact[1].group, xact[1].index, 
+				   xact[1].curblk, xact[1].cond)
 for xact in currentChain:
 	print xact.group, xact.index, xact.curblk, xact.cond
