@@ -1,0 +1,50 @@
+/* 	This is a model of system with multiple CPUs
+*	and shared command buffer. Commands are loading
+*	to buffer from RAM beforehand.
+*/
+
+int bufer = 0;
+int BUFFER_CAPACITY = 10;
+int completedCommands = 0;
+facility RAM("single");
+facility CPUs("parallel") {entries = 3};
+queue RAM;
+queue CPUs;
+mark RAMCycle;
+mark CPUCycle;
+
+/*exitwhen(completedCommands > 100);*/
+exitwhen("3", 0, 0, 200);
+{{
+/* RAM imitation */
+: inject("RAM cycling Xact", 0, 0, 0, 1);
+RAMCycle: qenter(RAM);
+: fbusy(RAM);
+: qleave(RAM);
+: wait(8, 3);
+: cond(bufer < BUFFER_CAPACITY);
+{
+: ffree(RAM);
+: bufer = bufer + 1;
+: travel(RAMCycle);
+}
+: otherwise(tryagain);
+
+/* Multiple CPU system imitation */
+: inject("CPUs cycling Xact", 0, 0, 0, 1);
+CPUCycle: cond(bufer > 0);
+{
+: qenter(CPUs);
+: fbusy(CPUs);
+: bufer = bufer - 1;
+: qleave(CPUs);
+: wait(15, 6);
+: ffree(CPUs);
+: completedCommands = completedCommands + 1;
+/* It was maybe a command which will erase buffer: */
+: travel(CPUCycle, 0.9);
+: bufer = 0;
+: travel(CPUCycle);
+}
+: otherwise(tryagain);
+}}

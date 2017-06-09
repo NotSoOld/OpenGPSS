@@ -17,18 +17,36 @@ rejected = 0
 curticks = 0
 commands = ['cond', 'fbusy', 'ffree', 
 			'wait', 'qenter', 'qleave',
-			'reject', 'travel']
+			'reject', 'travel', 'otherwise']
 
 
 class IntVar:
 	def __init__(self, name, initValue):
 		self.value = initValue
 		self.name = name
+	
+	def assign(self, val):
+		self.value = val
+		
+	def add(self, val):
+		self.value += val
+	
+	def sub(self, val):
+		self.value -= val
 
 class FloatVar:
 	def __init__(self, name, initValue):
 		self.value = initValue
 		self.name = name
+		
+	def assign(self, val):
+		self.value = val
+		
+	def add(self, val):
+		self.value += val
+	
+	def sub(self, val):
+		self.value -= val
 		
 class Facility:
 	busyxacts = []
@@ -37,6 +55,8 @@ class Facility:
 		self.mode = mode
 		if mode == 'single':
 			self.places = 1
+		else:
+			self.places = 2
 		
 class Queue:
 	enters = 0
@@ -95,8 +115,9 @@ def addFacility(argstr):
 	global program
 	strname = '\''+name+'\''
 	for line in program:
-		if 'fbusy' in line[1] or 'ffree' in line[1]:
-			line[1] = line[1].replace(name, strname)
+		tmp = line[1].partition(':')
+		if 'fbusy' in tmp[2] or 'ffree' in tmp[2]:
+			line[1] = tmp[0] + tmp[1] + tmp[2].replace(name, strname)
 	return fd
 	
 def addQueue(argstr):
@@ -108,8 +129,9 @@ def addQueue(argstr):
 	global program
 	strname = '\''+name+'\''
 	for line in program:
-		if 'qenter' in line[1] or 'qleave' in line[1]:
-			line[1] = line[1].replace(name, strname)
+		tmp = line[1].partition(':')
+		if 'qenter' in tmp[2] or 'qleave' in tmp[2]:
+			line[1] = tmp[0] + tmp[1] + tmp[2].replace(name, strname)
 	return qd
 	
 def addMark(argstr):
@@ -123,8 +145,28 @@ def addMark(argstr):
 		if 'travel' in line[1]:
 			line[1] = line[1].replace(name, strname)
 	return md
+	
+def addInt(name, initval):
+	global program
+	for line in program:
+		text = line[1].partition(':')
+		if name in text[2]:
+			parsedname = 'intVars[\''+name+'\'].value'
+			newtext = text[2].replace(name, parsedname)
+			line[1] = text[0] + text[1] + newtext
+	return {name:IntVar(name, initval)}
+	
+def addFloat(name, initval):
+	global program
+	for line in program:
+		text = line[1].partition(':')
+		if name in text[2]:
+			parsedname = 'floatVars[\''+name+'\'].value'
+			newtext = text[2].replace(name, parsedname)
+			line[1] = text[0] + text[1] + newtext
+	return {name:FloatVar(name, initval)}
 
-def entry(cond, i, j, k):
+def exitwhen(cond, i, j, k):
 	cond = (cond.replace('||', ' or ').replace('&&', ' and ')
 				.replace('1', '%1%').replace('2', '%2%')
 				.replace('3', '%3%'))
@@ -140,12 +182,12 @@ def inject(group, time, tdelta, tdelay, limit, block):
 	
 def addMarkedBlock(name, index):
 	if name not in marks:
-		print('ERROR in line', index, '!! Mark "',
-				name, '" is undefined.')
+		print 'ERROR in line', index, '!! Mark "', \
+				name, '" is undefined.'
 		sys.exit()
 	if marks[name].block != -1:
-		print('ERROR in line', index, '!! Mark "',
-				name, '" is used more than once')
+		print 'ERROR in line', index, '!! Mark "', \
+				name, '" is used more than once'
 		sys.exit()
 	marks[name].block = index
 	
@@ -201,10 +243,74 @@ def travel(xact, truemark, prob=None, addmark=None):
 				xact.curblk += 1
 	else:
 		xact.curblk = marks[truemark].block - 1
+		
+def cond(xact, condition):
+	condblock = xact.curblk + 1
+	global program
+	depth = 0
+	for i in range(condblock+1, len(program)):
+		if program[i][1].startswith('{'):
+			depth += 1
+		if program[i][1].startswith('}'):
+			depth -= 1
+		if depth == 0:
+			break
+	# Here i == index of line with '}: [otherwise(tryagain)]'
+	# or simply with closing bracket.
+	if condition:
+		xact.curblk += 2
+		xact.cond = 'canmove'
+		for j in range(condblock+1, i):
+			eval(program[j][1].partition(':')[2])
+	else:
+		if 'otherwise' in program[i][1]:
+			if 'tryagain' not in program[i][1]:
+				xact.curblk = i - 1
+			eval(program[i][1].partition(':')[2])
+		else:
+			xact.curblk = i - 1
+			
+def otherwise(xact, cond=None):
+	global program
+	if cond != None:
+		if cond == 'tryagain':
+			xact.cond = 'blocked'
+		else:
+			condblock = xact.curblk + 1
+			depth = 0
+			for i in range(condblock, len(program)):
+				if program[i][1].startswith('{'):
+					depth += 1
+				if program[i][1].startswith('}'):
+					depth -= 1
+				if depth == 0:
+					break
+			# Here i == index of line with 'otherwise' closing bracket.
+			if cond:
+				xact.curblk += 2
+				xact.cond = 'canmove'
+				for j in range(condblock+1, i):
+					eval(program[j][1].partition(':')[2])
+			else:
+				xact.curblk = i
+				xact.cond = 'canmove'
+	else:
+		condblock = xact.curblk + 1
+		depth = 0
+		for i in range(condblock, len(program)):
+			if program[i][1].startswith('{'):
+				depth += 1
+			if program[i][1].startswith('}'):
+				depth -= 1
+			if depth == 0:
+				break
+		# Here i == index of line with 'otherwise' closing bracket.	
+		for j in range(condblock+1, i):
+			eval(program[j][1].partition(':')[2])	
 	
 ###############################################################
 
-progfile = open('prog1.ogps', 'r')
+progfile = open('prog2.ogps', 'r')
 allprogram = progfile.read()
 progpart = allprogram.partition('/*')
 while progpart[1] != '':
@@ -237,12 +343,26 @@ for j in range(i):
 		queues.update(addQueue(args))
 	elif cmd == 'mark':
 		marks.update(addMark(args))
-	if program[j][1].startswith('entry'):
+	elif cmd == 'int':
+		intargs = args.replace(' ', '').partition('=')
+		if intargs[1] != '':
+			intVars.update(addInt(intargs[0], int(intargs[2])))
+		else:
+			intVars.update(addInt(intargs[0], 0))
+	elif cmd == 'float':
+		floatargs = args.replace(' ', '').partition('=')
+		if floatargs[1] != '':
+			floatVars.update(addFloat(floatargs[0], float(floatargs[2])))
+		else:
+			floatVars.update(addFloat(floatargs[0], 0))
+	if program[j][1].startswith('exitwhen'):
 		eval(program[j][1])
 		
 for j in range(i, len(program)):
+	program[j][1] = program[j][1].replace(' ', '') \
+					.replace('tryagain', '\'tryagain\'')
 	t = program[j][1].partition(':')
-	if t[0] != '' and t[1] != '':
+	if t[0] != '' and t[0] != '{' and t[0] != '}' and t[1] != '':
 		addMarkedBlock(t[0], program[j][0])
 	if t[2].startswith('inject'):
 		tt = t[2].partition(')')
@@ -251,23 +371,32 @@ for j in range(i, len(program)):
 		args += str(j)
 		args += ')'
 		eval(args)
+	if t[2].startswith('cond') or t[2].startswith('otherwise'):
+		tup = t[2].partition('(')
+		newline = tup[0]+'(\''+tup[2]
+		tup = newline.partition(')')
+		newline = tup[0]+'\')'+tup[2]
+		program[j][1] = t[0]+':'+newline
 	if t[2].partition('(')[0] in commands:
 		tup = t[2].partition('(')
-		newline = tup[0]+'(xact, '+tup[2]
+		newline = tup[0]+'(xact,'+tup[2]
 		program[j][1] = t[0]+':'+newline
 		
 for ll in program:
 	print ll[1]
+for intt in intVars.keys():
+	print intt, intVars[intt].value
 print(exitCond)
 while True:
 	tempCurrentChain = []
-	ttt = raw_input()
+	inp = raw_input()
 	print 'timestep =', curticks
 	print 'Future Events Chain: ', list(xa[0] for xa in futureChain)
 	for xa in futureChain:
 		if xa[0] == curticks:
 			currentChain.append(xa[1])
-			# Inject new xact if we move injected xact from future events chain.
+			# Inject new xact if we move injected xact 
+			# from future events chain.
 			if xa[1].cond == 'injected':
 				if injectors[xa[1].group].limit != 0:
 					injectors[xa[1].group].inject()
@@ -277,11 +406,11 @@ while True:
 			# Stop by injecting enough xacts.
 			if eval(exitCond) == True:
 				break
+	print 'Current Events Chain:', list(xa.index for xa in currentChain)
 	futureChain = [xa for xa in futureChain if xa[0] != -1]
 	if len(currentChain) == 0:
 		curticks += 1
 		continue
-	print 'Current Events Chain:', list(xa.index for xa in currentChain)
 	restart = True
 	while restart:
 		restart = False
@@ -302,9 +431,6 @@ while True:
 						tempCurrentChain.append(xact)
 						print 'xact', xact.index, 'was blocked'
 					break
-			#print 'CurEvents Chain:', list(xa.index for xa in currentChain)
-			#print 'CurTempEv Chain:', list(xa.index for xa in tempCurrentChain)
-			#ttt = raw_input()
 			# Stop by rejecting enough xacts.
 			if eval(exitCond) == True:
 				break
@@ -320,7 +446,7 @@ print(queues)
 print(marks)
 print(exitCond)
 for xact in futureChain:
-	print(xact[0], xact[1].group, xact[1].index, 
-				   xact[1].curblk, xact[1].cond)
+	print xact[0], xact[1].group, xact[1].index, \
+				   xact[1].curblk, xact[1].cond
 for xact in currentChain:
 	print xact.group, xact.index, xact.curblk, xact.cond

@@ -2,7 +2,7 @@ facility op("single");
 queue op;
 mark lol;
 /* Program starts here; all blocks work properly */
-entry("3", 0, 0, 200);
+exitwhen("3", 0, 0, 200);
 {{
 /* write program after double brackets */
 :inject("main", 6, 2, 0, 0) {};

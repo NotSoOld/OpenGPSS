@@ -21,14 +21,14 @@ return_type func_name([type param1, type param2, ...]);
 :return(return_value);
 }
 
-entry(str exitmode, int injectedCounter, int rejectedCounter, int tickLimit);
+exitwhen(str exitmode, int injectedCounter, int rejectedCounter, int tickLimit);
 {{
 :inject(str name, int time, int tdelta, int delay, int limit) {[type param1, type param2, ...]};
 :cond(int op1, string operation, int op2);
 {
 :operations
 }
-:[otherwise] [wait;]
+:[otherwise(] [tryagain);]
 {
 :operations
 }
