@@ -206,12 +206,17 @@ def travel(xact, truemark, prob=None, addmark=None):
 
 progfile = open('prog1.ogps', 'r')
 allprogram = progfile.read()
+progpart = allprogram.partition('/*')
+while progpart[1] != '':
+	allprogram = progpart[0] + progpart[2].partition('*/')[2]
+	progpart = allprogram.partition('/*')
 temp = allprogram.split(';')
 i = 0
 for line in temp:
 	program.append([i, line])
 	i += 1
 progfile.close()
+
 i = 0
 flag = 0
 for line in program:
