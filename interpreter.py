@@ -16,8 +16,9 @@ injected = 0
 rejected = 0
 curticks = 0
 commands = ['cond', 'fbusy', 'ffree', 
-			'wait', 'qenter', 'qleave',
-			'reject', 'travel', 'otherwise']
+            'wait', 'qenter', 'qleave',
+            'reject', 'travel', 'otherwise']
+xact = None
 
 
 class IntVar:
@@ -176,6 +177,7 @@ def addFloat(name, initval):
 			parsedname = 'floatVars[\''+name+'\'].value'
 		newtext = text[2].replace(name, parsedname)
 		line[1] = text[0] + text[1] + newtext
+		print line[1]
 	return {name:FloatVar(name, initval)}
 
 def exitwhen(cond):
@@ -239,6 +241,7 @@ def reject(xact, decr):
 	xact.cond = 'rejected'
 	
 def travel(xact, truemark, prob=None, addmark=None):
+	xact.cond = 'canmove'
 	if prob != None:
 		if random.random() < prob:
 			xact.curblk = marks[truemark].block - 1
@@ -269,13 +272,22 @@ def cond(xact, condition):
 		for j in range(condblock+1, i):
 			print 'xact', xact.index, 'entered block', program[j][1].partition(':')[2]
 			eval(program[j][1].partition(':')[2])
+			if xact.cond == 'passagain':
+				tempCurrentChain.append(xact)
+				restart = True
+			elif xact.cond == 'blocked':
+				tempCurrentChain.append(xact)
+				print 'xact', xact.index, 'was blocked'
+			break
 	else:
 		if 'otherwise' in program[i][1]:
 			if 'tryagain' not in program[i][1]:
 				xact.curblk = i - 1
+			# Evaluate 'otherwise' block.
 			eval(program[i][1].partition(':')[2])
 		else:
 			xact.curblk = i - 1
+			xact.cond = 'canmove'
 			
 def otherwise(xact, cond=None):
 	global program
@@ -299,6 +311,13 @@ def otherwise(xact, cond=None):
 				for j in range(condblock+1, i):
 					print 'xact', xact.index, 'entered block', program[j][1].partition(':')[2]
 					eval(program[j][1].partition(':')[2])
+					if xact.cond == 'passagain':
+						tempCurrentChain.append(xact)
+						restart = True
+					elif xact.cond == 'blocked':
+						tempCurrentChain.append(xact)
+						print 'xact', xact.index, 'was blocked'
+					break
 			else:
 				xact.curblk = i
 				xact.cond = 'canmove'
@@ -315,7 +334,15 @@ def otherwise(xact, cond=None):
 		# Here i == index of line with 'otherwise' closing bracket.	
 		for j in range(condblock+1, i):
 			print 'xact', xact.index, 'entered block', program[j][1].partition(':')[2]
-			eval(program[j][1].partition(':')[2])	
+			eval(program[j][1].partition(':')[2])
+			if xact.cond != 'canmove':
+				if xact.cond == 'passagain':
+					tempCurrentChain.append(xact)
+					restart = True
+				elif xact.cond == 'blocked':
+					tempCurrentChain.append(xact)
+					print 'xact', xact.index, 'was blocked'
+				break
 	
 ###############################################################
 
