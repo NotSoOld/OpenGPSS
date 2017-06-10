@@ -28,12 +28,23 @@ class IntVar:
 	
 	def assign(self, val):
 		self.value = val
+		xact.curblk += 1
+		xact.cond = 'canmove'
 		
 	def add(self, val):
-		self.value += val
+		self.assign(self.value + val)
 	
 	def subt(self, val):
-		self.value -= val
+		self.assign(self.value - val)
+		
+	def mult(self, val):
+		self.assign(self.value * val)
+		
+	def div(self, val):
+		self.assign(self.value / val)
+		
+	def exp(self, val):
+		self.assign(self.value ** val)
 
 class FloatVar:
 	def __init__(self, name, initValue):
@@ -42,22 +53,34 @@ class FloatVar:
 		
 	def assign(self, val):
 		self.value = val
+		xact.curblk += 1
+		xact.cond = 'canmove'
 		
 	def add(self, val):
-		self.value += val
+		self.assign(self.value + val)
 	
 	def subt(self, val):
-		self.value -= val
+		self.assign(self.value - val)
+		
+	def mult(self, val):
+		self.assign(self.value * val)
+		
+	def div(self, val):
+		self.assign(self.value / val)
+		
+	def exp(self, val):
+		self.assign(self.value ** val)
 		
 class Facility:
 	busyxacts = []
-	def __init__(self, name, mode):
+	def __init__(self, name, mode, params={}):
 		self.name = name
 		self.mode = mode
 		if mode == 'single':
 			self.places = 1
 		else:
-			self.places = 2
+			self.places = 1
+			#self.places = params['entries']
 		
 class Queue:
 	enters = 0
@@ -199,18 +222,18 @@ def addMarkedBlock(name, index):
 		sys.exit()
 	marks[name].block = index
 	
-def qenter(xact, qid):
+def qenter(qid):
 	queues[qid].enters += 1
 	queues[qid].curxacts += 1
 	xact.curblk += 1
 	xact.cond = 'canmove'
 	
-def qleave(xact, qid):
+def qleave(qid):
 	queues[qid].curxacts -= 1
 	xact.curblk += 1
 	xact.cond = 'canmove'
 	
-def fbusy(xact, fid):
+def fbusy(fid):
 	if facilities[fid].places > 0:
 		facilities[fid].places -= 1
 		xact.curblk += 1
@@ -219,13 +242,13 @@ def fbusy(xact, fid):
 	else:
 		xact.cond = 'blocked'
 	
-def ffree(xact, fid):
+def ffree(fid):
 	facilities[fid].places += 1
 	facilities[fid].busyxacts.remove(xact)
 	xact.curblk += 1
 	xact.cond = 'passagain'
 	
-def wait(xact, time, tdelta):
+def wait(time, tdelta):
 	global futureChain
 	global curticks
 	futime = curticks + time + random.randint(-tdelta, tdelta)
@@ -234,13 +257,13 @@ def wait(xact, time, tdelta):
 	print 'exit time =', futime
 	futureChain.append([futime, xact])
 	
-def reject(xact, decr):
+def reject(decr):
 	global rejected
 	rejected += decr
 	xact.curblk += 1
 	xact.cond = 'rejected'
 	
-def travel(xact, truemark, prob=None, addmark=None):
+def travel(truemark, prob=None, addmark=None):
 	xact.cond = 'canmove'
 	if prob != None:
 		if random.random() < prob:
@@ -253,11 +276,16 @@ def travel(xact, truemark, prob=None, addmark=None):
 	else:
 		xact.curblk = marks[truemark].block - 1
 		
-def cond(xact, condition):
-	condblock = xact.curblk + 1
+def cond(condition):
+	print condition+' is '+str(eval(condition))
+	if eval(condition):
+		xact.curblk += 1
+		xact.cond = 'canmove'
+		return
+		
 	global program
 	depth = 0
-	for i in range(condblock+1, len(program)):
+	for i in range(xact.curblk+2, len(program)):
 		if program[i][1].startswith('{'):
 			depth += 1
 		if program[i][1].startswith('}'):
@@ -266,85 +294,45 @@ def cond(xact, condition):
 			break
 	# Here i == index of line with '}: [otherwise(tryagain)]'
 	# or simply with closing bracket.
-	if condition:
-		xact.curblk += 2
+	
+	# We can be here only if condition == False.
+	# If it is just conditional 'jump' or non-blocking cond:
+	if not 'tryagain' in program[i][1]:
+		xact.curblk = i - 1
 		xact.cond = 'canmove'
-		for j in range(condblock+1, i):
-			print 'xact', xact.index, 'entered block', program[j][1].partition(':')[2]
-			eval(program[j][1].partition(':')[2])
-			if xact.cond == 'passagain':
-				tempCurrentChain.append(xact)
-				restart = True
-			elif xact.cond == 'blocked':
-				tempCurrentChain.append(xact)
-				print 'xact', xact.index, 'was blocked'
-			break
+	# If this cond has an blocking otherwise option:
 	else:
-		if 'otherwise' in program[i][1]:
-			if 'tryagain' not in program[i][1]:
-				xact.curblk = i - 1
-			# Evaluate 'otherwise' block.
-			eval(program[i][1].partition(':')[2])
-		else:
-			xact.curblk = i - 1
-			xact.cond = 'canmove'
+		xact.cond = 'blocked'
 			
-def otherwise(xact, cond=None):
+def otherwise(cond=None):
 	global program
-	if cond != None:
-		if cond == 'tryagain':
-			xact.cond = 'blocked'
-		else:
-			condblock = xact.curblk + 1
-			depth = 0
-			for i in range(condblock, len(program)):
-				if program[i][1].startswith('{'):
-					depth += 1
-				if program[i][1].startswith('}'):
-					depth -= 1
-				if depth == 0:
-					break
-			# Here i == index of line with 'otherwise' closing bracket.
-			if cond:
-				xact.curblk += 2
-				xact.cond = 'canmove'
-				for j in range(condblock+1, i):
-					print 'xact', xact.index, 'entered block', program[j][1].partition(':')[2]
-					eval(program[j][1].partition(':')[2])
-					if xact.cond == 'passagain':
-						tempCurrentChain.append(xact)
-						restart = True
-					elif xact.cond == 'blocked':
-						tempCurrentChain.append(xact)
-						print 'xact', xact.index, 'was blocked'
-					break
-			else:
-				xact.curblk = i
-				xact.cond = 'canmove'
+	# We don't need to manage blocking 'tryagain' option here,
+	# because cond() does it already.
+	if 'tryagain' in program[xact.curblk+1][1]:
+		xact.curblk += 1
+		xact.cond = 'canmove'
+		return
+	
+	# Just like 'else' with no condition 
+	# (and true condition also goes here).
+	if cond == None or cond:
+		xact.curblk += 1
+		xact.cond = 'canmove'
 	else:
-		condblock = xact.curblk + 1
 		depth = 0
-		for i in range(condblock, len(program)):
+		for i in range(xact.curblk+2, len(program)):
 			if program[i][1].startswith('{'):
 				depth += 1
 			if program[i][1].startswith('}'):
 				depth -= 1
 			if depth == 0:
 				break
-		# Here i == index of line with 'otherwise' closing bracket.	
-		for j in range(condblock+1, i):
-			print 'xact', xact.index, 'entered block', program[j][1].partition(':')[2]
-			eval(program[j][1].partition(':')[2])
-			if xact.cond != 'canmove':
-				if xact.cond == 'passagain':
-					tempCurrentChain.append(xact)
-					restart = True
-				elif xact.cond == 'blocked':
-					tempCurrentChain.append(xact)
-					print 'xact', xact.index, 'was blocked'
-				break
+		xact.curblk = i - 1
+		xact.cond = 'canmove'
+
 	
 ###############################################################
+
 
 progfile = open('prog2.ogps', 'r')
 allprogram = progfile.read()
@@ -400,8 +388,7 @@ for j in range(i):
 		eval(program[j][1])
 		
 for j in range(i, len(program)):
-	program[j][1] = program[j][1].replace(' ', '') \
-					.replace('tryagain', '\'tryagain\'')
+	program[j][1] = program[j][1].replace(' ', '')
 	t = program[j][1].partition(':')
 	if t[0] != '' and t[0] != '{' and t[0] != '}' and t[1] != '':
 		addMarkedBlock(t[0], program[j][0])
@@ -414,25 +401,18 @@ for j in range(i, len(program)):
 		eval(args)
 	if t[2].startswith('cond') or t[2].startswith('otherwise'):
 		tup = t[2].partition('(')
-		newline = tup[0]+'(\''+tup[2]
+		newline = tup[0]+'(\"'+tup[2]
 		tup = newline.partition(')')
-		newline = tup[0]+'\')'+tup[2]
-		program[j][1] = t[0]+':'+newline
-	if t[2].partition('(')[0] in commands:
-		tup = t[2].partition('(')
-		newline = tup[0]+'(xact,'+tup[2]
+		newline = tup[0]+'\")'+tup[2]
 		program[j][1] = t[0]+':'+newline
 		
 for ll in program:
-	print ll[1]
-for intt in intVars.keys():
-	print intt, intVars[intt].value
-print(exitCond)
+	print str(ll[0]).zfill(3)+'\t'+ll[1]
+inp = raw_input()
 while True:
 	tempCurrentChain = []
-	inp = raw_input()
+#	inp = raw_input()
 	print 'timestep =', curticks
-	print 'Future Events Chain: ', list(xa[0] for xa in futureChain)
 	for xa in futureChain:
 		if xa[0] == curticks:
 			currentChain.append(xa[1])
@@ -447,8 +427,9 @@ while True:
 			# Stop by injecting enough xacts.
 			if eval(exitCond) == True:
 				break
-	print 'Current Events Chain:', list(xa.index for xa in currentChain)
 	futureChain = [xa for xa in futureChain if xa[0] != -1]
+	print 'Future Events Chain: ', list(xa[0] for xa in futureChain)
+	print 'Current Events Chain:', list(xa.index for xa in currentChain)
 	if len(currentChain) == 0:
 		curticks += 1
 		continue
@@ -481,13 +462,25 @@ while True:
 	# Stop by modelling enough amount of time.
 	if eval(exitCond) == True:
 		break
-			
-print(facilities)
-print(queues)
-print(marks)
-print(exitCond)
+
+print 'Variables:'
+for intt in intVars.keys():
+	print str(intt)+' = '+str(intVars[intt].value)
+print 'Facilities:'
+for fac in facilities.values():
+	print fac.name+', '+fac.mode
+	l = []
+	for xact in fac.busyxacts:
+		l.append(xact.index)
+	print l
+print 'Marks:'
+for mark in marks.keys():
+	print marks[mark].name, marks[mark].block
+print 'Exit condition: '+exitCond
+print 'Future events chain:'
 for xact in futureChain:
 	print xact[0], xact[1].group, xact[1].index, \
 				   xact[1].curblk, xact[1].cond
+print 'Current events chain:'
 for xact in currentChain:
 	print xact.group, xact.index, xact.curblk, xact.cond
