@@ -13,8 +13,7 @@ queue CPUs;
 mark RAMCycle;
 mark CPUCycle;
 
-/*exitwhen(completedCommands > 100);*/
-exitwhen("3", 0, 0, 200);
+exitwhen(completedCommands > 100);
 {{
 /* RAM imitation */
 : inject("RAM cycling Xact", 0, 0, 0, 1);
@@ -25,7 +24,7 @@ RAMCycle: qenter(RAM);
 : cond(bufer < BUFFER_CAPACITY);
 {
 : ffree(RAM);
-: bufer = bufer + 1;
+: bufer.add(1);
 : travel(RAMCycle);
 }
 : otherwise(tryagain);
@@ -36,14 +35,14 @@ CPUCycle: cond(bufer > 0);
 {
 : qenter(CPUs);
 : fbusy(CPUs);
-: bufer = bufer - 1;
+: bufer.subt(1);
 : qleave(CPUs);
 : wait(15, 6);
 : ffree(CPUs);
-: completedCommands = completedCommands + 1;
+: completedCommands.add(1);
 /* It was maybe a command which will erase buffer: */
 : travel(CPUCycle, 0.9);
-: bufer = 0;
+: bufer.assign(0);
 : travel(CPUCycle);
 }
 : otherwise(tryagain);

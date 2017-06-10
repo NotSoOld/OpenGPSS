@@ -31,7 +31,7 @@ class IntVar:
 	def add(self, val):
 		self.value += val
 	
-	def sub(self, val):
+	def subt(self, val):
 		self.value -= val
 
 class FloatVar:
@@ -45,7 +45,7 @@ class FloatVar:
 	def add(self, val):
 		self.value += val
 	
-	def sub(self, val):
+	def subt(self, val):
 		self.value -= val
 		
 class Facility:
@@ -149,30 +149,36 @@ def addMark(argstr):
 def addInt(name, initval):
 	global program
 	for line in program:
-		text = line[1].partition(':')
-		if name in text[2]:
+		parsedname = ''
+		if line[1].startswith('exitwhen'):
+			text = ('', '', line[1])
+		else:
+			text = line[1].partition(':')
+		if name+'.' in text[2]:
+			parsedname = 'intVars[\''+name+'\']'
+		elif name in text[2]:
 			parsedname = 'intVars[\''+name+'\'].value'
-			newtext = text[2].replace(name, parsedname)
-			line[1] = text[0] + text[1] + newtext
+		newtext = text[2].replace(name, parsedname)
+		line[1] = text[0] + text[1] + newtext
 	return {name:IntVar(name, initval)}
 	
 def addFloat(name, initval):
 	global program
 	for line in program:
-		text = line[1].partition(':')
-		if name in text[2]:
+		parsedname = ''
+		if line[1].startswith('exitwhen'):
+			text = ('', '', line[1])
+		else:
+			text = line[1].partition(':')
+		if name+'.' in text[2]:
+			parsedname = 'floatVars[\''+name+'\']'
+		elif name in text[2]:
 			parsedname = 'floatVars[\''+name+'\'].value'
-			newtext = text[2].replace(name, parsedname)
-			line[1] = text[0] + text[1] + newtext
+		newtext = text[2].replace(name, parsedname)
+		line[1] = text[0] + text[1] + newtext
 	return {name:FloatVar(name, initval)}
 
-def exitwhen(cond, i, j, k):
-	cond = (cond.replace('||', ' or ').replace('&&', ' and ')
-				.replace('1', '%1%').replace('2', '%2%')
-				.replace('3', '%3%'))
-	cond = (cond.replace('%1%', 'injected >= '+str(i))
-				.replace('%2%', 'rejected >= '+str(j))
-				.replace('%3%', 'curticks >= '+str(k)))
+def exitwhen(cond):
 	global exitCond
 	exitCond = cond
 	
@@ -261,6 +267,7 @@ def cond(xact, condition):
 		xact.curblk += 2
 		xact.cond = 'canmove'
 		for j in range(condblock+1, i):
+			print 'xact', xact.index, 'entered block', program[j][1].partition(':')[2]
 			eval(program[j][1].partition(':')[2])
 	else:
 		if 'otherwise' in program[i][1]:
@@ -290,6 +297,7 @@ def otherwise(xact, cond=None):
 				xact.curblk += 2
 				xact.cond = 'canmove'
 				for j in range(condblock+1, i):
+					print 'xact', xact.index, 'entered block', program[j][1].partition(':')[2]
 					eval(program[j][1].partition(':')[2])
 			else:
 				xact.curblk = i
@@ -306,6 +314,7 @@ def otherwise(xact, cond=None):
 				break
 		# Here i == index of line with 'otherwise' closing bracket.	
 		for j in range(condblock+1, i):
+			print 'xact', xact.index, 'entered block', program[j][1].partition(':')[2]
 			eval(program[j][1].partition(':')[2])	
 	
 ###############################################################
@@ -326,7 +335,7 @@ progfile.close()
 i = 0
 flag = 0
 for line in program:
-	line[1] = line[1].replace('\r', '').replace('\n', '')
+	line[1] = line[1].replace('\r', '').replace('\n', '').replace('\t', ' ')
 for line in program:
 	if line[1].find('{{') != -1:
 		flag = 1
@@ -356,6 +365,11 @@ for j in range(i):
 		else:
 			floatVars.update(addFloat(floatargs[0], 0))
 	if program[j][1].startswith('exitwhen'):
+		tup2 = program[j][1].partition('(')
+		newstr = tup2[0] + '(\"' + tup2[2]
+		tup2 = newstr.partition(')')
+		newstr = tup2[0] + '\")' + tup2[2]
+		program[j][1] = newstr
 		eval(program[j][1])
 		
 for j in range(i, len(program)):
@@ -420,8 +434,8 @@ while True:
 				continue
 			while True:
 				t = program[xact.curblk+1][1].partition(':')[2]
-				eval(t)
 				print 'xact', xact.index, 'entered block', t
+				eval(t)
 				
 				if xact.cond != 'canmove':
 					if xact.cond == 'passagain':
