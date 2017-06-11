@@ -72,21 +72,26 @@ class FloatVar:
 		self.assign(self.value ** val)
 		
 class Facility:
-	busyxacts = []
 	def __init__(self, name, mode, params={}):
 		self.name = name
 		self.mode = mode
+		self.busyxacts = []
+		self.enters = 0
 		if mode == 'single':
 			self.places = 1
 		else:
-			self.places = 1
-			#self.places = params['entries']
+			if 'entries' not in params.keys():
+				print 'Error!! Facility "{0}" marked as non-single ' \
+					  'does not have "entries" parameter!'.format(name)
+				sys.exit()
+			else:
+				self.places = params['entries']
 		
 class Queue:
-	enters = 0
-	curxacts = 0
 	def __init__(self, name):
 		self.name = name
+		self.enters = 0
+		self.curxacts = 0
 		
 class Mark:
 	def __init__(self, name, block):
@@ -101,7 +106,7 @@ class Xact:
 		self.cond = 'injected'
 		
 class Injector:
-	def __init__(self, group, time, tdelta, tdelay, limit, block):
+	def __init__(self, group, time, tdelta, tdelay, limit, block, params={}):
 		self.group = group
 		self.time = time
 		self.tdelta = tdelta
@@ -111,6 +116,14 @@ class Injector:
 		else:
 			self.limit = limit
 		self.block = block
+		if 'priority' in params.keys():
+			self.pr = params['priority']
+			del params['priority']
+		else:
+			self.pr = 0
+		self.intparams = {p:params[p] for p in params.keys() if 'p' in p}
+		self.floatparams = {p:params[p] for p in params.keys() if 'f' in p}
+		self.strparams = {p:params[p] for p in params.keys() if 'str' in p}
 		self.inject()
 	
 	def inject(self):
@@ -131,10 +144,14 @@ class Injector:
 
 def addFacility(argstr):
 	fd = {}
-	t = argstr.partition('(')
+	t = argstr.replace(')', '').partition('(')
 	name = t[0]
-	mode = t[2].partition(')')[0].replace('\"', '')
-	f = Facility(name, mode)
+	mode = t[2].partition(',')[0].replace('\"', '')
+	params = t[2].partition(',')[2]
+	if params == '':
+		f = Facility(name, mode)
+	else:
+		f = Facility(name, mode, eval(params))
 	fd[name] = f
 	global program
 	strname = '\''+name+'\''
@@ -207,9 +224,9 @@ def exitwhen(cond):
 	global exitCond
 	exitCond = cond
 	
-def inject(group, time, tdelta, tdelay, limit, block):
+def inject(group, time, tdelta, tdelay, limit, block, params={}):
 	global injectors
-	injectors[group] = Injector(group, time, tdelta, tdelay, limit, block)
+	injectors[group] = Injector(group, time, tdelta, tdelay, limit, block, params)
 	
 def addMarkedBlock(name, index):
 	if name not in marks:
@@ -236,15 +253,17 @@ def qleave(qid):
 def fbusy(fid):
 	if facilities[fid].places > 0:
 		facilities[fid].places -= 1
+		facilities[fid].enters += 1
 		xact.curblk += 1
 		facilities[fid].busyxacts.append(xact)
+		print 'added xact '+str(xact.index)+' to facility '+fid
 		xact.cond = 'canmove'
 	else:
 		xact.cond = 'blocked'
 	
 def ffree(fid):
 	facilities[fid].places += 1
-	facilities[fid].busyxacts.remove(xact)
+	facilities[fid].busyxacts = [xa for xa in facilities[fid].busyxacts if xa.index != xact.index]
 	xact.curblk += 1
 	xact.cond = 'passagain'
 	
@@ -343,7 +362,7 @@ while progpart[1] != '':
 temp = allprogram.split(';')
 i = 0
 for line in temp:
-	program.append([i, line])
+	program.append([i, line, 0, 0])
 	i += 1
 progfile.close()
 
@@ -362,6 +381,13 @@ for j in range(i):
 	cmd = t[0]
 	args = t[2]
 	if cmd == 'facility':
+		part = args.partition(')')
+		param = ''
+		if '{' in part[2]:	
+			param = part[2].replace(',', ',\'').replace('=', '\':') \
+						   .replace('}', '})').replace('{', ',{\'') \
+						   .replace(' ', '')
+			args = part[0]+param
 		facilities.update(addFacility(args))
 	elif cmd == 'queue':
 		queues.update(addQueue(args))
@@ -395,9 +421,13 @@ for j in range(i, len(program)):
 	if t[2].startswith('inject'):
 		tt = t[2].partition(')')
 		args = tt[0]
-		args += ', '
-		args += str(j)
-		args += ')'
+		args += ', '+str(j)+')'+tt[2]
+		part = args.partition(')')
+		param = ''
+		if '{' in part[2]:	
+			param = part[2].replace(',', ',\'').replace('=', '\':') \
+						   .replace('}', '})').replace('{', ',{\'')
+			args = part[0]+param
 		eval(args)
 	if t[2].startswith('cond') or t[2].startswith('otherwise'):
 		tup = t[2].partition('(')
@@ -409,9 +439,10 @@ for j in range(i, len(program)):
 for ll in program:
 	print str(ll[0]).zfill(3)+'\t'+ll[1]
 inp = raw_input()
+
 while True:
 	tempCurrentChain = []
-#	inp = raw_input()
+	#inp = raw_input()
 	print 'timestep =', curticks
 	for xa in futureChain:
 		if xa[0] == curticks:
@@ -463,24 +494,31 @@ while True:
 	if eval(exitCond) == True:
 		break
 
-print 'Variables:'
+print '\n\n======== MODELLING INFORMATION ========'
+print '\nGenerated program:'
+for ll in program:
+	print str(ll[0]).zfill(3)+'\t'+ll[1]
+print '\nExit condition: '+exitCond
+print '\n----Variables:----'
 for intt in intVars.keys():
 	print str(intt)+' = '+str(intVars[intt].value)
-print 'Facilities:'
+print '\n----Facilities:----'
 for fac in facilities.values():
-	print fac.name+', '+fac.mode
 	l = []
 	for xact in fac.busyxacts:
 		l.append(xact.index)
-	print l
-print 'Marks:'
+	print fac.name+'\t   '+fac.mode+'\t'+str(l)
+print '\n----Queues:----'
+for qu in queues.values():
+	print '{}\t{!s}\t{!s}'.format(qu.name, qu.enters, qu.curxacts)
+print '\n----Marks:----'
 for mark in marks.keys():
-	print marks[mark].name, marks[mark].block
-print 'Exit condition: '+exitCond
-print 'Future events chain:'
+	print marks[mark].name+'\t'+str(marks[mark].block)
+print '\n----Future events chain:----'
 for xact in futureChain:
-	print xact[0], xact[1].group, xact[1].index, \
-				   xact[1].curblk, xact[1].cond
-print 'Current events chain:'
+	print '{!s}\t{}\t{!s}\t{!s}\t{}'.format(xact[0], xact[1].group, 
+			xact[1].index, xact[1].curblk, xact[1].cond)
+print '\n----Current events chain:----'
 for xact in currentChain:
-	print xact.group, xact.index, xact.curblk, xact.cond
+	print xact.group+'\t'+str(xact.index)+'\t'	\
+			+str(xact.curblk)+'\t'+xact.cond

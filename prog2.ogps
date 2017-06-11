@@ -4,7 +4,7 @@
 */
 
 int bufer = 0;
-int BUFFER_CAPACITY = 10;
+int BUFFER_CAPACITY = 20;
 int completedCommands = 0;
 facility RAM("single");
 facility CPUs("parallel") {entries = 3};
@@ -13,10 +13,10 @@ queue CPUs;
 mark RAMCycle;
 mark CPUCycle;
 
-exitwhen(completedCommands > 100);
+exitwhen(completedCommands > 1);
 {{
 /* RAM imitation */
-: inject("RAM cycling Xact", 0, 0, 0, 1);
+: inject("RAM cycling Xact", 0, 0, 0, 1) {priority = 10, p1 = 4, p2 = 5, str1 = "ram"};
 RAMCycle: qenter(RAM);
 : fbusy(RAM);
 : qleave(RAM);
@@ -30,7 +30,7 @@ RAMCycle: qenter(RAM);
 : otherwise(tryagain);
 
 /* Multiple CPU system imitation */
-: inject("CPUs cycling Xact", 0, 0, 0, 1);
+: inject("CPUs cycling Xact", 0, 0, 0, 3);
 CPUCycle: cond(bufer > 0);
 {
 : qenter(CPUs);
