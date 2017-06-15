@@ -6,8 +6,8 @@
 int bufer = 0;
 int BUFFER_CAPACITY = 20;
 int completedCommands = 0;
-facility RAM("single");
-facility CPUs("parallel") {entries = 3};
+fac RAM("single");
+fac CPUs("parallel") {entries = 3};
 queue RAM;
 queue CPUs;
 mark RAMCycle;
@@ -17,33 +17,31 @@ exitwhen(completedCommands > 1);
 {{
 /* RAM imitation */
 : inject("RAM cycling Xact", 0, 0, 0, 1) {priority = 10, p1 = 4, p2 = 5, str1 = "ram"};
-RAMCycle: qenter(RAM);
-: fbusy(RAM);
-: qleave(RAM);
+RAMCycle: queue_enter(RAM);
+: fac_enter(RAM);
+: queue_leave(RAM);
 : wait(8, 3);
-: cond(bufer < BUFFER_CAPACITY);
+: try(bufer < BUFFER_CAPACITY);
 {
-: ffree(RAM);
+: fac_leave(RAM);
 : bufer.add(1);
 : travel(RAMCycle);
 }
-: otherwise(tryagain);
 
 /* Multiple CPU system imitation */
 : inject("CPUs cycling Xact", 0, 0, 0, 3);
-CPUCycle: cond(bufer > 0);
+CPUCycle: try(bufer > 0);
 {
-: qenter(CPUs);
-: fbusy(CPUs);
+: queue_enter(CPUs);
+: fac_enter(CPUs);
 : bufer.subt(1);
-: qleave(CPUs);
+: queue_leave(CPUs);
 : wait(15, 6);
-: ffree(CPUs);
+: fac_leave(CPUs);
 : completedCommands.add(1);
 /* It was maybe a command which will erase buffer: */
 : travel(CPUCycle, 0.9);
 : bufer.assign(0);
 : travel(CPUCycle);
 }
-: otherwise(tryagain);
 }}

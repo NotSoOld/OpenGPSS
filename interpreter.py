@@ -1,5 +1,6 @@
 import sys
 import random
+from better_arch import lexer
 
 intVars = {}
 floatVars = {}
@@ -77,6 +78,7 @@ class Facility:
 		self.mode = mode
 		self.busyxacts = []
 		self.enters = 0
+		self.busyticks = 0
 		if mode == 'single':
 			self.places = 1
 		else:
@@ -355,6 +357,11 @@ def otherwise(cond=None):
 
 progfile = open('prog2.ogps', 'r')
 allprogram = progfile.read()
+
+tokens = lexer.analyze(allprogram)
+for token in tokens:
+	print token
+
 progpart = allprogram.partition('/*')
 while progpart[1] != '':
 	allprogram = progpart[0] + progpart[2].partition('*/')[2]
@@ -461,6 +468,9 @@ while True:
 	futureChain = [xa for xa in futureChain if xa[0] != -1]
 	print 'Future Events Chain: ', list(xa[0] for xa in futureChain)
 	print 'Current Events Chain:', list(xa.index for xa in currentChain)
+	for fac in facilities.values():
+		if fac.busyxacts:
+			fac.busyticks += 1
 	if len(currentChain) == 0:
 		curticks += 1
 		continue
@@ -499,15 +509,18 @@ print '\nGenerated program:'
 for ll in program:
 	print str(ll[0]).zfill(3)+'\t'+ll[1]
 print '\nExit condition: '+exitCond
+print 'Modeling time: '+str(curticks)
 print '\n----Variables:----'
 for intt in intVars.keys():
 	print str(intt)+' = '+str(intVars[intt].value)
 print '\n----Facilities:----'
+print 'Name\t   Mode\t\tBusyness\tCurrent xacts'
+print '- '*30
 for fac in facilities.values():
 	l = []
 	for xact in fac.busyxacts:
 		l.append(xact.index)
-	print fac.name+'\t   '+fac.mode+'\t'+str(l)
+	print fac.name+'\t   '+fac.mode+'\t{:.3f}\t\t{!s}'.format(fac.busyticks/float(curticks), l)
 print '\n----Queues:----'
 for qu in queues.values():
 	print '{}\t{!s}\t{!s}'.format(qu.name, qu.enters, qu.curxacts)
@@ -515,10 +528,14 @@ print '\n----Marks:----'
 for mark in marks.keys():
 	print marks[mark].name+'\t'+str(marks[mark].block)
 print '\n----Future events chain:----'
+print 'Move time\tXact group\t\tXact ID\tXact curblock\tXact status'
+print '- '*35
 for xact in futureChain:
-	print '{!s}\t{}\t{!s}\t{!s}\t{}'.format(xact[0], xact[1].group, 
+	print '{!s}\t\t{}\t\t{!s}\t{!s}\t\t{}'.format(xact[0], xact[1].group, 
 			xact[1].index, xact[1].curblk, xact[1].cond)
 print '\n----Current events chain:----'
+print 'Xact group\t\tXact ID\tXact curblock\tXact status'
+print '- '*35
 for xact in currentChain:
-	print xact.group+'\t'+str(xact.index)+'\t'	\
-			+str(xact.curblk)+'\t'+xact.cond
+	print xact.group+'\t\t'+str(xact.index)+'\t'	\
+			+str(xact.curblk)+'\t\t'+xact.cond
