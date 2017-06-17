@@ -1,6 +1,6 @@
 import sys
 import random
-from better_arch import lexer
+from better_arch import lexer, parser
 
 intVars = {}
 floatVars = {}
@@ -355,12 +355,16 @@ def otherwise(cond=None):
 ###############################################################
 
 
-progfile = open('prog2.ogps', 'r')
+progfile = open('/sdcard/qpython/OpenGPSS/prog2.ogps', 'r')
 allprogram = progfile.read()
 
 tokens = lexer.analyze(allprogram)
 for token in tokens:
 	print token
+	
+toklines = parser.tocodelines(tokens)
+for line in toklines:
+    print line
 
 progpart = allprogram.partition('/*')
 while progpart[1] != '':

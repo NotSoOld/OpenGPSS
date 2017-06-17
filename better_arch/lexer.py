@@ -35,7 +35,9 @@ operators = {
              '[':'lbracket', 
              ']':'rbracket', 
              ';':'eocl', 
-             ':':'marksep'
+             ':':'marksep',
+             '{{':'lexecblocks',
+             '}}':'rexecblocks'
             }
              
 typedefs = [
