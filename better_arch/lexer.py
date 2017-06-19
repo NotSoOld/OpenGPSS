@@ -47,7 +47,8 @@ typedefs = [
             'fac', 
             'fac_enum', 
             'queue', 
-            'mark'
+            'mark',
+            'chain'
            ]
 
 blocks = [
@@ -73,7 +74,6 @@ blocks = [
 
 pos = 0
 allprogram = []
-
 
 def analyze(program):
 	global pos

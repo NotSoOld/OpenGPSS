@@ -1,5 +1,6 @@
 import sys
 
+pos = 0
 
 def tocodelines(program):
     parsed = []
@@ -25,10 +26,32 @@ def tocodelines(program):
                 sys.exit()
     return parsed
 
-def parseDefinition(defline):
-    pass
+def parseDefinition(line):
+    pos = 0
+    name = ''
+    newobj = None
+    deftype = line[0][1]
+    
+    if deftype == 'int':
+        pass
+    elif deftype == 'float':
+        pass
+    elif deftype == 'fac':
+        pass
+    elif deftype == 'queue':
+        pass
+    elif deftype == 'chain':
+        pass
+    elif deftype == 'block':
+        pass
+    elif deftype == 'str':
+        pass
+    else: # If deftype is fac_enum
+        pass
+    
+    #getattr(interpreter, deftype+'s')[name] = newobj
 
-def parseBlock(blockline):
+def parseBlock(line):
     pass
 
 def parseExpression(expr):
@@ -36,3 +59,5 @@ def parseExpression(expr):
 
 def parseBinary(expr1, expr2):
     pass
+
+#os.path.dirname(os.path.abspath(__file__))
