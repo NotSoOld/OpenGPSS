@@ -1,4 +1,5 @@
 import sys
+import errors
 
 tokens = []
 numbers = '0123456789'
@@ -9,6 +10,7 @@ operators = {
              '-':'minus', 
              '*':'mult', 
              '/':'div', 
+             '%':'remain',
              '**':'pwr', 
              '=':'eq', 
              '+=':'add', 
@@ -104,8 +106,7 @@ def tokenizeNumber():
 	while True:
 		if cur == '.':
 			if '.' in result:
-				print 'Incorrect float number!'
-				sys.exit()
+				errors.print_error(9, '', [result+'.'])
 			result += cur
 		elif cur in numbers:
 			result += cur

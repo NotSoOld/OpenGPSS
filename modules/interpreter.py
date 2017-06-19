@@ -1,9 +1,12 @@
 import sys
 import random
-from better_arch import lexer, parser
+import lexer
+import parser
+import structs
+import errors
 
-intVars = {}
-floatVars = {}
+ints = {}
+floats = {}
 chains = {}
 facilities = {}
 queues = {}
@@ -20,6 +23,7 @@ commands = ['cond', 'fbusy', 'ffree',
             'wait', 'qenter', 'qleave',
             'reject', 'travel', 'otherwise']
 xact = None
+toklines = []
 
 
 class IntVar:
@@ -355,17 +359,39 @@ def otherwise(cond=None):
 ###############################################################
 
 
-progfile = open('/sdcard/qpython/OpenGPSS/prog2.ogps', 'r')
-allprogram = progfile.read()
+def start_interpreter(filepath):
+	progfile = open(filepath, 'r')
+	allprogram = progfile.read()
+	progfile.close()
 
-tokens = lexer.analyze(allprogram)
-for token in tokens:
-	print token
+	tokens = lexer.analyze(allprogram)
+	for token in tokens:
+		print token
 	
-toklines = parser.tocodelines(tokens)
-for line in toklines:
-    print line
+	global toklines
+	toklines = parser.tocodelines(tokens)
+	
+	skip = False
+	for line in toklines:
+		if line == [['{{']]:
+			skip = True
+		elif line == [['}}']]:
+			skip = False
+		if skip == True:
+			continue
+		if line[0][0] == 'typedef':
+			defd = parser.parseDefinition(line)
+			dic = getattr(self, defd[0]+'s')
+			dic[defd[1]] = defd[2]
+			if defd[0] == 'facilitie' and defd[2].isQueued:
+				queues[defd[1]] = structs.Queue(defd[1])
+	
+	return
 
+def print_program:
+	pass
+
+"""
 progpart = allprogram.partition('/*')
 while progpart[1] != '':
 	allprogram = progpart[0] + progpart[2].partition('*/')[2]
@@ -543,3 +569,4 @@ print '- '*35
 for xact in currentChain:
 	print xact.group+'\t\t'+str(xact.index)+'\t'	\
 			+str(xact.curblk)+'\t\t'+xact.cond
+"""
