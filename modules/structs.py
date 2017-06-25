@@ -1,10 +1,14 @@
 class IntVar:
 	def __init__(self, name, initval):
+		if type(initval) is not int:
+			pass #error: initial value for int variable 'name' must be of type int
 		self.value = initval
 		self.name = name
 		
 class FloatVar:
 	def __init__(self, name, initval):
+		if type(initval) is not int or type(initval) is not float:
+			pass #error: initial value for float variable 'name' must be a number
 		self.value = initval
 		self.name = name
 		
@@ -29,3 +33,23 @@ class Mark:
 	def __init__(self, name, block):
 		self.name = name
 		self.block = block
+		
+class Injector:
+	def __init__(self, group, time, tdelta, tdelay, limit, block, params={}):
+		self.group = group
+		self.time = time
+		self.tdelta = tdelta
+		self.tdelay = tdelay
+		if limit <= 0:
+			self.limit = -1
+		else:
+			self.limit = limit
+		self.block = block
+		if 'priority' in params.keys():
+			self.pr = params['priority']
+			del params['priority']
+		else:
+			self.pr = 0
+		self.intparams = {p:params[p] for p in params.keys() if 'p' in p}
+		self.floatparams = {p:params[p] for p in params.keys() if 'f' in p}
+		self.strparams = {p:params[p] for p in params.keys() if 'str' in p}

@@ -7,7 +7,7 @@ errors = {
           3:'Name of the definition expected; got "{}" "{}"',
           4:'Unknown facility parameter or missing closing brace',
           5:'Expected parameter of type "{}" for facility parameter "{}"; got "{}"',
-          6:'Expected name of defined variable or value; got "{}" "{}"',
+          6:'Expected name of defined variable or value; got "{} {}"',
           7:'Cannot increment string',
           8:'Cannot decrement string',
           9:'Found incorrect float number "{}" during analysis'

@@ -25,6 +25,7 @@ operators = {
              '>=':'gteq', 
              '<=':'lesseq', 
              '==':'compeq', 
+             '!=':'noteq',
              '||':'or', 
              '&&':'and', 
              '!':'not',

@@ -7,6 +7,7 @@ import errors
 
 ints = {}
 floats = {}
+strs = {}
 chains = {}
 facilities = {}
 queues = {}
@@ -15,94 +16,12 @@ injectors = {}
 currentChain = []
 tempCurrentChain = []
 futureChain = []
-program = []
 injected = 0
 rejected = 0
 curticks = 0
-commands = ['cond', 'fbusy', 'ffree', 
-            'wait', 'qenter', 'qleave',
-            'reject', 'travel', 'otherwise']
 xact = None
 toklines = []
-
-
-class IntVar:
-	def __init__(self, name, initValue):
-		self.value = initValue
-		self.name = name
-	
-	def assign(self, val):
-		self.value = val
-		xact.curblk += 1
-		xact.cond = 'canmove'
-		
-	def add(self, val):
-		self.assign(self.value + val)
-	
-	def subt(self, val):
-		self.assign(self.value - val)
-		
-	def mult(self, val):
-		self.assign(self.value * val)
-		
-	def div(self, val):
-		self.assign(self.value / val)
-		
-	def exp(self, val):
-		self.assign(self.value ** val)
-
-class FloatVar:
-	def __init__(self, name, initValue):
-		self.value = initValue
-		self.name = name
-		
-	def assign(self, val):
-		self.value = val
-		xact.curblk += 1
-		xact.cond = 'canmove'
-		
-	def add(self, val):
-		self.assign(self.value + val)
-	
-	def subt(self, val):
-		self.assign(self.value - val)
-		
-	def mult(self, val):
-		self.assign(self.value * val)
-		
-	def div(self, val):
-		self.assign(self.value / val)
-		
-	def exp(self, val):
-		self.assign(self.value ** val)
-		
-class Facility:
-	def __init__(self, name, mode, params={}):
-		self.name = name
-		self.mode = mode
-		self.busyxacts = []
-		self.enters = 0
-		self.busyticks = 0
-		if mode == 'single':
-			self.places = 1
-		else:
-			if 'entries' not in params.keys():
-				print 'Error!! Facility "{0}" marked as non-single ' \
-					  'does not have "entries" parameter!'.format(name)
-				sys.exit()
-			else:
-				self.places = params['entries']
-		
-class Queue:
-	def __init__(self, name):
-		self.name = name
-		self.enters = 0
-		self.curxacts = 0
-		
-class Mark:
-	def __init__(self, name, block):
-		self.name = name
-		self.block = block
+exitcond = -1
 		
 class Xact:
 	def __init__(self, group, index, curblk):
@@ -110,140 +29,23 @@ class Xact:
 		self.index = index
 		self.curblk = curblk
 		self.cond = 'injected'
-		
-class Injector:
-	def __init__(self, group, time, tdelta, tdelay, limit, block, params={}):
-		self.group = group
-		self.time = time
-		self.tdelta = tdelta
-		self.tdelay = tdelay
-		if limit <= 0:
-			self.limit = -1
-		else:
-			self.limit = limit
-		self.block = block
-		if 'priority' in params.keys():
-			self.pr = params['priority']
-			del params['priority']
-		else:
-			self.pr = 0
-		self.intparams = {p:params[p] for p in params.keys() if 'p' in p}
-		self.floatparams = {p:params[p] for p in params.keys() if 'f' in p}
-		self.strparams = {p:params[p] for p in params.keys() if 'str' in p}
-		self.inject()
 	
-	def inject(self):
-		# Limit should be checked before calling this.
-		global futureChain
-		global curxact
-		global curticks
-		global injected
-		xa = Xact(self.group, injected, self.block)
-		injected += 1
-		if self.limit != -1:
-			self.limit -= 1
-		futime = curticks + self.time + random.randint(-self.tdelta, self.tdelta)
-		if self.tdelay != 0:
-			futime += self.tdelay
-			self.tdelay = 0
-		futureChain.append([futime, xa])
+def inject(injector):
+	# Limit should be checked before calling this.
+	global futureChain
+	global curxact
+	global curticks
+	global injected
+	xa = Xact(injector.group, injected, injector.block)
+	injected += 1
+	if injector.limit != -1:
+		injector.limit -= 1
+	futime = curticks + injector.time + random.randint(-injector.tdelta, injector.tdelta)
+	if injector.tdelay != 0:
+		futime += injector.tdelay
+		injector.tdelay = 0
+	futureChain.append([futime, xa])
 
-def addFacility(argstr):
-	fd = {}
-	t = argstr.replace(')', '').partition('(')
-	name = t[0]
-	mode = t[2].partition(',')[0].replace('\"', '')
-	params = t[2].partition(',')[2]
-	if params == '':
-		f = Facility(name, mode)
-	else:
-		f = Facility(name, mode, eval(params))
-	fd[name] = f
-	global program
-	strname = '\''+name+'\''
-	for line in program:
-		tmp = line[1].partition(':')
-		if 'fbusy' in tmp[2] or 'ffree' in tmp[2]:
-			line[1] = tmp[0] + tmp[1] + tmp[2].replace(name, strname)
-	return fd
-	
-def addQueue(argstr):
-	qd = {}
-	t = argstr.partition('{')
-	name = t[0]
-	q = Queue(name)
-	qd[name] = q
-	global program
-	strname = '\''+name+'\''
-	for line in program:
-		tmp = line[1].partition(':')
-		if 'qenter' in tmp[2] or 'qleave' in tmp[2]:
-			line[1] = tmp[0] + tmp[1] + tmp[2].replace(name, strname)
-	return qd
-	
-def addMark(argstr):
-	md = {}
-	name = argstr.partition(';')[0]
-	m = Mark(name, -1)
-	md[name] = m
-	global program
-	strname = '\''+name+'\''
-	for line in program:
-		if 'travel' in line[1]:
-			line[1] = line[1].replace(name, strname)
-	return md
-	
-def addInt(name, initval):
-	global program
-	for line in program:
-		parsedname = ''
-		if line[1].startswith('exitwhen'):
-			text = ('', '', line[1])
-		else:
-			text = line[1].partition(':')
-		if name+'.' in text[2]:
-			parsedname = 'intVars[\''+name+'\']'
-		elif name in text[2]:
-			parsedname = 'intVars[\''+name+'\'].value'
-		newtext = text[2].replace(name, parsedname)
-		line[1] = text[0] + text[1] + newtext
-	return {name:IntVar(name, initval)}
-	
-def addFloat(name, initval):
-	global program
-	for line in program:
-		parsedname = ''
-		if line[1].startswith('exitwhen'):
-			text = ('', '', line[1])
-		else:
-			text = line[1].partition(':')
-		if name+'.' in text[2]:
-			parsedname = 'floatVars[\''+name+'\']'
-		elif name in text[2]:
-			parsedname = 'floatVars[\''+name+'\'].value'
-		newtext = text[2].replace(name, parsedname)
-		line[1] = text[0] + text[1] + newtext
-		print line[1]
-	return {name:FloatVar(name, initval)}
-
-def exitwhen(cond):
-	global exitCond
-	exitCond = cond
-	
-def inject(group, time, tdelta, tdelay, limit, block, params={}):
-	global injectors
-	injectors[group] = Injector(group, time, tdelta, tdelay, limit, block, params)
-	
-def addMarkedBlock(name, index):
-	if name not in marks:
-		print 'ERROR in line', index, '!! Mark "', \
-				name, '" is undefined.'
-		sys.exit()
-	if marks[name].block != -1:
-		print 'ERROR in line', index, '!! Mark "', \
-				name, '" is used more than once'
-		sys.exit()
-	marks[name].block = index
 	
 def qenter(qid):
 	queues[qid].enters += 1
@@ -355,6 +157,10 @@ def otherwise(cond=None):
 		xact.curblk = i - 1
 		xact.cond = 'canmove'
 
+def move(args):
+	xact.curblk += 1
+	xact.cond = 'canmove'		
+
 	
 ###############################################################
 
@@ -382,191 +188,138 @@ def start_interpreter(filepath):
 		if line[0][0] == 'typedef':
 			defd = parser.parseDefinition(line)
 			dic = getattr(self, defd[0]+'s')
+			if dic[defd[1]]:
+				pass #error: multiple definition of name defd[1] with type defd[0]
 			dic[defd[1]] = defd[2]
 			if defd[0] == 'facilitie' and defd[2].isQueued:
 				queues[defd[1]] = structs.Queue(defd[1])
+		elif line[0][0] == 'block': 
+			if line[0][1] == 'exitwhen':
+				if exitcond != -1:
+					pass #error: exit condition must be declared only once
+				exitcond = toklines.indexof(line)
+			else:
+				pass #errors.print_error(): executive block outside executive area
 	
-	return
-
-def print_program:
-	pass
-
-"""
-progpart = allprogram.partition('/*')
-while progpart[1] != '':
-	allprogram = progpart[0] + progpart[2].partition('*/')[2]
-	progpart = allprogram.partition('/*')
-temp = allprogram.split(';')
-i = 0
-for line in temp:
-	program.append([i, line, 0, 0])
-	i += 1
-progfile.close()
-
-i = 0
-flag = 0
-for line in program:
-	line[1] = line[1].replace('\r', '').replace('\n', '').replace('\t', ' ')
-for line in program:
-	if line[1].find('{{') != -1:
-		flag = 1
-		line[1] = line[1].replace('{{', '')
-		break
-	i += 1
-for j in range(i):
-	t = program[j][1].partition(' ')
-	cmd = t[0]
-	args = t[2]
-	if cmd == 'facility':
-		part = args.partition(')')
-		param = ''
-		if '{' in part[2]:	
-			param = part[2].replace(',', ',\'').replace('=', '\':') \
-						   .replace('}', '})').replace('{', ',{\'') \
-						   .replace(' ', '')
-			args = part[0]+param
-		facilities.update(addFacility(args))
-	elif cmd == 'queue':
-		queues.update(addQueue(args))
-	elif cmd == 'mark':
-		marks.update(addMark(args))
-	elif cmd == 'int':
-		intargs = args.replace(' ', '').partition('=')
-		if intargs[1] != '':
-			intVars.update(addInt(intargs[0], int(intargs[2])))
-		else:
-			intVars.update(addInt(intargs[0], 0))
-	elif cmd == 'float':
-		floatargs = args.replace(' ', '').partition('=')
-		if floatargs[1] != '':
-			floatVars.update(addFloat(floatargs[0], float(floatargs[2])))
-		else:
-			floatVars.update(addFloat(floatargs[0], 0))
-	if program[j][1].startswith('exitwhen'):
-		tup2 = program[j][1].partition('(')
-		newstr = tup2[0] + '(\"' + tup2[2]
-		tup2 = newstr.partition(')')
-		newstr = tup2[0] + '\")' + tup2[2]
-		program[j][1] = newstr
-		eval(program[j][1])
-		
-for j in range(i, len(program)):
-	program[j][1] = program[j][1].replace(' ', '')
-	t = program[j][1].partition(':')
-	if t[0] != '' and t[0] != '{' and t[0] != '}' and t[1] != '':
-		addMarkedBlock(t[0], program[j][0])
-	if t[2].startswith('inject'):
-		tt = t[2].partition(')')
-		args = tt[0]
-		args += ', '+str(j)+')'+tt[2]
-		part = args.partition(')')
-		param = ''
-		if '{' in part[2]:	
-			param = part[2].replace(',', ',\'').replace('=', '\':') \
-						   .replace('}', '})').replace('{', ',{\'')
-			args = part[0]+param
-		eval(args)
-	if t[2].startswith('cond') or t[2].startswith('otherwise'):
-		tup = t[2].partition('(')
-		newline = tup[0]+'(\"'+tup[2]
-		tup = newline.partition(')')
-		newline = tup[0]+'\")'+tup[2]
-		program[j][1] = t[0]+':'+newline
-		
-for ll in program:
-	print str(ll[0]).zfill(3)+'\t'+ll[1]
-inp = raw_input()
-
-while True:
-	tempCurrentChain = []
-	#inp = raw_input()
-	print 'timestep =', curticks
-	for xa in futureChain:
-		if xa[0] == curticks:
-			currentChain.append(xa[1])
-			# Inject new xact if we move injected xact 
-			# from future events chain.
-			if xa[1].cond == 'injected':
-				if injectors[xa[1].group].limit != 0:
-					injectors[xa[1].group].inject()
-			# Mark for future deleting (because now we don't want 
-			# to modify collection we're iterating)
-			xa[0] = -1
-			# Stop by injecting enough xacts.
-			if eval(exitCond) == True:
-				break
-	futureChain = [xa for xa in futureChain if xa[0] != -1]
-	print 'Future Events Chain: ', list(xa[0] for xa in futureChain)
-	print 'Current Events Chain:', list(xa.index for xa in currentChain)
-	for fac in facilities.values():
-		if fac.busyxacts:
-			fac.busyticks += 1
-	if len(currentChain) == 0:
-		curticks += 1
-		continue
-	restart = True
-	while restart:
-		restart = False
-		for xact in currentChain:
-			if restart:
-				tempCurrentChain.append(xact)
-				continue
-			while True:
-				t = program[xact.curblk+1][1].partition(':')[2]
-				print 'xact', xact.index, 'entered block', t
-				eval(t)
-				
-				if xact.cond != 'canmove':
-					if xact.cond == 'passagain':
-						tempCurrentChain.append(xact)
-						restart = True
-					elif xact.cond == 'blocked':
-						tempCurrentChain.append(xact)
-						print 'xact', xact.index, 'was blocked'
-					break
-			# Stop by rejecting enough xacts.
-			if eval(exitCond) == True:
-				break
-		currentChain = tempCurrentChain
+	for line in toklines:
+		if line.indexof(['block', 'inject']) != -1:
+			newinj = parser.parseInjector(line)
+			injectors[newinj.group] = newinj
+			inject(newinj)
+			
+	while True:
 		tempCurrentChain = []
-	curticks += 1
-	# Stop by modelling enough amount of time.
-	if eval(exitCond) == True:
-		break
+		#inp = raw_input()
+		print 'timestep =', curticks
+		for xa in futureChain:
+			if xa[0] == curticks:
+				currentChain.append(xa[1])
+				# Inject new xact if we move injected xact 
+				# from future events chain.
+				if xa[1].cond == 'injected':
+					if injectors[xa[1].group].limit != 0:
+						inject(injectors[xa[1].group])
+				# Mark for future deleting (because now we don't want 
+				# to modify collection we're iterating)
+				xa[0] = -1
+				# Stop by injecting enough xacts.
+				if checkExitCond():
+					break
+		futureChain = [xa for xa in futureChain if xa[0] != -1]
+		print 'Future Events Chain: ', list(xa[0] for xa in futureChain)
+		print 'Current Events Chain:', list(xa.index for xa in currentChain)
+		for fac in facilities.values():
+			if fac.busyxacts:
+				fac.busyticks += 1
+		if len(currentChain) == 0:
+			curticks += 1
+			continue
+			
+		restart = True
+		while restart:
+			restart = False
+			for xact in currentChain:
+				if restart:
+					tempCurrentChain.append(xact)
+					continue
+				while True:
+					if xact.curblk+1 >= len(toklines):
+						pass #error: executive line index is out of bounds (probably missing '}}')
+					print 'xact', xact.index, 'entering block', xact.curblk+1
+					cmd = parser.parseBlock(toklines[xact.curblk+1])
+					func = getattr(self, cmd[0])
+					func(cmd[1])
+				
+					if xact.cond != 'canmove':
+						if xact.cond == 'passagain':
+							tempCurrentChain.append(xact)
+							restart = True
+						elif xact.cond == 'blocked':
+							tempCurrentChain.append(xact)
+							print 'xact', xact.index, 'was blocked'
+						break
+				# Stop by rejecting enough xacts.
+				if checkExitCond():
+					break
+			currentChain = tempCurrentChain
+			tempCurrentChain = []
+		curticks += 1
+		# Stop by modelling enough amount of time.
+		if checkExitCond():
+			break
+			
+	print_results()
+	
+def checkExitCond():
+	global toklines
+	global exitcond
+	if parser.parseExitCond(toklines[exitcond]):
+		return true
+	return false	
 
-print '\n\n======== MODELLING INFORMATION ========'
-print '\nGenerated program:'
-for ll in program:
-	print str(ll[0]).zfill(3)+'\t'+ll[1]
-print '\nExit condition: '+exitCond
-print 'Modeling time: '+str(curticks)
-print '\n----Variables:----'
-for intt in intVars.keys():
-	print str(intt)+' = '+str(intVars[intt].value)
-print '\n----Facilities:----'
-print 'Name\t   Mode\t\tBusyness\tCurrent xacts'
-print '- '*30
-for fac in facilities.values():
-	l = []
-	for xact in fac.busyxacts:
-		l.append(xact.index)
-	print fac.name+'\t   '+fac.mode+'\t{:.3f}\t\t{!s}'.format(fac.busyticks/float(curticks), l)
-print '\n----Queues:----'
-for qu in queues.values():
-	print '{}\t{!s}\t{!s}'.format(qu.name, qu.enters, qu.curxacts)
-print '\n----Marks:----'
-for mark in marks.keys():
-	print marks[mark].name+'\t'+str(marks[mark].block)
-print '\n----Future events chain:----'
-print 'Move time\tXact group\t\tXact ID\tXact curblock\tXact status'
-print '- '*35
-for xact in futureChain:
-	print '{!s}\t\t{}\t\t{!s}\t{!s}\t\t{}'.format(xact[0], xact[1].group, 
-			xact[1].index, xact[1].curblk, xact[1].cond)
-print '\n----Current events chain:----'
-print 'Xact group\t\tXact ID\tXact curblock\tXact status'
-print '- '*35
-for xact in currentChain:
-	print xact.group+'\t\t'+str(xact.index)+'\t'	\
-			+str(xact.curblk)+'\t\t'+xact.cond
-"""
+def print_program():
+	global toklines
+	for line in toklines:
+		for token in line:
+			if token[0] in lexer.operators.values():
+				print lexer.operators.keys()[lexer.operators.values().index(token[0])],
+			elif token[0] == 'word' or token[0] == 'string' or \
+			     token[0] == 'number' or token[0] == 'typedef' or \
+			     token[0] == 'block':
+				print token[1],
+		print
+
+def print_results():
+	print '\n\n======== MODELLING INFORMATION ========'
+	print '\nGenerated program:'
+	print_program()
+	print 'Modeling time: '+str(curticks)
+	print '\n----Variables:----'
+	for intt in ints.keys():
+		print str(intt)+' = '+str(ints[intt].value)
+	print '\n----Facilities:----'
+	print 'Name\t   Mode\t\tBusyness\tCurrent xacts'
+	print '- '*30
+	for fac in facilities.values():
+		l = []
+		for xact in fac.busyxacts:
+			l.append(xact.index)
+		print fac.name+'\t   '+fac.mode+'\t{:.3f}\t\t{!s}'.format(fac.busyticks/float(curticks), l)
+	print '\n----Queues:----'
+	for qu in queues.values():
+		print '{}\t{!s}\t{!s}'.format(qu.name, qu.enters, qu.curxacts)
+	print '\n----Marks:----'
+	for mark in marks.keys():
+		print marks[mark].name+'\t'+str(marks[mark].block)
+	print '\n----Future events chain:----'
+	print 'Move time\tXact group\t\tXact ID\tXact curblock\tXact status'
+	print '- '*35
+	for xact in futureChain:
+		print '{!s}\t\t{}\t\t{!s}\t{!s}\t\t{}'.format(xact[0], xact[1].group, 
+				xact[1].index, xact[1].curblk, xact[1].cond)
+	print '\n----Current events chain:----'
+	print 'Xact group\t\tXact ID\tXact curblock\tXact status'
+	print '- '*35
+	for xact in currentChain:
+		print xact.group+'\t\t'+str(xact.index)+'\t'	\
+				+str(xact.curblk)+'\t\t'+xact.cond
