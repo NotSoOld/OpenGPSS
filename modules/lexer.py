@@ -18,6 +18,7 @@ operators = {
              '*=':'multeq', 
              '/=':'diveq', 
              '**=':'pwreq', 
+             '%=':'remaineq',
              ',':'comma',
              '.':'dot',
              '>':'gt', 
@@ -39,8 +40,8 @@ operators = {
              ']':'rbracket', 
              ';':'eocl', 
              ':':'marksep',
-             '{{':'lexecblocks',
-             '}}':'rexecblocks'
+             '{{':'lexec',
+             '}}':'rexec'
             }
              
 typedefs = [
@@ -51,7 +52,8 @@ typedefs = [
             'fac_enum', 
             'queue', 
             'mark',
-            'chain'
+            'chain',
+            'sub'
            ]
 
 blocks = [
@@ -72,7 +74,8 @@ blocks = [
           'travel',
           'travel_if',
           'while',
-          'for'
+          'for',
+          'copy'
          ]
 
 pos = 0

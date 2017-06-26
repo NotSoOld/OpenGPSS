@@ -12,7 +12,7 @@ def tocodelines(program):
 	i = 0
 	while i < len(program):
 		token = program[i]
-		if token[0] in 'lbrace'+'rbrace'+'lexecblocks'+'rexecblocks':
+		if token[0] in 'lbrace'+'rbrace'+'lexec'+'rexec':
 			parsed.append([token])
 			i += 1
 			continue
@@ -84,12 +84,11 @@ def parseDefinition(line):
 						errors.print_error(5, lineindex, ['bool', 'isQueued', tok[1]])
 					isQueued = bool(nexttok()[1])
 					continue
-				# Error: unknown facility parameter or missing closing brace.
-				errors.print_error(4, lineindex)
+				errors.print_error(4, lineindex, [peek(0)])
 			newobj = structs.Facility(name, places, isQueued)
 			deftype = 'facilitie'
 		else:
-			pass #error: nothing or '{' expected
+			errors.print_error(12, lineindex, [peek(0)])
 		
 	elif deftype == 'queue':
 		newobj = structs.Queue(name)
@@ -101,12 +100,18 @@ def parseDefinition(line):
 		for line in interpreter.toklines:
 			if line[0] == ['word', name] and line[1][0] == 'marksep':
 				if newobj.block != -1:
-					pass #error: mark 'name' found more than one time as travelling label (at the left of ':')
+					i = interpreter.toklines.indexof(line)
+					errors.print_error(13, i+1, [name])
 				newobj.block = interpreter.toklines.indexof(line)
 			
 		
 	elif deftype == 'str':
-		pass
+		if not tok:
+			newobj = structs.StrVar(name, '')
+		elif tok[0] == 'eq':
+			nexttok()
+			newobj = structs.StrVar(name, parseExpression())
+			
 	else: # If deftype is fac_enum
 		pass
 	
@@ -119,18 +124,111 @@ def parseBlock(line):
 	pos = 0
 	name = ''
 	args = []
+	global lineindex
+	lineindex = interpreter.toklines.indexof(line)+1
 	
 	if tokline.indexof(['rexecblocks', '']) != -1:
-		pass #error: xact is trying to leave executive area
+		errors.print_error(14, lineindex)
 	if peek(0)[0] == 'word':
 		if peek(0)[1] in interpreter.marks:
 			consume('word')
 		else:
-			pass #error: unknown word 'peek(0)[1] used as mark name'
+			errors.print_error(15, lineindex, [peek(0)[1]])
 	consume('marksep')
 	tok = peek(0)
 	if tok[0] != 'block':
-		pass #error: expected executive block; got 'tok'
+		if tok[0] == 'word':
+			tok1 = peek(1)
+			tok2 = peek(2)
+			tok3 = peek(3)
+			attr = None
+			attstr = ''
+			
+			if tok1[0] == 'dot' and tok2[0] == 'word':
+				nexttok()
+				nexttok()
+				if tok2[1] == 'curplaces': #or tok2[1] == ''
+					if tok[1] in interpreter.facilities:
+						attrstr = 'facilities['+tok[1]+']'
+					else:
+						pass #error: cannot find "facility" "tok[1]" to evaluate parameter "tok2[1]"
+				elif tok2[1] == 'curxacts': #or tok2[1] == ''
+					
+					if tok[1] in interpreter.queues:
+						attrstr = 'queues['+tok[1]+']'
+					else:
+						pass #error: cannot find "queue" "tok[1]" to evaluate parameter "tok2[1]"
+				elif tok[1] == 'xact':
+					try:
+						getattr(interpreter, 'xact.'+tok2[1])
+					except AttributeError:
+						pass #error: current xact from group "interpreter.xact.group" does not have a parameter "tok2[1]"
+					attrstr = tok[1]
+
+				# Always succeeds (because otherwise it will fail before this point)	
+				attr = getattr(interpreter, attrstr+'.'+tok2[1])
+				if tok3[0] == 'eq' or tok3[0] == 'add' or tok3[0] == 'subt' or \
+				   tok3[0] == 'multeq' or tok3[0] == 'diveq' or \
+				   tok3[0] == 'pwreq' or tok3[0] == 'remaineq':
+				   	nexttok()
+				   	nexttok()
+				   	result = parseExpression()
+				   	if tok3[0] == 'eq':
+				   		attr = result
+				   	elif tok3[0] == 'add':
+				   		attr += result
+				   	elif tok3[0] == 'subt':
+				   		attr -= result
+				   	elif tok3[0] == 'multeq':
+				   		attr *= result
+				   	elif tok3[0] == 'diveq':
+				   		attr /= result
+				   	elif tok3[0] == 'pwreq':
+				   		attr = attr ** result
+				   	elif tok3[0] == 'remaineq':
+				   		attr %= result
+				   	return ('move', [])
+				else:
+					pass #error: expected assignment operator; got "tok"
+				
+			elif tok1[0] == 'eq' or tok1[0] == 'add' or tok1[0] == 'subt' or \
+			     tok1[0] == 'multeq' or tok1[0] == 'diveq' or \
+			     tok1[0] == 'pwreq' or tok1[0] == 'remaineq':
+			     
+			    attrstr = ''
+			    if tok[1] in interpreter.ints:
+					attrstr = 'ints['+tok[1]+']'
+				elif tok[1] in interpreter.floats:
+					attrstr = 'floats['+tok[1]+']'
+				elif tok[1] in interpreter.strs:
+					attrstr = 'strs['+tok[1]+']'
+				else:
+					pass #error: unknown variable "tok[1]"
+				attr = getattr(interpreter, attrstr)
+				nexttok()
+				nexttok()
+				result = parseExpression()
+			   	if tok1[0] == 'eq':
+			   		attr = result
+			   	elif tok1[0] == 'add':
+			   		attr += result
+			   	elif tok1[0] == 'subt':
+			   		attr -= result
+			   	elif tok1[0] == 'multeq':
+			   		attr *= result
+			   	elif tok1[0] == 'diveq':
+			   		attr /= result
+			   	elif tok1[0] == 'pwreq':
+			   		attr = attr ** result
+			   	elif tok1[0] == 'remaineq':
+			   		attr %= result
+			   	return ('move', [])
+			else:
+				pass #error: expected assignment operator or '.'; got "tok"
+		else:
+			pass #error: expected assignment lvalue; got "tok"
+	else:
+		pass #error: expected executive block or assignment lvalue; got "tok"
 	if tok[1] == 'inject':
 		name = 'move'
 	else:
@@ -144,7 +242,7 @@ def parseBlock(line):
 				consume('rparen')
 				break;
 			else:
-				pass #error: ',' or ')' expected while parsing arguments; got 'peek(0)'
+				errors.print_error(16, lineindex, [peek(0)])
 			args.append(parseExpression())
 	return (name, args)
 
@@ -154,24 +252,27 @@ def parseInjector(line):
 	global pos
 	pos = 0
 	tokline = line
+	global lineindex
+	lineindex = interpreter.toklines.indexof(line)+1
+	
 	if peek(0)[0] == 'word' and peek(0)[1] in interpreter.marks:
 		consume('word')
 	else:
-		pass #error: unknown word 'peek(0)[1] used as mark name'
+		errors.print_error(15, lineindex, [peek(0)[1]])
 	consume('marksep')
 	consume('block', 'inject')
 	consume('lparen')
 	
 	tok = peek(0)
 	if tok[0] != 'str':
-		pass #error: string 'group' expected
+		errors.print_error(17, lineindex, [tok])
 	group = tok[1]
 	consume('comma')
 	args = []
 	for i in range (0, 4):
 		tok = nexttok()
 		if tok[0] != 'number':
-			pass #error: number expected
+			errors.print_error(18, lineindex, [tok])
 		args.append(int(tok[1]))
 		if i != 3:
 			consume('comma')
@@ -194,19 +295,22 @@ def parseInjector(line):
 		
 		if tok1[1].startswith('p'):
 			if tok2[0] != 'number' or tok2[1].indexof('.') != -1:
-					pass #error: expected integer value for parameter 'tok1[1]'
+				errors.print_error(19, lineindex, ['integer', tok1[1], tok2[0]])
 			else:
 				params[tok1[1]] = int(tok2[1])
 		elif tok1[1].startswith('f'):
 			if tok2[0] != 'number':
-					pass #error: expected number value for parameter 'tok1[1]'
+				errors.print_error(19, lineindex, ['number', tok1[1], tok2[0]])
 			else:
 				params[tok1[1]] = float(tok2[1])
 		elif tok1[1].startswith('str'):
 			if tok2[0] != 'string':
-					pass #error: expected string value for parameter 'tok1[1]'
+				errors.print_error(19, lineindex, ['string', tok1[1], tok2[0]])
 			else:
-				params[tok1[1]] = int(tok2[1])
+				params[tok1[1]] = tok2[1]
+		else:
+			print_warning(2, lineindex, [tok1[1]])
+			params[tok1[1]] = tok2[1]
 		
 	newinj = structs.Injector(group, args[0], args[1], args[2], args[3], blk, params)
 	return newinj
@@ -279,13 +383,13 @@ def parseAdd():
 		if matchtok('plus'):
 			result1 = parseMult()
 			if type(result1) is str and type(result) is not str:
-				pass #error: cannot do addition between string and non-string values
+				errors.print_error(20, lineindex)
 			result += result1
 			continue
 		if matchtok('minus'):
 			result1 = parseMult()
 			if type(result1) is str or type(result) is str:
-				pass #error: cannot apply subtraction to string values
+				errors.print_error(6, lineindex, ['-'])
 			result -= result1
 			continue
 		break
@@ -299,25 +403,25 @@ def parseMult():
 		if matchtok('mult'):
 			result1 = parseUnary()
 			if type(result1) is str or type(result) is str:
-				pass #error: cannot apply multiplication to string values
+				errors.print_error(6, lineindex, ['*'])
 			result *= result1
 			continue
 		if matchtok('div'):
 			result1 = parseUnary()
 			if type(result1) is str or type(result) is str:
-				pass #error: cannot apply division to string values
+				errors.print_error(6, lineindex, ['/'])
 			result /= result1
 			continue
 		if matchtok('remain'):
 			result1 = parseUnary()
 			if type(result1) is str or type(result) is str:
-				pass #error: cannot apply remainder operation to string values
+				errors.print_error(6, lineindex, ['%'])
 			result = result % result1
 			continue
 		if matchtok('pwr'):
 			result1 = parseUnary()
 			if type(result1) is str or type(result) is str:
-				pass #error: cannot apply power operation to string values
+				errors.print_error(6, lineindex, ['**'])
 			result = result ** result1
 			continue
 		break
@@ -332,6 +436,10 @@ def parseUnary():
 	return parsePrimary()
 	
 def parsePrimary():
+	if matchtok('lparen'):
+		result = parseExpression()
+		consume('rparen')
+		return result
 	tok = peek(0)
 	val = 0
 	if tok[0] == 'number':
@@ -360,19 +468,20 @@ def parsePrimary():
 	
 	if matchtok('inc'):
 		if type(val) is str:
-			errors.print_error(7, lineindex)
+			errors.print_error(7, lineindex, ['inc'])
 		val += 1
 	elif matchtok('dec'):
 		if val is str:
-			errors.print_error(8, lineindex)
+			errors.print_error(7, lineindex, ['dec'])
 		val -= 1
 		
 	return val
 
 def consume(toktype, toktext=''):
 	global pos
+	global lineindex
 	if peek(0)[0] != toktype or peek(0)[1] != toktext:
-		pass #error: 'toktype' expected, got 'peek(0)[0]'
+		errors.print_error(21, lineindex, [[toktype, toktext], peek(0)])
 	pos += 1
 	
 def nexttok():

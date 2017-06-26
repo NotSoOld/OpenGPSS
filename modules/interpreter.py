@@ -176,30 +176,35 @@ def start_interpreter(filepath):
 	
 	global toklines
 	toklines = parser.tocodelines(tokens)
-	
+	print_program()
+	sys.exit()
 	skip = False
 	for line in toklines:
-		if line == [['{{']]:
+		if line == [['lexec', '']]:
 			skip = True
-		elif line == [['}}']]:
+		elif line == [['rexec', '']]:
 			skip = False
 		if skip == True:
 			continue
+		lineindex = toklines.indexof(line)+1
 		if line[0][0] == 'typedef':
 			defd = parser.parseDefinition(line)
 			dic = getattr(self, defd[0]+'s')
 			if dic[defd[1]]:
-				pass #error: multiple definition of name defd[1] with type defd[0]
+				errors.print_error(22, lineindex, [defd[1], defd[0]])
 			dic[defd[1]] = defd[2]
 			if defd[0] == 'facilitie' and defd[2].isQueued:
 				queues[defd[1]] = structs.Queue(defd[1])
 		elif line[0][0] == 'block': 
 			if line[0][1] == 'exitwhen':
 				if exitcond != -1:
-					pass #error: exit condition must be declared only once
+					errors.print_error(23, lineindex)
 				exitcond = toklines.indexof(line)
 			else:
-				pass #errors.print_error(): executive block outside executive area
+				errors.print_warning(1, lineindex)
+		else:
+			errors.print_warning(1, lineindex)
+				
 	
 	for line in toklines:
 		if line.indexof(['block', 'inject']) != -1:
@@ -244,7 +249,7 @@ def start_interpreter(filepath):
 					continue
 				while True:
 					if xact.curblk+1 >= len(toklines):
-						pass #error: executive line index is out of bounds (probably missing '}}')
+						errors.print_error(24, lineindex)
 					print 'xact', xact.index, 'entering block', xact.curblk+1
 					cmd = parser.parseBlock(toklines[xact.curblk+1])
 					func = getattr(self, cmd[0])
@@ -279,15 +284,25 @@ def checkExitCond():
 
 def print_program():
 	global toklines
+	prog = ''
 	for line in toklines:
+		print line
 		for token in line:
+			t = ''
 			if token[0] in lexer.operators.values():
-				print lexer.operators.keys()[lexer.operators.values().index(token[0])],
+				t = lexer.operators.keys()[lexer.operators.values().index(token[0])]
+				if t in ',:':
+					t += ' '
+				elif t in '+,-,*,/,%,**,+=,-=,==,*=,/=,%=,**=,<,>,<=,>=,!=':
+					t = ' '+t+' '
+				prog += t
 			elif token[0] == 'word' or token[0] == 'string' or \
-			     token[0] == 'number' or token[0] == 'typedef' or \
-			     token[0] == 'block':
-				print token[1],
-		print
+			     token[0] == 'number' or token[0] == 'block':
+				prog += token[1]
+			elif token[0] == 'typedef':
+				prog += token[1]+' '
+		prog += '\n'
+	print prog
 
 def print_results():
 	print '\n\n======== MODELLING INFORMATION ========'

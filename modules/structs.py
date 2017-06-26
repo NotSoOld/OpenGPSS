@@ -1,14 +1,22 @@
+import errors
+import parser
+
 class IntVar:
 	def __init__(self, name, initval):
 		if type(initval) is not int:
-			pass #error: initial value for int variable 'name' must be of type int
+			errors.print_error(10, parser.lineindex, [name])
 		self.value = initval
 		self.name = name
 		
 class FloatVar:
 	def __init__(self, name, initval):
 		if type(initval) is not int or type(initval) is not float:
-			pass #error: initial value for float variable 'name' must be a number
+			errors.print_error(11, parser.lineindex, [name])
+		self.value = initval
+		self.name = name
+		
+class StrVar:
+	def __init__(self, name, initval):
 		self.value = initval
 		self.name = name
 		
