@@ -24,10 +24,11 @@ toklines = []
 exitcond = -1
 		
 class Xact:
-	def __init__(self, group, index, curblk):
+	def __init__(self, group, index, curblk, params={}):
 		self.group = group
 		self.index = index
 		self.curblk = curblk
+		self.params = params
 		self.cond = 'injected'
 	
 def inject(injector):
@@ -36,7 +37,7 @@ def inject(injector):
 	global curxact
 	global curticks
 	global injected
-	xa = Xact(injector.group, injected, injector.block)
+	xa = Xact(injector.group, injected, injector.block, injector.params)
 	injected += 1
 	if injector.limit != -1:
 		injector.limit -= 1
@@ -47,18 +48,18 @@ def inject(injector):
 	futureChain.append([futime, xa])
 
 	
-def qenter(qid):
+def queue_enter(qid):
 	queues[qid].enters += 1
 	queues[qid].curxacts += 1
 	xact.curblk += 1
 	xact.cond = 'canmove'
 	
-def qleave(qid):
+def queue_leave(qid):
 	queues[qid].curxacts -= 1
 	xact.curblk += 1
 	xact.cond = 'canmove'
 	
-def fbusy(fid):
+def fac_enter(fid):
 	if facilities[fid].places > 0:
 		facilities[fid].places -= 1
 		facilities[fid].enters += 1
@@ -69,7 +70,7 @@ def fbusy(fid):
 	else:
 		xact.cond = 'blocked'
 	
-def ffree(fid):
+def fac_leave(fid):
 	facilities[fid].places += 1
 	facilities[fid].busyxacts = [xa for xa in facilities[fid].busyxacts if xa.index != xact.index]
 	xact.curblk += 1
@@ -157,7 +158,7 @@ def otherwise(cond=None):
 		xact.curblk = i - 1
 		xact.cond = 'canmove'
 
-def move(args):
+def move(args=[]):
 	xact.curblk += 1
 	xact.cond = 'canmove'		
 
@@ -171,26 +172,38 @@ def start_interpreter(filepath):
 	progfile.close()
 
 	tokens = lexer.analyze(allprogram)
-	for token in tokens:
-		print token
 	
 	global toklines
+	global exitcond
+	global curticks
+	global xact
+	global currentChain
+	global futureChain
+	global tempCurrentChain
+	global facitilies
+	global injectors
+	
 	toklines = parser.tocodelines(tokens)
+	for line in toklines:
+		print str(toklines.index(line)+1).zfill(2),
+		print line
 	print_program()
-	sys.exit()
+	ttt = raw_input()
 	skip = False
 	for line in toklines:
 		if line == [['lexec', '']]:
 			skip = True
 		elif line == [['rexec', '']]:
 			skip = False
+			continue
 		if skip == True:
 			continue
-		lineindex = toklines.indexof(line)+1
+		lineindex = toklines.index(line)+1
 		if line[0][0] == 'typedef':
 			defd = parser.parseDefinition(line)
-			dic = getattr(self, defd[0]+'s')
-			if dic[defd[1]]:
+			dic = globals()[defd[0]+'s']
+			#dic = getattr(None, defd[0]+'s')
+			if defd[1] in dic.keys():
 				errors.print_error(22, lineindex, [defd[1], defd[0]])
 			dic[defd[1]] = defd[2]
 			if defd[0] == 'facilitie' and defd[2].isQueued:
@@ -199,7 +212,7 @@ def start_interpreter(filepath):
 			if line[0][1] == 'exitwhen':
 				if exitcond != -1:
 					errors.print_error(23, lineindex)
-				exitcond = toklines.indexof(line)
+				exitcond = toklines.index(line)
 			else:
 				errors.print_warning(1, lineindex)
 		else:
@@ -207,7 +220,7 @@ def start_interpreter(filepath):
 				
 	
 	for line in toklines:
-		if line.indexof(['block', 'inject']) != -1:
+		if ['block', 'inject'] in line:
 			newinj = parser.parseInjector(line)
 			injectors[newinj.group] = newinj
 			inject(newinj)
@@ -252,7 +265,7 @@ def start_interpreter(filepath):
 						errors.print_error(24, lineindex)
 					print 'xact', xact.index, 'entering block', xact.curblk+1
 					cmd = parser.parseBlock(toklines[xact.curblk+1])
-					func = getattr(self, cmd[0])
+					func = globals()[cmd[0]]
 					func(cmd[1])
 				
 					if xact.cond != 'canmove':
@@ -278,7 +291,7 @@ def start_interpreter(filepath):
 def checkExitCond():
 	global toklines
 	global exitcond
-	if parser.parseExitCond(toklines[exitcond]):
+	if parser.parseExitCondition(toklines[exitcond]):
 		return true
 	return false	
 
@@ -286,13 +299,16 @@ def print_program():
 	global toklines
 	prog = ''
 	for line in toklines:
-		print line
+		prog += str(toklines.index(line)+1).zfill(2)
+		prog += '  '
 		for token in line:
 			t = ''
 			if token[0] in lexer.operators.values():
 				t = lexer.operators.keys()[lexer.operators.values().index(token[0])]
 				if t in ',:':
 					t += ' '
+				elif t == '{':
+					t = ' '+t
 				elif t in '+,-,*,/,%,**,+=,-=,==,*=,/=,%=,**=,<,>,<=,>=,!=':
 					t = ' '+t+' '
 				prog += t

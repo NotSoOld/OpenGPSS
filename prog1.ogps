@@ -1,4 +1,4 @@
-facility op("single");
+fac op {places = 1, isQueued = false};
 queue op;
 mark lol;
 /* Program starts here; all blocks work properly */
@@ -6,11 +6,10 @@ exitwhen(rejected > 10);
 {{
 /* write program after double brackets */
 :inject("main", 6, 2, 0, 0) {};
-lol:qenter(op);
-:fbusy(op);
-:qleave(op);
+lol:queue_enter(op);
+:fac_enter(op);
+:queue_leave(op);
 :wait(5, 3);
-:ffree(op);
-:travel(lol, 0.7);
+:fac_leave(op);
 :reject(1);
 }}

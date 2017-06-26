@@ -6,7 +6,29 @@ import errors
 pos = 0
 tokline = []
 lineindex = 0
-
+assgs = [
+         'eq', 
+         'add', 
+         'subt', 
+         'inc', 
+         'dec', 
+         'multeq', 
+         'diveq', 
+         'remaineq', 
+         'pwreq'
+        ]
+fac_params = [
+              'curplaces'
+             ]
+queue_params = [
+                'curxacts'
+               ]
+xact_params = [
+               'group',
+               'index',
+               'pr'
+              ]
+             
 def tocodelines(program):
 	parsed = []
 	i = 0
@@ -38,7 +60,7 @@ def parseDefinition(line):
 	newobj = None
 	deftype = line[0][1]
 	global lineindex
-	lineindex = interpreter.toklines.indexof(line)+1
+	lineindex = interpreter.toklines.index(line)+1
 	
 	tok = nexttok()
 	if not tok or tok[0] != 'word':
@@ -73,16 +95,24 @@ def parseDefinition(line):
 				if matchtok('comma'):
 					continue
 				if matchtok('word', 'places'):
+					consume('eq')
+					tok = peek(0)
+					try:
+						places = int(tok[1])
+					except ValueError:
+						errors.print_error(5, lineindex, ['int', 'places', tok])
 					nexttok()
-					if type(nexttok()[1]) is not int:
-						errors.print_error(5, lineindex, ['int', 'places', tok[1]])
-					places = int(nexttok()[1])
 					continue
 				if matchtok('word', 'isQueued'):
-					nexttok()
-					if type(nexttok()[1]) is not bool:
+					consume('eq')
+					tok = peek(0)
+					if tok[1] == 'true':
+						isQueued = True
+					elif tok[1] == 'false':
+						isQueued = False
+					else:
 						errors.print_error(5, lineindex, ['bool', 'isQueued', tok[1]])
-					isQueued = bool(nexttok()[1])
+					nexttok()
 					continue
 				errors.print_error(4, lineindex, [peek(0)])
 			newobj = structs.Facility(name, places, isQueued)
@@ -100,9 +130,9 @@ def parseDefinition(line):
 		for line in interpreter.toklines:
 			if line[0] == ['word', name] and line[1][0] == 'marksep':
 				if newobj.block != -1:
-					i = interpreter.toklines.indexof(line)
+					i = interpreter.toklines.index(line)
 					errors.print_error(13, i+1, [name])
-				newobj.block = interpreter.toklines.indexof(line)
+				newobj.block = interpreter.toklines.index(line)
 			
 		
 	elif deftype == 'str':
@@ -125,9 +155,9 @@ def parseBlock(line):
 	name = ''
 	args = []
 	global lineindex
-	lineindex = interpreter.toklines.indexof(line)+1
+	lineindex = interpreter.toklines.index(line)+1
 	
-	if tokline.indexof(['rexecblocks', '']) != -1:
+	if tokline.index(['rexecblocks', '']) != -1:
 		errors.print_error(14, lineindex)
 	if peek(0)[0] == 'word':
 		if peek(0)[1] in interpreter.marks:
@@ -143,36 +173,56 @@ def parseBlock(line):
 			tok3 = peek(3)
 			attr = None
 			attstr = ''
+			assg = ''
 			
 			if tok1[0] == 'dot' and tok2[0] == 'word':
 				nexttok()
 				nexttok()
-				if tok2[1] == 'curplaces': #or tok2[1] == ''
-					if tok[1] in interpreter.facilities:
-						attrstr = 'facilities['+tok[1]+']'
+				
+				if tok[1] == 'xact':
+					if tok2[1] != 'pr':
+						try:
+							getattr(interpreter, 'xact.params['+tok2[1]+']')
+						except AttributeError:
+							errors.print_error(25, lineindex, 
+							[interpreter.xact.group, tok2[1]])
+						attrstr = 'xact.params['+tok2[1]+']'
 					else:
-						pass #error: cannot find "facility" "tok[1]" to evaluate parameter "tok2[1]"
-				elif tok2[1] == 'curxacts': #or tok2[1] == ''
+						attrstr = 'xact.pr'
+				else:
+					errors.print_error(26, lineindex, [tok[1]])
 					
-					if tok[1] in interpreter.queues:
-						attrstr = 'queues['+tok[1]+']'
-					else:
-						pass #error: cannot find "queue" "tok[1]" to evaluate parameter "tok2[1]"
-				elif tok[1] == 'xact':
-					try:
-						getattr(interpreter, 'xact.'+tok2[1])
-					except AttributeError:
-						pass #error: current xact from group "interpreter.xact.group" does not have a parameter "tok2[1]"
-					attrstr = tok[1]
-
 				# Always succeeds (because otherwise it will fail before this point)	
-				attr = getattr(interpreter, attrstr+'.'+tok2[1])
-				if tok3[0] == 'eq' or tok3[0] == 'add' or tok3[0] == 'subt' or \
-				   tok3[0] == 'multeq' or tok3[0] == 'diveq' or \
-				   tok3[0] == 'pwreq' or tok3[0] == 'remaineq':
-				   	nexttok()
-				   	nexttok()
-				   	result = parseExpression()
+				attr = getattr(interpreter, attrstr)
+				assg = tok3[0]
+			else:
+				attrstr = ''
+				if tok[1] in interpreter.ints:
+					attrstr = 'ints['+tok[1]+']'
+				elif tok[1] in interpreter.floats:
+					attrstr = 'floats['+tok[1]+']'
+				elif tok[1] in interpreter.strs:
+					attrstr = 'strs['+tok[1]+']'
+				else:
+					errors.print_error(27, lineindex, [tok[1]])
+				attr = getattr(interpreter, attrstr)
+				assg = tok1[0]
+				
+			global assgs	
+				
+			if assg in assgs:
+				if assg == 'inc':
+					if type(attr) is str:
+						errors.print_error(7, lineindex, ['inc'])
+					attr += 1
+				elif assg == 'dec':
+					if type(attr) is str:
+						errors.print_error(7, lineindex, ['dec'])
+					attr -= 1
+				else:
+					nexttok()
+					nexttok()
+					result = parseExpression()
 				   	if tok3[0] == 'eq':
 				   		attr = result
 				   	elif tok3[0] == 'add':
@@ -188,47 +238,15 @@ def parseBlock(line):
 				   	elif tok3[0] == 'remaineq':
 				   		attr %= result
 				   	return ('move', [])
-				else:
-					pass #error: expected assignment operator; got "tok"
-				
-			elif tok1[0] == 'eq' or tok1[0] == 'add' or tok1[0] == 'subt' or \
-			     tok1[0] == 'multeq' or tok1[0] == 'diveq' or \
-			     tok1[0] == 'pwreq' or tok1[0] == 'remaineq':
-			     
-			    attrstr = ''
-			    if tok[1] in interpreter.ints:
-					attrstr = 'ints['+tok[1]+']'
-				elif tok[1] in interpreter.floats:
-					attrstr = 'floats['+tok[1]+']'
-				elif tok[1] in interpreter.strs:
-					attrstr = 'strs['+tok[1]+']'
-				else:
-					pass #error: unknown variable "tok[1]"
-				attr = getattr(interpreter, attrstr)
-				nexttok()
-				nexttok()
-				result = parseExpression()
-			   	if tok1[0] == 'eq':
-			   		attr = result
-			   	elif tok1[0] == 'add':
-			   		attr += result
-			   	elif tok1[0] == 'subt':
-			   		attr -= result
-			   	elif tok1[0] == 'multeq':
-			   		attr *= result
-			   	elif tok1[0] == 'diveq':
-			   		attr /= result
-			   	elif tok1[0] == 'pwreq':
-			   		attr = attr ** result
-			   	elif tok1[0] == 'remaineq':
-			   		attr %= result
-			   	return ('move', [])
 			else:
-				pass #error: expected assignment operator or '.'; got "tok"
+				errors.print_error(21, lineindex, 
+				       ['assignment operator or "."', tok], 'C')
 		else:
-			pass #error: expected assignment lvalue; got "tok"
+			errors_print_error(21, lineindex, ['assignment lvalue', tok], 'D')
 	else:
-		pass #error: expected executive block or assignment lvalue; got "tok"
+		errors.print_error(21, lineindex, 
+		       ['executive block or assignment lvalue', tok], 'E')
+		
 	if tok[1] == 'inject':
 		name = 'move'
 	else:
@@ -253,33 +271,36 @@ def parseInjector(line):
 	pos = 0
 	tokline = line
 	global lineindex
-	lineindex = interpreter.toklines.indexof(line)+1
+	lineindex = interpreter.toklines.index(line)+1
 	
-	if peek(0)[0] == 'word' and peek(0)[1] in interpreter.marks:
-		consume('word')
-	else:
-		errors.print_error(15, lineindex, [peek(0)[1]])
+	if peek(0)[0] == 'word':
+		if peek(0)[1] in interpreter.marks:
+			consume('word')
+		else:
+			errors.print_error(15, lineindex, [peek(0)[1]])
 	consume('marksep')
 	consume('block', 'inject')
 	consume('lparen')
 	
 	tok = peek(0)
-	if tok[0] != 'str':
+	if tok[0] != 'string':
 		errors.print_error(17, lineindex, [tok])
 	group = tok[1]
+	nexttok()
 	consume('comma')
 	args = []
 	for i in range (0, 4):
-		tok = nexttok()
+		tok = peek(0)
 		if tok[0] != 'number':
 			errors.print_error(18, lineindex, [tok])
 		args.append(int(tok[1]))
+		nexttok()
 		if i != 3:
 			consume('comma')
 		else:
 			consume('rparen')
 			
-	blk = interpreter.indexof(line)
+	blk = interpreter.toklines.index(line)
 	if not matchtok('lbrace'):
 		newinj = structs.Injector(group, args[0], args[1], args[2], args[3], blk)
 		return newinj
@@ -294,7 +315,7 @@ def parseInjector(line):
 		tok2 = nexttok()
 		
 		if tok1[1].startswith('p'):
-			if tok2[0] != 'number' or tok2[1].indexof('.') != -1:
+			if tok2[0] != 'number' or tok2[1].index('.') != -1:
 				errors.print_error(19, lineindex, ['integer', tok1[1], tok2[0]])
 			else:
 				params[tok1[1]] = int(tok2[1])
@@ -316,6 +337,10 @@ def parseInjector(line):
 	return newinj
 	
 def parseExitCondition(line):
+	global tokline
+	global pos
+	pos = 0
+	tokline = line
 	nexttok()
 	consume('lparen')
 	result = parseExpression()
@@ -450,6 +475,41 @@ def parsePrimary():
 	elif tok[0] == 'string':
 		val = tok[1]
 	elif tok[0] == 'word':
+	
+		if matchtok('dot'):
+			tk = peek(0)
+			if tk[1] in fac_params and tok[1] in interpreter.facilities:
+				val = getattr(interpreter.facilities[tok[1]], tk[1])
+				
+			elif tk[1] in queue_params and tok[1] in interpreter.queues:
+				val = getattr(interpreter.queues[tok[1]], tk[1])
+			
+			elif tok[1] == 'xact':
+				if tk[1] not in xact_params:
+					try:
+						val = getattr(interpreter.xact, 'params['+tk[1]+']')
+					except AttributeError:
+						errors.print_error(25, lineindex, 
+						       [interpreter.xact.group, tk[1]])
+				else:
+					val = getattr(interpreter.xact, tk[1])
+			
+			elif tk[1] == 'name':
+				if tok[1] in interpreter.ints:
+					val = interpreter.ints[tok[1]].name
+				elif tok[1] in interpreter.floats:
+					val = interpreter.floats[tok[1]].name
+				elif tok[1] in interpreter.strs:
+					val = interpreter.strs[tok[1]].name
+				else:
+					errors.print_error(28, lineindex, [tok[1]])
+			else:
+				errors.print_error(21, lineindex, 
+				       ["name of parameter of defined variable", tok[1]], 'B')
+				
+			return val
+		
+		# If there is no dot:
 		if tok[1] in interpreter.ints:
 			val = interpreter.ints[tok[1]].value
 		elif tok[1] in interpreter.floats:
@@ -466,22 +526,13 @@ def parsePrimary():
 			errors.print_error(6, lineindex, tok)
 	nexttok()
 	
-	if matchtok('inc'):
-		if type(val) is str:
-			errors.print_error(7, lineindex, ['inc'])
-		val += 1
-	elif matchtok('dec'):
-		if val is str:
-			errors.print_error(7, lineindex, ['dec'])
-		val -= 1
-		
 	return val
 
 def consume(toktype, toktext=''):
 	global pos
 	global lineindex
 	if peek(0)[0] != toktype or peek(0)[1] != toktext:
-		errors.print_error(21, lineindex, [[toktype, toktext], peek(0)])
+		errors.print_error(21, lineindex, [[toktype, toktext], peek(0)], 'A')
 	pos += 1
 	
 def nexttok():

@@ -58,6 +58,4 @@ class Injector:
 			del params['priority']
 		else:
 			self.pr = 0
-		self.intparams = {p:params[p] for p in params.keys() if 'p' in p}
-		self.floatparams = {p:params[p] for p in params.keys() if 'f' in p}
-		self.strparams = {p:params[p] for p in params.keys() if 'str' in p}
+		self.params = params
