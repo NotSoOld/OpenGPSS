@@ -41,18 +41,20 @@ When this expression turns to true, simulation will stop.
 
 Double brackets `{{` and `}}` separate executive area from definition area. Executive area is an area where xacts are added and removed, move and process. Executive area contains executive blocks:
 
-`optional\_mark_name : executive_block_name(block params);`
+`optional_mark_name:executive_block_name(block params);`
 
 assignments to variables or xact parameters (and increments/decrements):
 
-`var_name = new_value;`
+`optional_mark_name:var_name = new_value;`
 
-`var_name += expression;`
+`optional_mark_name:var_name += expression;`
 
-`var_name++;`
+`optional_mark_name:var_name++;`
 
 and single braces for *try* and *if*/*else_if*/... blocks.
+
 Every line in executive area (except braces) starts with *mark separator* ':', if no mark points to this line, or with name of the mark followed by mark separator. In other words, presence of mark separator in the line means that xact can be transported to this line.
+
 If xact reaches some executive line, it tries to execute it (except single braces and *inject* block - it executes automatically) using its own parameters if needed.
 
 Nearly every parameter - queue/facility name, *wait*/*travel*/*if* parameters - can be not just words, but complex expressions. They will be parsed to a string/number before block execution.
@@ -94,6 +96,7 @@ Nearly every parameter - queue/facility name, *wait*/*travel*/*if* parameters - 
 - Usage:
 
 This block will add an xact of group *xact\_group\_name* every *time* beats until it reaches its *inject\_limit*. Xacts will start moving from the line where *inject* block stands. Time between injections can be modified: first xact can be delayed by *initdelay* beats, and *time* parameter can be randomized to *time±timedelta* with even distribution.
+
 {parameters} are optional (if you don't use them, just leave no braces or empty braces). p\* are names for integer parameters, f\* - for float parameters and str\* - for string parameters (their types will be recognized automatically). *priority* is a special number parameter to define priority to xacts. Priority can be used for controlling the order of a processing, etc.
 - Example:
 ```
@@ -101,10 +104,13 @@ This block will add an xact of group *xact\_group\_name* every *time* beats unti
 ```
 - Additional hacks:
 
-If *inject\_limit* equals zero, there is no limit for this *inject* block.
-*timedelta* and *timedelay* also can be zeros.
-If *inject\_limit* is positive, but other parameters are zeros, *inject\_limit* xacts will be added simultaneously.
-You can also add parameters with custom names, but they are not so good as automatically recognized ones, because a) they can lead to errors because of inattentiveness b) intital values of all of them are automatically turned into strings.
+\- If *inject\_limit* equals zero, there is no limit for this *inject* block.
+
+\- *timedelta* and *timedelay* also can be zeros.
+
+\- If *inject\_limit* is positive, but other parameters are zeros, *inject\_limit* xacts will be added simultaneously.
+
+\- You can also add parameters with custom names, but they are not so good as automatically recognized ones, because a) they can lead to errors because of inattentiveness b) intital values of all of them are automatically turned into strings.
 
 ### queue_enter - enter unordered queue to gather statistics
 - Prototype:
