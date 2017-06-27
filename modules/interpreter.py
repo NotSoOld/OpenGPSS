@@ -190,7 +190,8 @@ def start_interpreter(filepath):
 		print str(toklines.index(line)+1).zfill(2),
 		print line
 	print_program()
-	ttt = raw_input()
+	ttt = raw_input('Read the info above, it may contain some warnings. When '\
+	                'ready, press any key')
 	
 	addDefaultVars()
 	skip = False
@@ -206,7 +207,6 @@ def start_interpreter(filepath):
 		if line[0][0] == 'typedef':
 			defd = parser.parseDefinition(line)
 			dic = globals()[defd[0]+'s']
-			#dic = getattr(None, defd[0]+'s')
 			if defd[1] in dic.keys():
 				errors.print_error(22, lineindex, [defd[1], defd[0]])
 			dic[defd[1]] = defd[2]
@@ -231,7 +231,6 @@ def start_interpreter(filepath):
 			
 	while True:
 		tempCurrentChain = []
-		#inp = raw_input()
 		print 'timestep =', ints['curticks'].value
 		for xa in futureChain:
 			if xa[0] == ints['curticks'].value:

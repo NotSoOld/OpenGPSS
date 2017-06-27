@@ -134,6 +134,8 @@ def parseDefinition(line):
 					i = interpreter.toklines.index(line)
 					errors.print_error(13, i+1, [name])
 				newobj.block = interpreter.toklines.index(line)
+		if newobj.block == -1:
+			errors.print_warning(3, '', [name])
 			
 		
 	elif deftype == 'str':

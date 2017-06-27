@@ -41,7 +41,9 @@ warnings = {
             2:'Xact parameters\' custom names (like "{}") are acceptible but '\
             'HIGHLY undesirable because they can lead to "parameter not found"'\
             ' errors very easily (for example, for xacts from other group). '\
-            'They also got type "string" by default which you may not want.' 
+            'They also got type "string" by default which you may not want.',
+            3:'Mark "{}" cannot be found as travelling label (at the left of '\
+            '":"). Is it needed at all?'
            }
 
 def print_error(error_code, line, args=[], add=''):
