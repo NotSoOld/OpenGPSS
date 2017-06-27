@@ -23,12 +23,13 @@ class StrVar:
 class Facility:
 	def __init__(self, name, places, isQueued):
 		self.name = name
-		self.maxplaces = places
+		self.maxplaces = places # Is this parameter really needed?
 		self.isQueued = isQueued
-		self.curplaces = 0
+		self.curplaces = places
 		# For stats
 		self.busyxacts = []
 		self.busyticks = 0
+		self.enters = 0
 		
 class Queue:
 	def __init__(self, name):

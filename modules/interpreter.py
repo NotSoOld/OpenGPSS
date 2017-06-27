@@ -16,9 +16,6 @@ injectors = {}
 currentChain = []
 tempCurrentChain = []
 futureChain = []
-injected = 0
-rejected = 0
-curticks = 0
 xact = None
 toklines = []
 exitcond = -1
@@ -35,13 +32,12 @@ def inject(injector):
 	# Limit should be checked before calling this.
 	global futureChain
 	global curxact
-	global curticks
-	global injected
-	xa = Xact(injector.group, injected, injector.block, injector.params)
-	injected += 1
+	global ints
+	xa = Xact(injector.group, ints['injected'].value, injector.block, injector.params)
+	ints['injected'].value += 1
 	if injector.limit != -1:
 		injector.limit -= 1
-	futime = curticks + injector.time + random.randint(-injector.tdelta, injector.tdelta)
+	futime = ints['curticks'].value + injector.time + random.randint(-injector.tdelta, injector.tdelta)
 	if injector.tdelay != 0:
 		futime += injector.tdelay
 		injector.tdelay = 0
@@ -60,8 +56,8 @@ def queue_leave(qid):
 	xact.cond = 'canmove'
 	
 def fac_enter(fid):
-	if facilities[fid].places > 0:
-		facilities[fid].places -= 1
+	if facilities[fid].curplaces > 0:
+		facilities[fid].curplaces -= 1
 		facilities[fid].enters += 1
 		xact.curblk += 1
 		facilities[fid].busyxacts.append(xact)
@@ -71,23 +67,23 @@ def fac_enter(fid):
 		xact.cond = 'blocked'
 	
 def fac_leave(fid):
-	facilities[fid].places += 1
+	facilities[fid].curplaces += 1
 	facilities[fid].busyxacts = [xa for xa in facilities[fid].busyxacts if xa.index != xact.index]
 	xact.curblk += 1
 	xact.cond = 'passagain'
 	
 def wait(time, tdelta):
 	global futureChain
-	global curticks
-	futime = curticks + time + random.randint(-tdelta, tdelta)
+	global ints
+	futime = ints['curticks'].value + time + random.randint(-tdelta, tdelta)
 	xact.curblk += 1
 	xact.cond = 'waiting'
 	print 'exit time =', futime
 	futureChain.append([futime, xact])
 	
 def reject(decr):
-	global rejected
-	rejected += decr
+	global ints
+	ints['rejected'].value += decr
 	xact.curblk += 1
 	xact.cond = 'rejected'
 	
@@ -160,7 +156,13 @@ def otherwise(cond=None):
 
 def move(args=[]):
 	xact.curblk += 1
-	xact.cond = 'canmove'		
+	xact.cond = 'canmove'
+	
+def addDefaultVars():
+	global ints
+	ints['injected'] = structs.IntVar('injected', 0)
+	ints['rejected'] = structs.IntVar('rejected', 0)
+	ints['curticks'] = structs.IntVar('curticks', 0)
 
 	
 ###############################################################
@@ -175,13 +177,13 @@ def start_interpreter(filepath):
 	
 	global toklines
 	global exitcond
-	global curticks
 	global xact
 	global currentChain
 	global futureChain
 	global tempCurrentChain
 	global facitilies
 	global injectors
+	global ints
 	
 	toklines = parser.tocodelines(tokens)
 	for line in toklines:
@@ -189,6 +191,8 @@ def start_interpreter(filepath):
 		print line
 	print_program()
 	ttt = raw_input()
+	
+	addDefaultVars()
 	skip = False
 	for line in toklines:
 		if line == [['lexec', '']]:
@@ -228,9 +232,9 @@ def start_interpreter(filepath):
 	while True:
 		tempCurrentChain = []
 		#inp = raw_input()
-		print 'timestep =', curticks
+		print 'timestep =', ints['curticks'].value
 		for xa in futureChain:
-			if xa[0] == curticks:
+			if xa[0] == ints['curticks'].value:
 				currentChain.append(xa[1])
 				# Inject new xact if we move injected xact 
 				# from future events chain.
@@ -250,7 +254,7 @@ def start_interpreter(filepath):
 			if fac.busyxacts:
 				fac.busyticks += 1
 		if len(currentChain) == 0:
-			curticks += 1
+			ints['curticks'].value += 1
 			continue
 			
 		restart = True
@@ -266,7 +270,7 @@ def start_interpreter(filepath):
 					print 'xact', xact.index, 'entering block', xact.curblk+1
 					cmd = parser.parseBlock(toklines[xact.curblk+1])
 					func = globals()[cmd[0]]
-					func(cmd[1])
+					func(*cmd[1])
 				
 					if xact.cond != 'canmove':
 						if xact.cond == 'passagain':
@@ -281,7 +285,7 @@ def start_interpreter(filepath):
 					break
 			currentChain = tempCurrentChain
 			tempCurrentChain = []
-		curticks += 1
+		ints['curticks'].value += 1
 		# Stop by modelling enough amount of time.
 		if checkExitCond():
 			break
@@ -292,8 +296,8 @@ def checkExitCond():
 	global toklines
 	global exitcond
 	if parser.parseExitCondition(toklines[exitcond]):
-		return true
-	return false	
+		return True
+	return False	
 
 def print_program():
 	global toklines
@@ -304,7 +308,8 @@ def print_program():
 		for token in line:
 			t = ''
 			if token[0] in lexer.operators.values():
-				t = lexer.operators.keys()[lexer.operators.values().index(token[0])]
+				t = lexer.operators.keys()[lexer.operators.values()
+				                           .index(token[0])]
 				if t in ',:':
 					t += ' '
 				elif t == '{':
@@ -321,36 +326,79 @@ def print_program():
 	print prog
 
 def print_results():
-	print '\n\n======== MODELLING INFORMATION ========'
-	print '\nGenerated program:'
+	print '\n\n\n\n======== MODELLING INFORMATION ========'
+	
+	print '\n\n----Generated program:----'
 	print_program()
-	print 'Modeling time: '+str(curticks)
-	print '\n----Variables:----'
-	for intt in ints.keys():
-		print str(intt)+' = '+str(ints[intt].value)
-	print '\n----Facilities:----'
-	print 'Name\t   Mode\t\tBusyness\tCurrent xacts'
-	print '- '*30
-	for fac in facilities.values():
-		l = []
-		for xact in fac.busyxacts:
-			l.append(xact.index)
-		print fac.name+'\t   '+fac.mode+'\t{:.3f}\t\t{!s}'.format(fac.busyticks/float(curticks), l)
-	print '\n----Queues:----'
-	for qu in queues.values():
-		print '{}\t{!s}\t{!s}'.format(qu.name, qu.enters, qu.curxacts)
-	print '\n----Marks:----'
-	for mark in marks.keys():
-		print marks[mark].name+'\t'+str(marks[mark].block)
-	print '\n----Future events chain:----'
-	print 'Move time\tXact group\t\tXact ID\tXact curblock\tXact status'
-	print '- '*35
-	for xact in futureChain:
-		print '{!s}\t\t{}\t\t{!s}\t{!s}\t\t{}'.format(xact[0], xact[1].group, 
-				xact[1].index, xact[1].curblk, xact[1].cond)
-	print '\n----Current events chain:----'
-	print 'Xact group\t\tXact ID\tXact curblock\tXact status'
-	print '- '*35
-	for xact in currentChain:
-		print xact.group+'\t\t'+str(xact.index)+'\t'	\
-				+str(xact.curblk)+'\t\t'+xact.cond
+	print '\nModeling time: '+str(ints['curticks'].value)+' beats'
+	
+	if ints.keys():
+		print '\n\n----Integer variables:----'
+		for intt in ints.keys():
+			print str(intt)+' = '+str(ints[intt].value)
+	
+	if floats.keys():
+		print '\n\n----Float variables:----'
+		for floatt in floats.keys():
+			print str(floatt)+' = '+str(floats[floatt].value)
+			
+	if strs.keys():
+		print '\n\n----String variables:----'
+		for s in strs.keys():
+			print s+' = '+strs[s].value
+	
+	print '\n\n----Facilities:----'
+	if not facilities.keys():
+		print '<<NO FACILITIES>>'
+	else:
+		print 'Name   \tMax xacts\tAuto queued\tEnters\t\t'\
+		      'Busyness\tCurrent xacts'
+		print '- '*40
+		for fac in facilities.values():
+			l = []
+			for xact in fac.busyxacts:
+				l.append(xact.index)
+			print '{!s}   \t{!s}\t\t{!s}\t\t{!s}\t\t{:.3f}\t\t{!s}'.format(
+				  fac.name, fac.maxplaces, fac.isQueued, fac.enters,
+				  fac.busyticks/float(ints['curticks'].value), l)
+
+	print '\n\n----Queues:----'
+	if not queues.keys():
+		print '<<NO QUEUES>>'
+	else:
+		print 'Name   \t\tEnters\t\tCurrent xacts'
+		print '- '*40
+		for qu in queues.values():
+			print '{}   \t\t{!s}\t\t{!s}'.format(
+			      qu.name, qu.enters, qu.curxacts)
+	
+	if marks.keys():
+		print '\n\n----Marks:----'
+		print 'Name   \tCorresponding line'
+		print '- '*40
+		for mark in marks.keys():
+			print '{}   \t{!s}'.format(marks[mark].name, marks[mark].block)
+		
+	print '\n\n----Future events chain:----'
+	if not futureChain:
+		print '<<EMPTY>>'
+	else:
+		print 'Move time\tXact group\tXact ID   \tXact curblock\tXact status'
+		print '- '*40
+		for xact in futureChain:
+			print '{!s}\t\t{}\t\t{!s}   \t\t{!s}\t\t{}'.format(
+				  xact[0], xact[1].group, 
+				  xact[1].index, xact[1].curblk, xact[1].cond)
+				
+	print '\n\n----Current events chain:----'
+	if not currentChain+tempCurrentChain:
+		print '<<EMPTY>>'
+	else:
+		print 'Xact group\tXact ID   \tXact curblock\tXact status'
+		print '- '*40
+		for xact in currentChain+tempCurrentChain:
+			print '{}\t\t{!s}   \t\t{!s}\t\t{}'.format(
+			      xact.group, xact.index, xact.curblk, xact.cond)
+			      
+	print
+	print

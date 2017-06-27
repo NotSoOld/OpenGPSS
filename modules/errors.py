@@ -4,7 +4,7 @@ errors = {
           1:'No such file: "{}"',
           2:'Unexpected end of file during parsing program into lines',
           3:'Name of the definition expected; got "{}" "{}"',
-          4:'Unknown facility parameter "{}" or missing "{{"',
+          4:'Unknown facility parameter "{}" or missing "}}"',
           5:'Expected parameter of type "{}" for facility parameter '\
           '"{}"; got "{}"',
           6:'Expected name of defined variable or value; got "{} {}"',

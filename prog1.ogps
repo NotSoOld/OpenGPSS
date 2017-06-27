@@ -9,7 +9,7 @@ exitwhen(rejected > 10);
 lol:queue_enter(op);
 :fac_enter(op);
 :queue_leave(op);
-:wait(5, 3);
+:wait(8, 3);
 :fac_leave(op);
 :reject(1);
 }}
