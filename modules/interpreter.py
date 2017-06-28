@@ -61,7 +61,7 @@ def fac_enter(fid):
 		facilities[fid].enters += 1
 		xact.curblk += 1
 		facilities[fid].busyxacts.append(xact)
-		print 'added xact '+str(xact.index)+' to facility '+fid
+		#print 'added xact '+str(xact.index)+' to facility '+fid
 		xact.cond = 'canmove'
 	else:
 		xact.cond = 'blocked'
@@ -78,7 +78,7 @@ def wait(time, tdelta):
 	futime = ints['curticks'].value + time + random.randint(-tdelta, tdelta)
 	xact.curblk += 1
 	xact.cond = 'waiting'
-	print 'exit time =', futime
+	#print 'exit time =', futime
 	futureChain.append([futime, xact])
 	
 def reject(decr):
@@ -86,19 +86,7 @@ def reject(decr):
 	ints['rejected'].value += decr
 	xact.curblk += 1
 	xact.cond = 'rejected'
-	
-def travel(truemark, prob=None, addmark=None):
-	xact.cond = 'canmove'
-	if prob != None:
-		if random.random() < prob:
-			xact.curblk = marks[truemark].block - 1
-		else:
-			if addmark != None:
-				xact.curblk = marks[addmark].block - 1
-			else:
-				xact.curblk += 1
-	else:
-		xact.curblk = marks[truemark].block - 1
+	print 'param at reject: '+str(xact.params['p2'])
 		
 def cond(condition):
 	print condition+' is '+str(eval(condition))
@@ -158,6 +146,28 @@ def move(args=[]):
 	xact.curblk += 1
 	xact.cond = 'canmove'
 	
+def transport(block, prob=-1, addblock=''):
+	xact.cond = 'canmove'
+	if block not in marks.keys():
+		errors.print_error(29, xact.curblk+2, [block])
+	if marks[block].block == -1:
+		errors.print_error(30, xact.curblk+2, [block])
+		
+	if prob == -1:
+		xact.curblk = marks[block].block-1
+	else:
+		if random.random() < prob:
+			xact.curblk = marks[block].block-1
+		else:
+			if addblock == '':
+				xact.curblk += 1
+			else:
+				if addblock not in marks.keys():
+					errors.print_error(29, xact.curblk+2, [addblock])
+				if marks[block].block == -1:
+					errors.print_error(30, xact.curblk+2, [addblock])
+				xact.curblk = marks[addblock].block-1
+	
 def addDefaultVars():
 	global ints
 	ints['injected'] = structs.IntVar('injected', 0)
@@ -190,8 +200,6 @@ def start_interpreter(filepath):
 		print str(toklines.index(line)+1).zfill(2),
 		print line
 	print_program()
-	ttt = raw_input('Read the info above, it may contain some warnings. When '\
-	                'ready, press any key')
 	
 	addDefaultVars()
 	skip = False
@@ -221,7 +229,9 @@ def start_interpreter(filepath):
 				errors.print_warning(1, lineindex)
 		else:
 			errors.print_warning(1, lineindex)
-				
+	
+	ttt = raw_input('Read the info above, it may contain some warnings. When '\
+	                'ready, press any key')			
 	
 	for line in toklines:
 		if ['block', 'inject'] in line:
@@ -231,7 +241,7 @@ def start_interpreter(filepath):
 			
 	while True:
 		tempCurrentChain = []
-		print 'timestep =', ints['curticks'].value
+		#print 'timestep =', ints['curticks'].value
 		for xa in futureChain:
 			if xa[0] == ints['curticks'].value:
 				currentChain.append(xa[1])
@@ -247,8 +257,8 @@ def start_interpreter(filepath):
 				if checkExitCond():
 					break
 		futureChain = [xa for xa in futureChain if xa[0] != -1]
-		print 'Future Events Chain: ', list(xa[0] for xa in futureChain)
-		print 'Current Events Chain:', list(xa.index for xa in currentChain)
+		#print 'Future Events Chain: ', list(xa[0] for xa in futureChain)
+		#print 'Current Events Chain:', list(xa.index for xa in currentChain)
 		for fac in facilities.values():
 			if fac.busyxacts:
 				fac.busyticks += 1
@@ -266,8 +276,9 @@ def start_interpreter(filepath):
 				while True:
 					if xact.curblk+1 >= len(toklines):
 						errors.print_error(24, lineindex)
-					print 'xact', xact.index, 'entering block', xact.curblk+1
+					#print 'xact', xact.index, 'entering block', xact.curblk+2
 					cmd = parser.parseBlock(toklines[xact.curblk+1])
+					#print cmd
 					func = globals()[cmd[0]]
 					func(*cmd[1])
 				
@@ -277,7 +288,7 @@ def start_interpreter(filepath):
 							restart = True
 						elif xact.cond == 'blocked':
 							tempCurrentChain.append(xact)
-							print 'xact', xact.index, 'was blocked'
+							#print 'xact', xact.index, 'was blocked'
 						break
 				# Stop by rejecting enough xacts.
 				if checkExitCond():
@@ -309,7 +320,7 @@ def print_program():
 			if token[0] in lexer.operators.values():
 				t = lexer.operators.keys()[lexer.operators.values()
 				                           .index(token[0])]
-				if t in ',:':
+				if t in ',:' or t == '->':
 					t += ' '
 				elif t == '{':
 					t = ' '+t
@@ -317,7 +328,8 @@ def print_program():
 					t = ' '+t+' '
 				prog += t
 			elif token[0] == 'word' or token[0] == 'string' or \
-			     token[0] == 'number' or token[0] == 'block':
+			     token[0] == 'number' or token[0] == 'block' or \
+			     token[0] == 'builtin':
 				prog += token[1]
 			elif token[0] == 'typedef':
 				prog += token[1]+' '

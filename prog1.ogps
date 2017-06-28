@@ -1,15 +1,26 @@
 fac op {places = 1, isQueued = false};
 queue op;
 mark lol;
+int one = 0;
+int two;
+int three = 15;
+int cnt = 0;
 /* Program starts here; all blocks work properly */
 exitwhen(rejected > 10);
 {{
 /* write program after double brackets */
-:inject("main", 6, 2, 0, 0) {};
-lol:queue_enter(op);
+:inject("main", 6, 2, 0, 0) {priority = 1, p2 = 11};
+:queue_enter(op);
 :fac_enter(op);
 :queue_leave(op);
 :wait(8, 3);
 :fac_leave(op);
+:cnt += "lol";
+:three += xact.pr;
+:xact.p2 = three;
+//:two **= xact.p2;
+:one = "str " + (xact.group + to_str(op.curxacts / xact.p2));
+:one += "crack";
+:cnt++;
 :reject(1);
 }}

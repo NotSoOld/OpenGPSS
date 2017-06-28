@@ -41,7 +41,9 @@ operators = {
              ';':'eocl', 
              ':':'marksep',
              '{{':'lexec',
-             '}}':'rexec'
+             '}}':'rexec',
+             '->':'transport',
+             '~':'indirect_addr'
             }
              
 typedefs = [
@@ -77,6 +79,16 @@ blocks = [
           'for',
           'copy'
          ]
+         
+builtins = [
+            'to_str',
+            'to_int',
+            'to_float',
+            'to_bool',
+            'random_int',
+            'random_float',
+            'random01'
+           ]
 
 pos = 0
 allprogram = []
@@ -128,6 +140,8 @@ def tokenizeWord():
 				addToken('typedef', buf)
 			elif buf in blocks:
 				addToken('block', buf)
+			elif buf in builtins:
+				addToken('builtin', buf)
 			else:
 				addToken('word', buf)
 			return

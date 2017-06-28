@@ -7,14 +7,14 @@ errors = {
           4:'Unknown facility parameter "{}" or missing "}}"',
           5:'Expected parameter of type "{}" for facility parameter '\
           '"{}"; got "{}"',
-          6:'Expected name of defined variable or value; got "{} {}"',
+          6:'Expected name of defined variable/structure or value; got "{} {}"',
           7:'Cannot {}rement string',
           8:'Cannot apply operation "{}" for string values',
           9:'Found incorrect float number "{}" during analysis',
           10:'Initial value for integer variable "{}" must be of type "int"',
           11:'Initial value for float variable "{}" must be a number',
-          12:'Nothing or "{{" expected; got "{}"',
-          13:'Mark "{}" found more than one time as travelling label ' \
+          12:'Nothing or "{}" expected; got "{}"',
+          13:'Mark "{}" found more than one time as transporting label ' \
           '(at the left of ":")',
           14:'Xact is trying to leave executive area',
           15:'Unknown word "{}" used as mark name',
@@ -28,10 +28,14 @@ errors = {
           23:'Exit condition must be declared only once',
           24:'Index of executive line is out of bounds (probably missing "}}}}")',
           25:'Current xact from group "{}" does not have a parameter "{}"',
-          26:'Unknown complex value "{}" (are you trying to assign to ' \
+          26:'Unknown structure value "{}" (are you trying to assign to ' \
           'read-only parameters?)',
           27:'Unknown variable "{}"',
-          28:'Cannot take name of "{}", because it is unknown'
+          28:'Cannot take name of "{}", because it is unknown',
+          29:'Error while transporting: undefined mark "{}"',
+          30:'Mark "{}" is not present anywhere as transporting label '\
+          '(at the left of ":")',
+          31:'Cannot turn "{}" into "{}"'
          }
 
 warnings = {
@@ -42,15 +46,19 @@ warnings = {
             'HIGHLY undesirable because they can lead to "parameter not found"'\
             ' errors very easily (for example, for xacts from other group). '\
             'They also got type "string" by default which you may not want.',
-            3:'Mark "{}" cannot be found as travelling label (at the left of '\
+            3:'Mark "{}" cannot be found as transporting label (at the left of '\
             '":"). Is it needed at all?'
            }
 
 def print_error(error_code, line, args=[], add=''):
+	print '\n\n'+'/'*30
 	print 'ERROR {!s}{!s} in line {!s}:'.format(error_code, add, line)
 	print errors[error_code].format(*args)
+	print '\n'
 	sys.exit()
 	
 def print_warning(warn_code, line, args=[]):
+	print '\n\n'+'/'*30
 	print 'WARNING {!s} in line {!s}:'.format(warn_code, line)
 	print warnings[warn_code].format(*args)
+	print '\n'
