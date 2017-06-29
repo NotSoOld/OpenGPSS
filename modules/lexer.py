@@ -62,27 +62,28 @@ typedefs = [
            ]
 
 blocks = [
-          'exitwhen',     #
-          'inject',       #
-          'reject',       #
-          'fac_enter',    #
-          'fac_leave',    #
-          'queue_enter',  #
-          'queue_leave',  #
-          'wait',         #
+          'exitwhen',     # tested
+          'inject',       # tested
+          'reject',       # tested
+          'fac_enter',    # implemented
+          'fac_leave',    # implemented
+          'queue_enter',  # tested
+          'queue_leave',  # tested
+          'wait',         # tested
           'if',
           'else_if',
           'else',
           'try',
-          'chain_enter',  #
-          'chain_leave',  #
-          'chain_purge',  #
+          'chain_enter',  # implemented
+          'chain_leave',  # implemented
+          'chain_purge',  # implemented
           'chain_leaveif',
           'while',
           'for',
-          'copy',
-          'output',       #
-          'refresh'       #
+          'copy',         # implemented
+          'output',       # implemented
+          'refresh',      # implemented
+          'move'          # implemented
          ]
          
 builtins = [

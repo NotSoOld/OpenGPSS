@@ -217,6 +217,22 @@ def output(outstr):
 	print outstr
 	move()
 	
+def copy(cnt, toblk=''):
+	if toblk != '':
+		if toblk not in marks.keys():
+			errors.print_error(29, xact.curblk+2, [toblk])
+		if marks[toblk].block == -1:
+			errors.print_error(30, xact.curblk+2, [toblk])
+	move()
+	for i in range(cnt):
+		xa = deepcopy(xact)
+		if toblk != '':
+			xa.curblk = marks[toblk].block - 1
+		else:
+			xa.curblk += 1
+		xa.cond = 'canmove'
+		tempCurrentChain.append(xa)
+	
 	
 ###############################################################
 

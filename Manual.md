@@ -57,18 +57,83 @@ Every line in executive area (except braces) starts with *mark separator* ':', i
 
 If xact reaches some executive line, it tries to execute it (except single braces and *inject* block - it executes automatically) using its own parameters if needed.
 
-Nearly every parameter - queue/facility name, *wait*/*travel*/*if* parameters - can be not just words, but complex expressions. They will be parsed to a string/number before block execution.
+Nearly every parameter - queue/facility name, *wait*/*travel*/*if* parameters - can be not just words, but complex expressions. They will be parsed to a string/number before block execution. (Except parameters in definitions and *inject* block, because these are parsed before any execution of blocks starts.)
+
+Model while simulating has two very important lists: *future events chain*, FEC, and *current events chain*, CEC. Time in model is measured in beats (so, it's discrete). Every beat FEC is watched if there are xacts that need to move in the current beat. If they do, they are moved from FEC to CEC. Then, every xact in CEC is moving through executive blocks until it will be a) rejected from the model b) blocked c) moved to a user chain d) executing *wait* block. 
+
+In case a) xact will be deleted from CEC. 
+
+In case b), which can be caused by trying to enter busy facility or *try* block with failed condition, xact will remain in CEC up to the next beat, in which it tries to move again. 
+
+In case c) xact will be removed from CEC and added to one of user chains.
+
+In case d) xact will be moved to FEC with exit time (time when it needs to move further) set by *wait* block.
+
+New xacts can be added to the model through *inject* and *copy* blocks. Inject block presents an *injector* - it adds one xact to FEC with exit time set according to injector's parameters, and when this xact leaves FEC, it sends a signal to injector that it's time to inject one more xact into FEC. *Copy* block creates copies of xacts which are added into CEC.
+
+There is a special situation called *CEC review*. When interpreter receives a signal "review CEC", it interrupts movement of current xact and starts to go through CEC from its beginning. Blocks like *fac\_leave*, *refresh* and changing xact's *priority* can trigger CEC review (because these actions can affect simulation process. For example, if some xact leaves facility, it becomes available for xacts which wait at *fac\_enter* block but cannot proceed. And when CEC will be reviewed, xacts will be able to move to unlocked facility. Changing of priority may affect the order of xacts' processing.)
 
 
 ## Language types
 - int - simple integer number, value limited by Python language
 - float - simple floating point number, value limited by Python language
 - string - string (line of characters) with (theoretically) unlimited length. Bounded by "double quotes"
-- word - string without quotes, can be used to reach parameters of structure by name of this structure. Often parsed to a string by interpreter
+- word - string without quotes, can be used to reach parameters of structure by name of this structure. Often parsed to a string by interpreter or is needed for parser's work.
 
  
 ## Definition types
+### Simple variables:
+- int
 
+Just a variable which can hold an integer value and be accessed by its name. Range is the same as range of integer in Python.
+
+Notes:
+
+\- If a float value is assigned to int variable, it is implicitly converted to int.
+
+- float
+
+Just a variable which can hold a floating point value and be accessed by its name. Range is the same as range of float in Python.
+
+- str
+
+Just a variable which can hold a string value and be accessed by its name. Strings can be accessed, assigned and concatenated only.
+
+- bool
+
+Just a variable which can hold a boolean value (true/false) and be accessed by its name. Boolean variables can be only assigned or accessed.
+
+### Structure types:
+- fac (facility)
+
+This is a device which can be occupied by xacts. Usual practice is to use facility to simulate something that can be occupied by somebody for some amount of time and therefore make other transacts wait until it'll be freed. So, when facility is free (has spare places), xacts can occupy it and move further, but facility is fully busy, xacts will wait until it'll have free places.
+
+Parameters (can be set in curly braces):
+\- isQueued = bool *(default == true)* - if true, this facility will be automatically queued as if there are *queue\_enter* and *queue\_leave* blocks around *fac\_enter* block. Queue will be named with this facility's name.
+
+\- places = int *(default == 1)* - how many xacts can occupy this facility until it becomes busy.
+
+- queue
+
+This is a device which is generally used for gathering statistics about the flow of transacts near facilities. But queueing can be used not only around *fac\_enter* blocks. Statistics include number of entered xacts, current xacts in the queue, etc. It is important to mention that queues doesn't really sort or queue xacts, it's only gather statistics.
+
+Parameters: none.
+
+- mark
+
+This is a definition of a transporting mark which can be used in the executive area of a program. When mark is at the left of ':' in the line, it is called a *transporting label*. When mark is present as argument of transport operator (or somewhere else where xacts can be moved around the model), it declares where xact should go, which line it should follow after execution.
+
+Parameters: none.
+
+Additional notes:
+
+\- You will always see messages about undefined or unused marks.
+
+- chain
+
+User chains are used to store transacts here when you need to control their flow through the model. User chains enable user to buffer xacts (and to simulate buffering devices), to release xacts one by one at some point in the model, etc.
+
+Parameters: none.
 
 
 ## Executive blocks
@@ -83,12 +148,10 @@ Nearly every parameter - queue/facility name, *wait*/*travel*/*if* parameters - 
          int inject_limit
         ) 
         {
-         p1 = int, 
-         p5 = int, 
+         p1 = int,
          f1 = float, 
-         f8 = float, 
          str1 = string, 
-         str3 = string, 
+         b1 = bool, 
          priority = int/float, 
          custom_name_parameter = string
         };
@@ -119,3 +182,90 @@ This block will add an xact of group *xact\_group\_name* every *time* beats unti
              word queue_name
             );
 ```
+- Usage:
+
+This block will queue executing xact in the queue *queue\_name*.
+
+- Example:
+```
+:queue_enter(CPU);
+```
+- Additional hacks:
+
+\- Queue name can be an expression with string result (for example, name of one of the queues).
+
+### queue_leave - leave previously entered unordered queue
+- Prototype:
+```
+:queue_leave(
+             word queue_name
+            );
+```
+- Usage:
+
+This block will remove current xact from queue *queue\_name*. If xact will try to leave queue which it didn't enter, an error will be raised.
+
+- Example:
+```
+:queue_leave(CPU);
+```
+- Additional hacks:
+
+\- Queue name can be an expression with string result (for example, name of one of the queues).
+
+### fac_enter - occupy facility by taking one of its free places
+- Prototype:
+```
+:fac_enter(
+             word fac_name
+            );
+```
+- Usage:
+
+This block is used to simulate a facility which can be occupied by some number of xacts. If facility *fac\_name* has free places, xact will move further and will be present in facility's busyness list. If facility is fully busy, xact will stop at this block and will try to enter this facility again every beat until it proceeds.
+
+*fac\_enter* is usually queued by *queue\_enter* and *queue\_leave* blocks to gather iformation about how long xacts wait to enter busy facility and how much of them are waiting.
+
+- Example:
+```
+:fac_enter(CPU);
+```
+- Additional hacks:
+
+\- Facility name can be an expression with string result (for example, name of one of the facilities).
+
+\- Facilities can be automatically queued (so, you won't need to write queueing blocks manually) as if it is *queue\_enter* block right above *fac\_enter* block and *queue\_leave* block right under *fac\_enter* block.
+
+### fac_leave - free a place in previously occupied facility
+- Prototype:
+```
+:fac_leave(
+             word fac_name
+            );
+```
+- Usage:
+
+This block will free a place in facility *fac\_name*, triggering CEC review to give an ability to blocked xacts to occupy freed facility. If the facility was not previously occupied by leaving xact, an error will be raised.
+
+- Example:
+```
+:fac_leave(CPU);
+```
+- Additional hacks:
+
+\- Facility name can be an expression with string result (for example, name of one of the facilities).
+
+\- This block automatically triggers interpreter to review CEC.
+
+
+## Built-in functions
+### Random generators:
+- random_int(min, max) - generates a pseudo-random integer between *min* and *max*, including min and max values.
+- random_float(min, max) - generates a pseudo-random floating point value *min* <= value <= *max*.
+- random01() - generates a pseudo-random float value between 0 and 1 (like probability).
+
+### Type converters:
+- to_str(val) - tries to convert *val* into string and returns string.
+- to_int(val) - tries to convert *val* into integer and returns integer. Can raise "cannot convert" error.
+- to_float(val) - tries to convert *val* into floating point number and returns it. Can raise "cannot convert" error.
+- to_bool(val) - tries to convert *val* into boolean value (true/false). Following values can be converted: true/false boolean values, "true"/"false" strings, any numbers (==0 - false, !=0 - true); otherwise, error will be raised.
