@@ -4,7 +4,7 @@ import errors
 tokens = []
 numbers = '0123456789'
 letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-operatorChars = '+-*/=<>()|&!{};:,.[]'
+operatorChars = '+-*/=<>()|&!{};:,.[]?'
 operators = {
              '+':'plus', 
              '-':'minus', 
@@ -43,41 +43,46 @@ operators = {
              '{{':'lexec',
              '}}':'rexec',
              '->':'transport',
+             '|':'transport_prob',
+             '?':'transport_if',
              '~':'indirect_addr'
             }
              
 typedefs = [
             'int', 
             'float', 
-            'str', 
+            'str',
+            'bool',
             'fac', 
-            'fac_enum', 
+            #'fac_enum', 
             'queue', 
-            'mark',
+            'mark'
             'chain',
-            'sub'
+            #'sub'
            ]
 
 blocks = [
-          'exitwhen',
-          'inject',
-          'reject',
-          'fac_enter',
-          'fac_leave',
-          'queue_enter',
-          'queue_leave',
-          'wait',
+          'exitwhen',     #
+          'inject',       #
+          'reject',       #
+          'fac_enter',    #
+          'fac_leave',    #
+          'queue_enter',  #
+          'queue_leave',  #
+          'wait',         #
           'if',
           'else_if',
           'else',
           'try',
-          'chain_enter',
-          'chain_leave',
-          'travel',
-          'travel_if',
+          'chain_enter',  #
+          'chain_leave',  #
+          'chain_purge',  #
+          'chain_leaveif',
           'while',
           'for',
-          'copy'
+          'copy',
+          'output',       #
+          'refresh'       #
          ]
          
 builtins = [

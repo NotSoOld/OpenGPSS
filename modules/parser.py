@@ -20,10 +20,15 @@ assgs = [
         ]
 fac_params = [
               'curplaces',
-              'maxplaces'
+              'maxplaces',
+              'enters_f'
              ]
 queue_params = [
-                'curxacts'
+                'curxacts',
+                'enters_q'
+               ]
+chain_params = [
+                'length'
                ]
 xact_params = [
                'group',
@@ -87,6 +92,15 @@ def parseDefinition(line):
 		else:
 			errors.print_error(12, lineindex, ['=', peek(0)])
 			
+	elif deftype == 'bool':
+		if tok[0] == 'eocl':
+			newobj = structs.BoolVar(name, 0)
+		elif tok[0] == 'eq':
+			nexttok()
+			newobj = structs.BoolVar(name, parseExpression())
+		else:
+			errors.print_error(12, lineindex, ['=', peek(0)])
+			
 	elif deftype == 'fac':
 		if tok[0] == 'eocl':
 			newobj = structs.Facility(name, 1, True)
@@ -131,7 +145,8 @@ def parseDefinition(line):
 		newobj = structs.Queue(name)
 	
 	elif deftype == 'chain':
-		pass
+		newobj = structs.Chain(name)
+		
 	elif deftype == 'mark':
 		newobj = structs.Mark(name, -1)
 		for line in interpreter.toklines:
@@ -208,6 +223,8 @@ def parseBlock(line):
 				prim = 'floats'
 			elif tok[1] in interpreter.strs:
 				prim = 'strs'
+			elif tok[1] in interpreter.bools:
+				prim = 'bools'
 			else:
 				errors.print_error(27, lineindex, [tok[1]])
 			key = tok[1]
@@ -237,10 +254,19 @@ def parseBlock(line):
 		return (name, args)
 	
 	elif tok[0] == 'transport':
-		name = 'transport'
 		nexttok()
+		if matchtok('gt'):
+			name = 'transport'
+		elif matchtok('transport_prob'):
+			name = 'transport_prob'
+		elif matchtok('transport_if'):
+			name = 'transport_if'
+		else:
+			errors.print_error(34, lineindex, [peek(1)])
 		block = parseExpression()
 		if not matchtok('comma'):
+			if name != 'transport':
+				errors.print_error(35, lineindex)
 			return (name, [block])
 		prob = parseExpression()
 		if matchtok('comma'):
@@ -266,17 +292,18 @@ def evaluateAssignment(prim, sec, assg, key):
 		if sec != '': # xact.params[key]
 			attr = getattr(attr, sec)
 			if assg == 'inc':
-				if type(attr[key]) is str:
+				if type(attr[key]) is str or type(attr[key]) is bool:
 					errors.print_error(7, lineindex, ['inc'])
 				attr[key] += 1
 			elif assg == 'dec':
-				if type(attr[key]) is str:
+				if type(attr[key]) is str or type(attr[key]) is bool:
 					errors.print_error(7, lineindex, ['dec'])
 				attr[key] -= 1
 			else:
 				nexttok()
 				nexttok()
 				result = parseExpression()
+				result = checkAssignmentTypes(attr[key], result, assg)
 			   	if assg == 'eq':         attr[key] = result
 			   	elif assg == 'add':      attr[key] += result
 			   	elif assg == 'subt':     attr[key] -= result
@@ -287,17 +314,18 @@ def evaluateAssignment(prim, sec, assg, key):
 			   	
 		else: # ints[key].value, etc.
 			if assg == 'inc':
-				if type(attr[key].value) is str:
+				if type(attr[key].value) is str or type(attr[key].value) is bool:
 					errors.print_error(7, lineindex, ['inc'])
 				attr[key].value += 1
 			elif assg == 'dec':
-				if type(attr[key].value) is str:
+				if type(attr[key].value) is str or type(attr[key].value) is bool:
 					errors.print_error(7, lineindex, ['dec'])
 				attr[key].value -= 1
 			else:
 				nexttok()
 				nexttok()
 				result = parseExpression()
+				result = checkAssignmentTypes(attr[key].value, result, assg)
 			   	if assg == 'eq':         attr[key].value = result
 			   	elif assg == 'add':      attr[key].value += result
 			   	elif assg == 'subt':     attr[key].value -= result
@@ -306,11 +334,36 @@ def evaluateAssignment(prim, sec, assg, key):
 			   	elif assg == 'pwreq':
 			   		attr[key].value = attr[key].value ** result
 			   	elif assg == 'remaineq': attr[key].value %= result
-			
+		
+		if prim == 'xact' and sec = 'params' and key = 'pr':
+			return ('refresh', [])	
 		return ('move', [])
 	else:
 		errors.print_error(21, lineindex, 
 			   ['assignment operator or "."', tok], 'C')
+
+def checkAssignmentTypes(l, r, asg):
+	if type(l) is int:
+		if type(r) is int:
+			return r
+		if type(r) is float:
+			return int(r)
+		errors.print_error(33, lineindex, [asg, type(l), type(r)])
+	if type(l) is float:
+		if type(r) is int or type(r) is float:
+			return r
+		errors.print_error(33, lineindex, [asg, type(l), type(r)])
+	if type(l) is str:
+		if type(r) is not str:
+			errors.print_error(33, lineindex, [asg, type(l), type(r)])
+		if asg != '=' and asg != '+=':
+			errors.print_error(33, lineindex, [asg, type(l), type(r)])
+		return r
+	if type(l) is bool:
+		if type(r) is not bool:
+			errors.print_error(33, lineindex, [asg, type(l), type(r)])
+		return r
+		
 
 def parseInjector(line):
 	newinj = None
@@ -362,22 +415,35 @@ def parseInjector(line):
 		nexttok()
 		consume('eq')
 		tok2 = peek(0)
+		
 		if tok1[1] == 'priority':
 			if tok2[0] != 'number':
-				errors.print_error(19, lineindex, ['number', tok1[1], tok2[0]])
+				errors.print_error(19, lineindex, ['number', tok1[1], tok2])
 			params['pr'] = float(tok2[1])
+			
 		elif tok1[1].startswith('p'):
 			if tok2[0] != 'number' or '.' in tok2[1]:
-				errors.print_error(19, lineindex, ['integer', tok1[1], tok2[0]])
+				errors.print_error(19, lineindex, ['integer', tok1[1], tok2])
 			params[tok1[1]] = int(tok2[1])
+			
+		elif tok1[1].startswith('b'):
+			if tok2[0] != 'word' or tok2[1] != 'true' and tok2[1] != 'false':
+				errors.print_error(19, lineindex, ['boolean', tok1[1], tok2])
+			if tok2[1] == 'true':
+				params[tok1[1]] = True
+			else:
+				params[tok1[1]] = False
+			
 		elif tok1[1].startswith('f'):
 			if tok2[0] != 'number':
-				errors.print_error(19, lineindex, ['number', tok1[1], tok2[0]])
+				errors.print_error(19, lineindex, ['number', tok1[1], tok2])
 			params[tok1[1]] = float(tok2[1])
+			
 		elif tok1[1].startswith('str'):
 			if tok2[0] != 'string':
-				errors.print_error(19, lineindex, ['string', tok1[1], tok2[0]])
+				errors.print_error(19, lineindex, ['string', tok1[1], tok2])
 			params[tok1[1]] = tok2[1]
+			
 		else:
 			errors.print_warning(2, lineindex, [tok1[1]])
 			params[tok1[1]] = tok2[1]
@@ -528,7 +594,11 @@ def parsePrimary():
 	elif tok[0] == 'string':
 		val = tok[1]
 	elif tok[0] == 'word':
-		if peek(1)[0] == 'dot':
+		if tok[1] == 'true':
+			val = True
+		elif tok[1] == 'false':
+			val = False
+		elif peek(1)[0] == 'dot':
 			nexttok()
 			consume('dot')
 			tk = peek(0)
@@ -537,6 +607,9 @@ def parsePrimary():
 				
 			elif tk[1] in queue_params and tok[1] in interpreter.queues:
 				val = getattr(interpreter.queues[tok[1]], tk[1])
+				
+			elif tk[1] in queue_params and tok[1] in interpreter.chains:
+				val = getattr(interpreter.chains[tok[1]], tk[1])
 			
 			elif tok[1] == 'xact':
 				if tk[1] not in xact_params: #parameters from 'params' dict
@@ -555,6 +628,8 @@ def parsePrimary():
 					val = interpreter.floats[tok[1]].name
 				elif tok[1] in interpreter.strs:
 					val = interpreter.strs[tok[1]].name
+				elif tok[1] in interpreter.bools:
+					val = interpreter.bools[tok[1]].name
 				else:
 					errors.print_error(28, lineindex, [tok[1]])
 			else:
@@ -564,18 +639,22 @@ def parsePrimary():
 			return val
 		
 		# If there is no dot:
-		if tok[1] in interpreter.ints:
+		elif tok[1] in interpreter.ints:
 			val = interpreter.ints[tok[1]].value
 		elif tok[1] in interpreter.floats:
 			val = interpreter.floats[tok[1]].value
 		elif tok[1] in interpreter.strs:
 			val = interpreter.strs[tok[1]].value
+		elif tok[1] in interpreter.bools:
+			val = interpreter.bools[tok[1]].value
 		elif tok[1] in interpreter.facilities:
 			val = interpreter.facilities[tok[1]].name
 		elif tok[1] in interpreter.queues:
 			val = interpreter.queues[tok[1]].name
 		elif tok[1] in interpreter.marks:
 			val = interpreter.marks[tok[1]].name
+		elif tok[1] in interpreter.chains:
+			val = interpreter.chains[tok[1]].name
 		else:
 			errors.print_error(6, lineindex, tok)
 	

@@ -8,7 +8,7 @@ errors = {
           5:'Expected parameter of type "{}" for facility parameter '\
           '"{}"; got "{}"',
           6:'Expected name of defined variable/structure or value; got "{} {}"',
-          7:'Cannot {}rement string',
+          7:'Cannot {}rement string or boolean',
           8:'Cannot apply operation "{}" for string values',
           9:'Found incorrect float number "{}" during analysis',
           10:'Initial value for integer variable "{}" must be of type "int"',
@@ -35,7 +35,12 @@ errors = {
           29:'Error while transporting: undefined mark "{}"',
           30:'Mark "{}" is not present anywhere as transporting label '\
           '(at the left of ":")',
-          31:'Cannot turn "{}" into "{}"'
+          31:'Cannot convert "{}" into "{}"',
+          32:'Initial value for boolean variable "{}" must be true/false word',
+          33:'Cannot perform "{}" for types "{}" and "{}".\nYou can use '\
+          'builtin functions to convert types.'
+          34:'What type of transport is there? Expected ">", "|" or "?", got "{}"',
+          35:'Condition or probability argument is missing'
          }
 
 warnings = {

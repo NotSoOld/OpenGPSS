@@ -8,10 +8,12 @@ import errors
 ints = {}
 floats = {}
 strs = {}
+bools = {}
 chains = {}
 facilities = {}
 queues = {}
 marks = {}
+chains = {}
 injectors = {}
 currentChain = []
 tempCurrentChain = []
@@ -43,34 +45,41 @@ def inject(injector):
 		injector.tdelay = 0
 	futureChain.append([futime, xa])
 
-	
 def queue_enter(qid):
-	queues[qid].enters += 1
+	queues[qid].enters_q += 1
 	queues[qid].curxacts += 1
+	queues[qid].queuedxacts.append(xact.index)
 	xact.curblk += 1
 	xact.cond = 'canmove'
 	
 def queue_leave(qid):
 	queues[qid].curxacts -= 1
+	queues[qid].queuedxacts.remove(xact.index)
 	xact.curblk += 1
 	xact.cond = 'canmove'
 	
 def fac_enter(fid):
+	if facilities[fid].isQueued:
+		if xact.index not in queues[fid].queuedxacts:
+			queue_enter(fid)
+		
 	if facilities[fid].curplaces > 0:
 		facilities[fid].curplaces -= 1
-		facilities[fid].enters += 1
+		facilities[fid].enters_f += 1
 		xact.curblk += 1
-		facilities[fid].busyxacts.append(xact)
+		facilities[fid].busyxacts.append(xact.index)
 		#print 'added xact '+str(xact.index)+' to facility '+fid
+		
+		if facilities[fid].isQueued:
+			queue_leave(fid)
 		xact.cond = 'canmove'
 	else:
 		xact.cond = 'blocked'
 	
 def fac_leave(fid):
 	facilities[fid].curplaces += 1
-	facilities[fid].busyxacts = [xa for xa in facilities[fid].busyxacts if xa.index != xact.index]
-	xact.curblk += 1
-	xact.cond = 'passagain'
+	facilities[fid].busyxacts.remove(xact.index)
+	refresh()
 	
 def wait(time, tdelta):
 	global futureChain
@@ -86,8 +95,36 @@ def reject(decr):
 	ints['rejected'].value += decr
 	xact.curblk += 1
 	xact.cond = 'rejected'
-	print 'param at reject: '+str(xact.params['p2'])
-		
+	
+def chain_enter(chid):
+	chains[chid].xacts.append(xact)
+	chains[chid].length = len(chains[chid].xacts)
+	xact.cond = 'chained'
+	
+def chain_leave(chid, cnt, toblk=''):
+	if toblk != '':
+		if toblk not in marks.keys():
+			errors.print_error(29, xact.curblk+2, [toblk])
+		if marks[toblk].block == -1:
+			errors.print_error(30, xact.curblk+2, [toblk])
+	move()
+	for i in range(cnt):
+		xa = chains[chid].xacts.pop()
+		chains[chid].length = len(chains[chid].xacts)
+		xa.cond = 'canmove'
+		if toblk != '':
+			xa.curblk = marks[toblk].block - 1
+		else:
+			xa.curblk = xact.curblk
+		tempCurrentChain.append(xa)
+	
+def chain_purge(chid, toblk=''):
+	chain_leave(chid, len(chains[chid].xacts), toblk)
+	
+def chain_leaveif(chid, cond, cnt, toblk=''):
+	pass
+
+"""		
 def cond(condition):
 	print condition+' is '+str(eval(condition))
 	if eval(condition):
@@ -141,39 +178,45 @@ def otherwise(cond=None):
 				break
 		xact.curblk = i - 1
 		xact.cond = 'canmove'
+"""
 
 def move(args=[]):
 	xact.curblk += 1
 	xact.cond = 'canmove'
 	
-def transport(block, prob=-1, addblock=''):
+def refresh(args=[]):
+	xact.curblk += 1
+	xact.cond = 'passagain'
+	
+def transport(block):
+	transport_if(block, True)
+
+def transport_prob(block, prob, addblock=''):
+	transport_if(block, random.random() < prob, addblock)
+	
+def transport_if(block, cond, addblock=''):
 	xact.cond = 'canmove'
 	if block not in marks.keys():
 		errors.print_error(29, xact.curblk+2, [block])
 	if marks[block].block == -1:
 		errors.print_error(30, xact.curblk+2, [block])
 		
-	if prob == -1:
+	if cond:
 		xact.curblk = marks[block].block-1
 	else:
-		if random.random() < prob:
-			xact.curblk = marks[block].block-1
+		if addblock == '':
+			xact.curblk += 1
 		else:
-			if addblock == '':
-				xact.curblk += 1
-			else:
-				if addblock not in marks.keys():
-					errors.print_error(29, xact.curblk+2, [addblock])
-				if marks[block].block == -1:
-					errors.print_error(30, xact.curblk+2, [addblock])
-				xact.curblk = marks[addblock].block-1
-	
-def addDefaultVars():
-	global ints
-	ints['injected'] = structs.IntVar('injected', 0)
-	ints['rejected'] = structs.IntVar('rejected', 0)
-	ints['curticks'] = structs.IntVar('curticks', 0)
+			if addblock not in marks.keys():
+				errors.print_error(29, xact.curblk+2, [addblock])
+			if marks[block].block == -1:
+				errors.print_error(30, xact.curblk+2, [addblock])
+			xact.curblk = marks[addblock].block-1
 
+def output(outstr):
+	print outstr
+	move()
+	
 	
 ###############################################################
 
@@ -308,6 +351,12 @@ def checkExitCond():
 	if parser.parseExitCondition(toklines[exitcond]):
 		return True
 	return False	
+
+def addDefaultVars():
+	global ints
+	ints['injected'] = structs.IntVar('injected', 0)
+	ints['rejected'] = structs.IntVar('rejected', 0)
+	ints['curticks'] = structs.IntVar('curticks', 0)
 
 def print_program():
 	global toklines
