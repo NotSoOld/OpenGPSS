@@ -38,9 +38,16 @@ errors = {
           31:'Cannot convert "{}" into "{}"',
           32:'Initial value for boolean variable "{}" must be true/false word',
           33:'Cannot perform "{}" for types "{}" and "{}".\nYou can use '\
-          'builtin functions to convert types.'
+          'builtin functions to convert types.',
           34:'What type of transport is there? Expected ">", "|" or "?", got "{}"',
-          35:'Condition or probability argument is missing'
+          35:'Condition or probability argument is missing',
+          36:'"}}" for "if"/"else_if"/"else" block is missing',
+          37:'"}}" for "while" block is missing',
+          38:'Cannot find the "owner" (block) of "{}" in line "{}"',
+          39:'Xact is trying to enter queue which it already entered',
+          40:'Xact is trying to leave queue which it did not enter',
+          41:'Xact is trying to occupy facility which it already occupies',
+          42:'Xact is trying to leave facility which it did not occupy'
          }
 
 warnings = {

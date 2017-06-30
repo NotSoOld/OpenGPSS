@@ -56,8 +56,8 @@ typedefs = [
             'fac', 
             #'fac_enum', 
             'queue', 
-            'mark'
-            'chain',
+            'mark',
+            'chain'
             #'sub'
            ]
 
@@ -65,25 +65,29 @@ blocks = [
           'exitwhen',     # tested
           'inject',       # tested
           'reject',       # tested
-          'fac_enter',    # implemented
-          'fac_leave',    # implemented
+          'fac_enter',    # tested
+          'fac_leave',    # tested
           'queue_enter',  # tested
           'queue_leave',  # tested
           'wait',         # tested
-          'if',
-          'else_if',
-          'else',
-          'try',
+          'if',           # implemented
+          'else_if',      # implemented
+          'else',         # implemented
+          'try',          # implemented
           'chain_enter',  # implemented
           'chain_leave',  # implemented
           'chain_purge',  # implemented
           'chain_leaveif',
-          'while',
+          'while',        # implemented
           'for',
           'copy',         # implemented
-          'output',       # implemented
-          'refresh',      # implemented
-          'move'          # implemented
+          'output',       # tested
+          'review_cec',   # tested
+          'move',         # tested
+          'iter_next',    # implemented
+          'iter_stop',    # implemented
+          'interrupt',    # implemented
+          'flush_cec'     # implemented
          ]
          
 builtins = [

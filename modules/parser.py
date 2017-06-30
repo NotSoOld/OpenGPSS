@@ -184,15 +184,16 @@ def parseBlock(line):
 	
 	if ['rexec', ''] in tokline:
 		errors.print_error(14, lineindex)
-	if peek(0)[0] == 'word':
+	if peek(0)[0] == 'word' and peek(1)[0] == 'marksep':
 		if peek(0)[1] in interpreter.marks:
 			consume('word')
+			consume('marksep')
 		else:
 			errors.print_error(15, lineindex, [peek(0)[1]])
-	consume('marksep')
+
 	tok = peek(0)
 	if tok[0] == 'word':
-		tok1 = peek(1)
+		"""tok1 = peek(1)
 		tok2 = peek(2)
 		tok3 = peek(3)
 		prim = ''
@@ -232,16 +233,40 @@ def parseBlock(line):
 			
 			evaluateAssignment(prim, '', assg, key)
 			
-		return ('move', [])
-		
+		return ('move', [])"""
+		return parseAssignment()
+	
+	elif tok[0] == 'rbrace':
+		depth = 0
+		for i in reversed(range(0, xact.curblk+2)):
+			if interpreter.toklines[i][0][0] == 'rbrace':
+				depth += 1
+			elif interpreter.toklines[i][0][0] == 'lbrace':
+				depth -= 1
+			if depth == 0:
+				break
+		if depth != 0:
+			errors.print_error(38, '', ['}', xact.curblk+2])
+		i -= 1
+		if ['block', 'while'] in interpreter.toklines[i]:
+			xact.curblk = i - 1
+			xact.cond = 'canmove'
+			return parseBlock(interpreter.toklines[i])
+	
 	elif tok[0] == 'block':
 		if tok[1] == 'inject':
 			name = 'move'
 		else:
 			name = tok[1]
+			if tok[1] == 'if' or tok[1] == 'else_if' or \
+			   tok[1] == 'else' or tok[1] == 'try' or \
+			   tok[1] == 'while' or tok[1] == 'for':
+				name += '_block'
 			nexttok()
 			consume('lparen')
 			while True:
+				if matchtok('rparen'):
+					break
 				args.append(parseExpression())
 				if peek(0)[0] == 'comma':
 					consume('comma')
@@ -278,6 +303,51 @@ def parseBlock(line):
 	else:
 		errors.print_error(21, lineindex, ['executive block, '\
 		       'transport operator or assignment lvalue', tok], 'E')
+
+def parseAssignment():
+	tok = peek(0)
+	tok1 = peek(1)
+	tok2 = peek(2)
+	tok3 = peek(3)
+	prim = ''
+	sec = ''
+	assg = ''
+	key = ''
+	res = ()
+	
+	if tok1[0] == 'dot' and tok2[0] == 'word':
+		nexttok()
+		nexttok()
+		if tok[1] == 'xact':
+			prim = 'xact'
+			if tok2[1] not in interpreter.xact.params.keys():
+				errors.print_error(25, lineindex, 
+				       [interpreter.xact.group, tok2[1]])
+			sec = 'params'
+			key = tok2[1]
+		else:
+			errors.print_error(26, lineindex, [tok[1]])
+		assg = tok3[0]
+		
+		res = evaluateAssignment(prim, sec, assg, key)
+		
+	else:
+		if tok[1] in interpreter.ints:
+			prim = 'ints'
+		elif tok[1] in interpreter.floats:
+			prim = 'floats'
+		elif tok[1] in interpreter.strs:
+			prim = 'strs'
+		elif tok[1] in interpreter.bools:
+			prim = 'bools'
+		else:
+			errors.print_error(27, lineindex, [tok[1]])
+		key = tok[1]
+		assg = tok1[0]
+		
+		res = evaluateAssignment(prim, '', assg, key)
+		
+	return res
 
 def evaluateAssignment(prim, sec, assg, key):
 	global assgs
@@ -335,8 +405,8 @@ def evaluateAssignment(prim, sec, assg, key):
 			   		attr[key].value = attr[key].value ** result
 			   	elif assg == 'remaineq': attr[key].value %= result
 		
-		if prim == 'xact' and sec = 'params' and key = 'pr':
-			return ('refresh', [])	
+		if prim == 'xact' and sec == 'params' and key == 'pr':
+			return ('review_cec', [])	
 		return ('move', [])
 	else:
 		errors.print_error(21, lineindex, 
@@ -356,7 +426,7 @@ def checkAssignmentTypes(l, r, asg):
 	if type(l) is str:
 		if type(r) is not str:
 			errors.print_error(33, lineindex, [asg, type(l), type(r)])
-		if asg != '=' and asg != '+=':
+		if asg != 'eq' and asg != 'add':
 			errors.print_error(33, lineindex, [asg, type(l), type(r)])
 		return r
 	if type(l) is bool:
@@ -364,7 +434,6 @@ def checkAssignmentTypes(l, r, asg):
 			errors.print_error(33, lineindex, [asg, type(l), type(r)])
 		return r
 		
-
 def parseInjector(line):
 	newinj = None
 	global tokline
@@ -374,12 +443,13 @@ def parseInjector(line):
 	global lineindex
 	lineindex = interpreter.toklines.index(line)+1
 	
-	if peek(0)[0] == 'word':
+	if peek(0)[0] == 'word' and peek(1)[0] == 'marksep':
 		if peek(0)[1] in interpreter.marks:
 			consume('word')
+			consume('marksep')
 		else:
 			errors.print_error(15, lineindex, [peek(0)[1]])
-	consume('marksep')
+	
 	consume('block', 'inject')
 	consume('lparen')
 	

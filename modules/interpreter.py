@@ -29,6 +29,7 @@ class Xact:
 		self.curblk = curblk
 		self.params = params
 		self.cond = 'injected'
+		self.eval_else = False
 	
 def inject(injector):
 	# Limit should be checked before calling this.
@@ -39,6 +40,7 @@ def inject(injector):
 	ints['injected'].value += 1
 	if injector.limit != -1:
 		injector.limit -= 1
+	random.seed()
 	futime = ints['curticks'].value + injector.time + random.randint(-injector.tdelta, injector.tdelta)
 	if injector.tdelay != 0:
 		futime += injector.tdelay
@@ -48,11 +50,15 @@ def inject(injector):
 def queue_enter(qid):
 	queues[qid].enters_q += 1
 	queues[qid].curxacts += 1
+	if xact.index in queues[qid].queuedxacts:
+		errors.print_error(39, xact.curblk+2)
 	queues[qid].queuedxacts.append(xact.index)
 	xact.curblk += 1
 	xact.cond = 'canmove'
 	
 def queue_leave(qid):
+	if xact.index not in queues[qid].queuedxacts:
+		errors.print_error(40, xact.curblk+2)
 	queues[qid].curxacts -= 1
 	queues[qid].queuedxacts.remove(xact.index)
 	xact.curblk += 1
@@ -62,28 +68,35 @@ def fac_enter(fid):
 	if facilities[fid].isQueued:
 		if xact.index not in queues[fid].queuedxacts:
 			queue_enter(fid)
+			xact.curblk -= 1
 		
 	if facilities[fid].curplaces > 0:
 		facilities[fid].curplaces -= 1
 		facilities[fid].enters_f += 1
-		xact.curblk += 1
+		if xact.index in facilities[fid].busyxacts:
+			errors.print_error(41, xact.curblk+1)
 		facilities[fid].busyxacts.append(xact.index)
 		#print 'added xact '+str(xact.index)+' to facility '+fid
 		
 		if facilities[fid].isQueued:
 			queue_leave(fid)
+			xact.curblk -= 1
+		xact.curblk += 1
 		xact.cond = 'canmove'
 	else:
 		xact.cond = 'blocked'
 	
 def fac_leave(fid):
+	if xact.index not in facilities[fid].busyxacts:
+		errors.print_error(42, xact.curblk+2)
 	facilities[fid].curplaces += 1
 	facilities[fid].busyxacts.remove(xact.index)
-	refresh()
+	review_cec()
 	
 def wait(time, tdelta):
 	global futureChain
 	global ints
+	random.seed()
 	futime = ints['curticks'].value + time + random.randint(-tdelta, tdelta)
 	xact.curblk += 1
 	xact.cond = 'waiting'
@@ -109,6 +122,8 @@ def chain_leave(chid, cnt, toblk=''):
 			errors.print_error(30, xact.curblk+2, [toblk])
 	move()
 	for i in range(cnt):
+		if len(chains[chid].xacts) == 0:
+			continue
 		xa = chains[chid].xacts.pop()
 		chains[chid].length = len(chains[chid].xacts)
 		xa.cond = 'canmove'
@@ -123,75 +138,77 @@ def chain_purge(chid, toblk=''):
 	
 def chain_leaveif(chid, cond, cnt, toblk=''):
 	pass
-
-"""		
-def cond(condition):
-	print condition+' is '+str(eval(condition))
-	if eval(condition):
+	
+def if_block(cond):
+	if cond:
 		xact.curblk += 1
-		xact.cond = 'canmove'
+		move()
+		xact.eval_else = False
 		return
-		
-	global program
+	
 	depth = 0
-	for i in range(xact.curblk+2, len(program)):
-		if program[i][1].startswith('{'):
+	global toklines
+	for i in range(xact.curblk+2, len(toklines)):
+		if toklines[i][0][0] == 'lbrace':
 			depth += 1
-		if program[i][1].startswith('}'):
+		elif toklines[i][0][0] == 'rbrace':
 			depth -= 1
 		if depth == 0:
 			break
-	# Here i == index of line with '}: [otherwise(tryagain)]'
-	# or simply with closing bracket.
+	if depth != 0:
+		errors.print_error(36, i)
+	xact.curblk = i - 1
+	xact.cond = 'canmove'
+	xact.eval_else = True
 	
-	# We can be here only if condition == False.
-	# If it is just conditional 'jump' or non-blocking cond:
-	if not 'tryagain' in program[i][1]:
-		xact.curblk = i - 1
-		xact.cond = 'canmove'
-	# If this cond has an blocking otherwise option:
+def else_if_block(cond):
+	if xact.eval_else:
+		if_block(cond)
+	
+def else_block(args=[]):
+	if xact.eval_else:
+		if_block(True)
+	
+def try_block(cond):
+	if cond:
+		xact.curblk += 1
+		move()
 	else:
 		xact.cond = 'blocked'
-			
-def otherwise(cond=None):
-	global program
-	# We don't need to manage blocking 'tryagain' option here,
-	# because cond() does it already.
-	if 'tryagain' in program[xact.curblk+1][1]:
+		
+def while_block(cond):
+	if cond:
 		xact.curblk += 1
-		xact.cond = 'canmove'
+		move()
 		return
-	
-	# Just like 'else' with no condition 
-	# (and true condition also goes here).
-	if cond == None or cond:
-		xact.curblk += 1
-		xact.cond = 'canmove'
-	else:
-		depth = 0
-		for i in range(xact.curblk+2, len(program)):
-			if program[i][1].startswith('{'):
-				depth += 1
-			if program[i][1].startswith('}'):
-				depth -= 1
-			if depth == 0:
-				break
-		xact.curblk = i - 1
-		xact.cond = 'canmove'
-"""
+		
+	depth = 0
+	global toklines
+	for i in range(xact.curblk+2, len(toklines)):
+		if toklines[i][0][0] == 'lbrace':
+			depth += 1
+		elif toklines[i][0][0] == 'rbrace':
+			depth -= 1
+		if depth == 0:
+			break
+	if depth != 0:
+		errors.print_error(37, i)
+	xact.curblk = i - 1
+	xact.cond = 'canmove'
 
 def move(args=[]):
 	xact.curblk += 1
 	xact.cond = 'canmove'
 	
-def refresh(args=[]):
-	xact.curblk += 1
+def review_cec(args=[]):
+	move()
 	xact.cond = 'passagain'
 	
 def transport(block):
 	transport_if(block, True)
 
 def transport_prob(block, prob, addblock=''):
+	random.seed()
 	transport_if(block, random.random() < prob, addblock)
 	
 def transport_if(block, cond, addblock=''):
@@ -232,6 +249,44 @@ def copy(cnt, toblk=''):
 			xa.curblk += 1
 		xa.cond = 'canmove'
 		tempCurrentChain.append(xa)
+		
+def iter_next(args=[]):
+	depth = -1
+	global toklines
+	for i in reversed(range(0, xact.curblk+1)):
+		if toklines[i][0][0] == 'lbrace':
+			depth += 1
+		elif toklines[i][0][0] == 'rbrace':
+			depth -= 1
+		if depth == 0:
+			break
+	if depth != 0:
+		errors.print_error(38, '', ['iter_next()', xact.curblk+1])
+	xact.curblk = i - 1
+	xact.cond = 'canmove'
+	
+def iter_stop(args=[]):
+	depth = 1
+	global toklines
+	for i in range(0, xact.curblk+1, len(toklines)):
+		if toklines[i][0][0] == 'lbrace':
+			depth += 1
+		elif toklines[i][0][0] == 'rbrace':
+			depth -= 1
+		if depth == 0:
+			break
+	if depth != 0:
+		errors.print_error(38, '', ['iter_stop()', xact.curblk+1])
+	xact.curblk = i - 1
+	xact.cond = 'canmove'
+	
+def interrupt(args=[]):
+	move()
+	xact.cond = 'interrupt'
+	
+def flush_cec(args=[]):
+	move()
+	xact.cond = 'flush'
 	
 	
 ###############################################################
@@ -326,10 +381,12 @@ def start_interpreter(filepath):
 			continue
 			
 		restart = True
+		interrupt = False
+		flush = False
 		while restart:
 			restart = False
 			for xact in currentChain:
-				if restart:
+				if restart or interrupt:
 					tempCurrentChain.append(xact)
 					continue
 				while True:
@@ -348,7 +405,16 @@ def start_interpreter(filepath):
 						elif xact.cond == 'blocked':
 							tempCurrentChain.append(xact)
 							#print 'xact', xact.index, 'was blocked'
+						elif xact.cond == 'interrupt':
+							tempCurrentChain.append(xact)
+							interrupt = True
+						elif xact.cond == 'flush':
+							flush = True
 						break
+				if flush:
+					currentChain = []
+					tempCurrentChain = []
+					break
 				# Stop by rejecting enough xacts.
 				if checkExitCond():
 					break
@@ -392,10 +458,12 @@ def print_program():
 				elif t in '+,-,*,/,%,**,+=,-=,==,*=,/=,%=,**=,<,>,<=,>=,!=':
 					t = ' '+t+' '
 				prog += t
-			elif token[0] == 'word' or token[0] == 'string' or \
+			elif token[0] == 'word' or \
 			     token[0] == 'number' or token[0] == 'block' or \
 			     token[0] == 'builtin':
 				prog += token[1]
+			elif token[0] == 'string':
+				prog += '"'+token[1]+'"'
 			elif token[0] == 'typedef':
 				prog += token[1]+' '
 		prog += '\n'
@@ -421,7 +489,7 @@ def print_results():
 	if strs.keys():
 		print '\n\n----String variables:----'
 		for s in strs.keys():
-			print s+' = '+strs[s].value
+			print s+' = '+repr(strs[s].value)
 	
 	print '\n\n----Facilities:----'
 	if not facilities.keys():
@@ -431,12 +499,10 @@ def print_results():
 		      'Busyness\tCurrent xacts'
 		print '- '*40
 		for fac in facilities.values():
-			l = []
-			for xact in fac.busyxacts:
-				l.append(xact.index)
 			print '{!s}   \t{!s}\t\t{!s}\t\t{!s}\t\t{:.3f}\t\t{!s}'.format(
-				  fac.name, fac.maxplaces, fac.isQueued, fac.enters,
-				  fac.busyticks/float(ints['curticks'].value), l)
+				  fac.name, fac.maxplaces, fac.isQueued, fac.enters_f,
+				  fac.busyticks/float(ints['curticks'].value), 
+				  fac.busyxacts)
 
 	print '\n\n----Queues:----'
 	if not queues.keys():
@@ -446,7 +512,7 @@ def print_results():
 		print '- '*40
 		for qu in queues.values():
 			print '{}   \t\t{!s}\t\t{!s}'.format(
-			      qu.name, qu.enters, qu.curxacts)
+			      qu.name, qu.enters_q, qu.curxacts)
 	
 	if marks.keys():
 		print '\n\n----Marks:----'
