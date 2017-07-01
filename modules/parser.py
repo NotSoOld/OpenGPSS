@@ -238,7 +238,7 @@ def parseBlock(line):
 	
 	elif tok[0] == 'rbrace':
 		depth = 0
-		for i in reversed(range(0, xact.curblk+2)):
+		for i in reversed(range(0, interpreter.xact.curblk+2)):
 			if interpreter.toklines[i][0][0] == 'rbrace':
 				depth += 1
 			elif interpreter.toklines[i][0][0] == 'lbrace':
@@ -252,6 +252,8 @@ def parseBlock(line):
 			xact.curblk = i - 1
 			xact.cond = 'canmove'
 			return parseBlock(interpreter.toklines[i])
+		else:
+		    return ('move', '')
 	
 	elif tok[0] == 'block':
 		if tok[1] == 'inject':

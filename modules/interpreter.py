@@ -164,10 +164,16 @@ def if_block(cond):
 def else_if_block(cond):
 	if xact.eval_else:
 		if_block(cond)
+	else:
+	    if_block(False)
+	    xact.eval_else = False
 	
 def else_block(args=[]):
 	if xact.eval_else:
 		if_block(True)
+	else:
+	    if_block(False)
+	    xact.eval_else = False
 	
 def try_block(cond):
 	if cond:
@@ -394,7 +400,8 @@ def start_interpreter(filepath):
 						errors.print_error(24, lineindex)
 					#print 'xact', xact.index, 'entering block', xact.curblk+2
 					cmd = parser.parseBlock(toklines[xact.curblk+1])
-					#print cmd
+					print cmd
+					#ttt = raw_input()
 					func = globals()[cmd[0]]
 					func(*cmd[1])
 				

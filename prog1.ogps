@@ -8,5 +8,17 @@ fac_enter(op);
 wait(8, 3);
 fac_leave(op);
 output("Hello, I am xact #" + to_str(xact.index));
+if(xact.index % 2 == 0);
+{
+    output("index is even");
+}
+else_if(xact.index % 3 == 0);
+{
+    output("index can be divided by 3");
+}
+else();
+{
+    output("index is odd");
+}
 reject(1);
 }}

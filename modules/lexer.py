@@ -4,7 +4,7 @@ import errors
 tokens = []
 numbers = '0123456789'
 letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-operatorChars = '+-*/=<>()|&!{};:,.[]?'
+operatorChars = '+-*/%=<>()|&!{};:,.[]?'
 operators = {
              '+':'plus', 
              '-':'minus', 
@@ -44,8 +44,8 @@ operators = {
              '}}':'rexec',
              '->':'transport',
              '|':'transport_prob',
-             '?':'transport_if',
-             '~':'indirect_addr'
+             '?':'transport_if'
+             #'~':'indirect_addr'
             }
              
 typedefs = [
@@ -67,19 +67,23 @@ blocks = [
           'reject',       # tested
           'fac_enter',    # tested
           'fac_leave',    # tested
+          #'fac_force',
+          #'fac_goaway',
           'queue_enter',  # tested
           'queue_leave',  # tested
           'wait',         # tested
-          'if',           # implemented
-          'else_if',      # implemented
-          'else',         # implemented
+          'if',           # tested
+          'else_if',      # tested
+          'else',         # tested
           'try',          # implemented
           'chain_enter',  # implemented
           'chain_leave',  # implemented
           'chain_purge',  # implemented
-          'chain_leaveif',
+          #'chain_leaveif',
+          #'find',
+          #'find_minmax',
           'while',        # implemented
-          'for',
+          #'loop_times',
           'copy',         # implemented
           'output',       # tested
           'review_cec',   # tested
