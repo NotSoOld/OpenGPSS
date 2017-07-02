@@ -36,13 +36,15 @@ xact_params = [
               ]
              
 def tocodelines(program):
-	parsed = []
+	parsed = [['padding', [0, 0, 0]]]
 	i = 0
+	li = 1
 	while i < len(program):
 		token = program[i]
 		if token[0] in 'lbrace'+'rbrace'+'lexec'+'rexec':
-			parsed.append([token])
+			parsed.append([token, [li, 0, 0]])
 			i += 1
+			li += 1
 			continue
 
 		line = []
@@ -51,7 +53,9 @@ def tocodelines(program):
 			line.append(token)
 			i += 1
 			if token[0] == 'eocl':
+				line.append([li, 0, 0])
 				parsed.append(line)
+				li += 1
 				break
 			if i >= len(program):
 				errors.print_error(2, '')
@@ -66,7 +70,7 @@ def parseDefinition(line):
 	newobj = None
 	deftype = line[0][1]
 	global lineindex
-	lineindex = interpreter.toklines.index(line)+1
+	lineindex = line[-1][0]
 	
 	tok = nexttok()
 	if not tok or tok[0] != 'word':
@@ -152,9 +156,9 @@ def parseDefinition(line):
 		for line in interpreter.toklines:
 			if line[0] == ['word', name] and line[1][0] == 'marksep':
 				if newobj.block != -1:
-					i = interpreter.toklines.index(line)
-					errors.print_error(13, i+1, [name])
-				newobj.block = interpreter.toklines.index(line)
+					i = line[-1][0]
+					errors.print_error(13, i, [name])
+				newobj.block = line[-1][0]
 		if newobj.block == -1:
 			errors.print_warning(3, '', [name])
 			
@@ -180,7 +184,7 @@ def parseBlock(line):
 	name = ''
 	args = []
 	global lineindex
-	lineindex = interpreter.toklines.index(line)+1
+	lineindex = line[-1][0]
 	
 	if ['rexec', ''] in tokline:
 		errors.print_error(14, lineindex)
@@ -193,52 +197,13 @@ def parseBlock(line):
 
 	tok = peek(0)
 	if tok[0] == 'word':
-		"""tok1 = peek(1)
-		tok2 = peek(2)
-		tok3 = peek(3)
-		prim = ''
-		sec = ''
-		assg = ''
-		key = ''
-		
-		if tok1[0] == 'dot' and tok2[0] == 'word':
-			nexttok()
-			nexttok()
-			if tok[1] == 'xact':
-				prim = 'xact'
-				if tok2[1] not in interpreter.xact.params.keys():
-					errors.print_error(25, lineindex, 
-					       [interpreter.xact.group, tok2[1]])
-				sec = 'params'
-				key = tok2[1]
-			else:
-				errors.print_error(26, lineindex, [tok[1]])
-			assg = tok3[0]
-			
-			evaluateAssignment(prim, sec, assg, key)
-			
-		else:
-			if tok[1] in interpreter.ints:
-				prim = 'ints'
-			elif tok[1] in interpreter.floats:
-				prim = 'floats'
-			elif tok[1] in interpreter.strs:
-				prim = 'strs'
-			elif tok[1] in interpreter.bools:
-				prim = 'bools'
-			else:
-				errors.print_error(27, lineindex, [tok[1]])
-			key = tok[1]
-			assg = tok1[0]
-			
-			evaluateAssignment(prim, '', assg, key)
-			
-		return ('move', [])"""
 		return parseAssignment()
 	
 	elif tok[0] == 'rbrace':
 		depth = 0
+		print interpreter.xact.curblk
 		for i in reversed(range(0, interpreter.xact.curblk+2)):
+			print 'i = '+str(i)
 			if interpreter.toklines[i][0][0] == 'rbrace':
 				depth += 1
 			elif interpreter.toklines[i][0][0] == 'lbrace':
@@ -246,14 +211,15 @@ def parseBlock(line):
 			if depth == 0:
 				break
 		if depth != 0:
-			errors.print_error(38, '', ['}', xact.curblk+2])
+			errors.print_error(38, '', ['}', xact.curblk+1])
 		i -= 1
+		print i
 		if ['block', 'while'] in interpreter.toklines[i]:
-			xact.curblk = i - 1
-			xact.cond = 'canmove'
+			interpreter.xact.curblk = i - 1
+			interpreter.xact.cond = 'canmove'
 			return parseBlock(interpreter.toklines[i])
 		else:
-		    return ('move', '')
+			return ('move', '')
 	
 	elif tok[0] == 'block':
 		if tok[1] == 'inject':
@@ -262,7 +228,7 @@ def parseBlock(line):
 			name = tok[1]
 			if tok[1] == 'if' or tok[1] == 'else_if' or \
 			   tok[1] == 'else' or tok[1] == 'try' or \
-			   tok[1] == 'while' or tok[1] == 'for':
+			   tok[1] == 'while' or tok[1] == 'copy':
 				name += '_block'
 			nexttok()
 			consume('lparen')
@@ -443,7 +409,7 @@ def parseInjector(line):
 	pos = 0
 	tokline = line
 	global lineindex
-	lineindex = interpreter.toklines.index(line)+1
+	lineindex = line[-1][0]
 	
 	if peek(0)[0] == 'word' and peek(1)[0] == 'marksep':
 		if peek(0)[1] in interpreter.marks:
@@ -473,7 +439,7 @@ def parseInjector(line):
 		else:
 			consume('rparen')
 			
-	blk = interpreter.toklines.index(line)
+	blk = line[-1][0]
 	if not matchtok('lbrace'):
 		newinj = structs.Injector(group, args[0], args[1], args[2], args[3], blk)
 		return newinj
@@ -748,9 +714,11 @@ def consume(toktype, toktext=''):
 	if peek(0)[0] != toktype:
 		if toktext != '':
 			if peek(0)[1] != toktext:
+				#raise ValueError()
 				errors.print_error(21, lineindex, 
 				       [[toktype, toktext], peek(0)], 'A')
 		else:
+			#raise ValueError()
 			errors.print_error(21, lineindex, 
 				       [toktype, peek(0)], 'A')
 	pos += 1

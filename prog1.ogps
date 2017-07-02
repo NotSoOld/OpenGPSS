@@ -7,18 +7,17 @@ inject("main", 6, 2, 0, 0) {priority = 1, pav = 11};
 fac_enter(op);
 wait(8, 3);
 fac_leave(op);
-output("Hello, I am xact #" + to_str(xact.index));
 if(xact.index % 2 == 0);
 {
     output("index is even");
-}
-else_if(xact.index % 3 == 0);
-{
-    output("index can be divided by 3");
-}
-else();
-{
-    output("index is odd");
+    if(xact.index == 4);
+    {
+    	output("and equals 4");
+    }
+    else();
+    {
+    	output("is not equal 4");
+    }
 }
 reject(1);
 }}

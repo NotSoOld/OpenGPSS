@@ -54,7 +54,7 @@ typedefs = [
             'str',
             'bool',
             'fac', 
-            #'fac_enum', 
+            #'gist',
             'queue', 
             'mark',
             'chain'
@@ -75,23 +75,24 @@ blocks = [
           'if',           # tested
           'else_if',      # tested
           'else',         # tested
-          'try',          # implemented
+          'try',          # tested
           'chain_enter',  # implemented
           'chain_leave',  # implemented
           'chain_purge',  # implemented
           #'chain_leaveif',
           #'find',
           #'find_minmax',
-          'while',        # implemented
+          'while',        # tested
           #'loop_times',
-          'copy',         # implemented
+          'copy',         # tested
           'output',       # tested
+          'xact_report',  # tested
           'review_cec',   # tested
           'move',         # tested
-          'iter_next',    # implemented
-          'iter_stop',    # implemented
+          'iter_next',    # broken
+          'iter_stop',    # broken
           'interrupt',    # implemented
-          'flush_cec'     # implemented
+          'flush_cec'     # broken
          ]
          
 builtins = [

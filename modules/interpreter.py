@@ -1,5 +1,6 @@
 import sys
 import random
+import copy
 import lexer
 import parser
 import structs
@@ -28,6 +29,8 @@ class Xact:
 		self.index = index
 		self.curblk = curblk
 		self.params = params
+		if 'pr' not in self.params.keys():
+			self.params['pr'] = 0
 		self.cond = 'injected'
 		self.eval_else = False
 	
@@ -51,14 +54,14 @@ def queue_enter(qid):
 	queues[qid].enters_q += 1
 	queues[qid].curxacts += 1
 	if xact.index in queues[qid].queuedxacts:
-		errors.print_error(39, xact.curblk+2)
+		errors.print_error(39, xact.curblk+1)
 	queues[qid].queuedxacts.append(xact.index)
 	xact.curblk += 1
 	xact.cond = 'canmove'
 	
 def queue_leave(qid):
 	if xact.index not in queues[qid].queuedxacts:
-		errors.print_error(40, xact.curblk+2)
+		errors.print_error(40, xact.curblk+1)
 	queues[qid].curxacts -= 1
 	queues[qid].queuedxacts.remove(xact.index)
 	xact.curblk += 1
@@ -88,7 +91,7 @@ def fac_enter(fid):
 	
 def fac_leave(fid):
 	if xact.index not in facilities[fid].busyxacts:
-		errors.print_error(42, xact.curblk+2)
+		errors.print_error(42, xact.curblk+1)
 	facilities[fid].curplaces += 1
 	facilities[fid].busyxacts.remove(xact.index)
 	review_cec()
@@ -100,7 +103,7 @@ def wait(time, tdelta):
 	futime = ints['curticks'].value + time + random.randint(-tdelta, tdelta)
 	xact.curblk += 1
 	xact.cond = 'waiting'
-	#print 'exit time =', futime
+	print 'exit time =', futime
 	futureChain.append([futime, xact])
 	
 def reject(decr):
@@ -117,9 +120,9 @@ def chain_enter(chid):
 def chain_leave(chid, cnt, toblk=''):
 	if toblk != '':
 		if toblk not in marks.keys():
-			errors.print_error(29, xact.curblk+2, [toblk])
+			errors.print_error(29, xact.curblk+1, [toblk])
 		if marks[toblk].block == -1:
-			errors.print_error(30, xact.curblk+2, [toblk])
+			errors.print_error(30, xact.curblk+1, [toblk])
 	move()
 	for i in range(cnt):
 		if len(chains[chid].xacts) == 0:
@@ -157,7 +160,7 @@ def if_block(cond):
 			break
 	if depth != 0:
 		errors.print_error(36, i)
-	xact.curblk = i - 1
+	xact.curblk = i
 	xact.cond = 'canmove'
 	xact.eval_else = True
 	
@@ -165,15 +168,15 @@ def else_if_block(cond):
 	if xact.eval_else:
 		if_block(cond)
 	else:
-	    if_block(False)
-	    xact.eval_else = False
+		if_block(False)
+		xact.eval_else = False
 	
 def else_block(args=[]):
 	if xact.eval_else:
 		if_block(True)
 	else:
-	    if_block(False)
-	    xact.eval_else = False
+		if_block(False)
+		xact.eval_else = False
 	
 def try_block(cond):
 	if cond:
@@ -199,7 +202,7 @@ def while_block(cond):
 			break
 	if depth != 0:
 		errors.print_error(37, i)
-	xact.curblk = i - 1
+	xact.curblk = i
 	xact.cond = 'canmove'
 
 def move(args=[]):
@@ -220,9 +223,9 @@ def transport_prob(block, prob, addblock=''):
 def transport_if(block, cond, addblock=''):
 	xact.cond = 'canmove'
 	if block not in marks.keys():
-		errors.print_error(29, xact.curblk+2, [block])
+		errors.print_error(29, xact.curblk+1, [block])
 	if marks[block].block == -1:
-		errors.print_error(30, xact.curblk+2, [block])
+		errors.print_error(30, xact.curblk+1, [block])
 		
 	if cond:
 		xact.curblk = marks[block].block-1
@@ -231,24 +234,40 @@ def transport_if(block, cond, addblock=''):
 			xact.curblk += 1
 		else:
 			if addblock not in marks.keys():
-				errors.print_error(29, xact.curblk+2, [addblock])
+				errors.print_error(29, xact.curblk+1, [addblock])
 			if marks[block].block == -1:
-				errors.print_error(30, xact.curblk+2, [addblock])
+				errors.print_error(30, xact.curblk+1, [addblock])
 			xact.curblk = marks[addblock].block-1
 
 def output(outstr):
-	print outstr
+	print '(T={!s}, L={!s}, X={!s})\t{!s}'.format(ints['curticks'].value, 
+	               xact.curblk+1, xact.index, outstr)
 	move()
 	
-def copy(cnt, toblk=''):
+def xact_report(args=[]):
+	move()
+	s = '\n'+'-'*20
+	s += '\nXact {!s} (group "{!s}") in line {!s} at beat {!s}:\n'.format(
+	     xact.index, xact.group, xact.curblk, ints['curticks'].value)
+	s += 'Priority: {!s}\n'.format(xact.params['pr'])
+	s1 = ''
+	for par in xact.params:
+		if par != 'pr':
+			s1 += '{!s} = {!s}\n'.format(par, xact.params[par])
+	s += 'Parameters:\n'+s1
+	s += '-'*20
+	print s
+	print
+	
+def copy_block(cnt, toblk=''):
 	if toblk != '':
 		if toblk not in marks.keys():
-			errors.print_error(29, xact.curblk+2, [toblk])
+			errors.print_error(29, xact.curblk+1, [toblk])
 		if marks[toblk].block == -1:
-			errors.print_error(30, xact.curblk+2, [toblk])
+			errors.print_error(30, xact.curblk+1, [toblk])
 	move()
 	for i in range(cnt):
-		xa = deepcopy(xact)
+		xa = copy.deepcopy(xact)
 		if toblk != '':
 			xa.curblk = marks[toblk].block - 1
 		else:
@@ -259,7 +278,7 @@ def copy(cnt, toblk=''):
 def iter_next(args=[]):
 	depth = -1
 	global toklines
-	for i in reversed(range(0, xact.curblk+1)):
+	for i in reversed(range(0, xact.curblk+2)):
 		if toklines[i][0][0] == 'lbrace':
 			depth += 1
 		elif toklines[i][0][0] == 'rbrace':
@@ -268,13 +287,14 @@ def iter_next(args=[]):
 			break
 	if depth != 0:
 		errors.print_error(38, '', ['iter_next()', xact.curblk+1])
+	print i
 	xact.curblk = i - 1
 	xact.cond = 'canmove'
 	
 def iter_stop(args=[]):
 	depth = 1
 	global toklines
-	for i in range(0, xact.curblk+1, len(toklines)):
+	for i in range(xact.curblk+1, len(toklines)):
 		if toklines[i][0][0] == 'lbrace':
 			depth += 1
 		elif toklines[i][0][0] == 'rbrace':
@@ -317,21 +337,22 @@ def start_interpreter(filepath):
 	
 	toklines = parser.tocodelines(tokens)
 	for line in toklines:
-		print str(toklines.index(line)+1).zfill(2),
+		print str(line[-1][0]).zfill(2),
 		print line
+	print
 	print_program()
 	
 	addDefaultVars()
 	skip = False
-	for line in toklines:
-		if line == [['lexec', '']]:
+	for line in toklines[1:]:
+		if line[0] == ['lexec', '']:
 			skip = True
-		elif line == [['rexec', '']]:
+		elif line[0] == ['rexec', '']:
 			skip = False
 			continue
 		if skip == True:
 			continue
-		lineindex = toklines.index(line)+1
+		lineindex = line[-1][0]
 		if line[0][0] == 'typedef':
 			defd = parser.parseDefinition(line)
 			dic = globals()[defd[0]+'s']
@@ -344,14 +365,14 @@ def start_interpreter(filepath):
 			if line[0][1] == 'exitwhen':
 				if exitcond != -1:
 					errors.print_error(23, lineindex)
-				exitcond = toklines.index(line)
+				exitcond = line[-1][0]
 			else:
 				errors.print_warning(1, lineindex)
 		else:
 			errors.print_warning(1, lineindex)
 	
 	ttt = raw_input('Read the info above, it may contain some warnings. When '\
-	                'ready, press any key')			
+					'ready, press any key')			
 	
 	for line in toklines:
 		if ['block', 'inject'] in line:
@@ -361,7 +382,14 @@ def start_interpreter(filepath):
 			
 	while True:
 		tempCurrentChain = []
-		#print 'timestep =', ints['curticks'].value
+		print 'timestep =', ints['curticks'].value
+		ttt = raw_input()
+		
+		# Statistics gathering.
+		for fac in facilities.values():
+			if fac.busyxacts:
+				fac.busyticks += len(fac.busyxacts)/float(fac.maxplaces)
+		
 		for xa in futureChain:
 			if xa[0] == ints['curticks'].value:
 				currentChain.append(xa[1])
@@ -377,14 +405,8 @@ def start_interpreter(filepath):
 				if checkExitCond():
 					break
 		futureChain = [xa for xa in futureChain if xa[0] != -1]
-		#print 'Future Events Chain: ', list(xa[0] for xa in futureChain)
-		#print 'Current Events Chain:', list(xa.index for xa in currentChain)
-		for fac in facilities.values():
-			if fac.busyxacts:
-				fac.busyticks += 1
-		if len(currentChain) == 0:
-			ints['curticks'].value += 1
-			continue
+		print 'Future Events Chain: ', list(xa[0] for xa in futureChain)
+		print 'Current Events Chain:', list(xa.index for xa in currentChain)
 			
 		restart = True
 		interrupt = False
@@ -398,9 +420,9 @@ def start_interpreter(filepath):
 				while True:
 					if xact.curblk+1 >= len(toklines):
 						errors.print_error(24, lineindex)
-					#print 'xact', xact.index, 'entering block', xact.curblk+2
+					print 'xact', xact.index, 'entering block', xact.curblk+1
 					cmd = parser.parseBlock(toklines[xact.curblk+1])
-					print cmd
+					#print cmd
 					#ttt = raw_input()
 					func = globals()[cmd[0]]
 					func(*cmd[1])
@@ -411,7 +433,7 @@ def start_interpreter(filepath):
 							restart = True
 						elif xact.cond == 'blocked':
 							tempCurrentChain.append(xact)
-							#print 'xact', xact.index, 'was blocked'
+							print 'xact', xact.index, 'was blocked'
 						elif xact.cond == 'interrupt':
 							tempCurrentChain.append(xact)
 							interrupt = True
@@ -450,14 +472,14 @@ def addDefaultVars():
 def print_program():
 	global toklines
 	prog = ''
-	for line in toklines:
-		prog += str(toklines.index(line)+1).zfill(2)
+	for line in toklines[1:]:
+		prog += str(line[-1][0]).zfill(2)
 		prog += '  '
 		for token in line:
 			t = ''
 			if token[0] in lexer.operators.values():
 				t = lexer.operators.keys()[lexer.operators.values()
-				                           .index(token[0])]
+										   .index(token[0])]
 				if t in ',:' or t == '->':
 					t += ' '
 				elif t == '{':
@@ -466,8 +488,8 @@ def print_program():
 					t = ' '+t+' '
 				prog += t
 			elif token[0] == 'word' or \
-			     token[0] == 'number' or token[0] == 'block' or \
-			     token[0] == 'builtin':
+				 token[0] == 'number' or token[0] == 'block' or \
+				 token[0] == 'builtin':
 				prog += token[1]
 			elif token[0] == 'string':
 				prog += '"'+token[1]+'"'
@@ -503,7 +525,7 @@ def print_results():
 		print '<<NO FACILITIES>>'
 	else:
 		print 'Name   \tMax xacts\tAuto queued\tEnters\t\t'\
-		      'Busyness\tCurrent xacts'
+			  'Busyness\tCurrent xacts'
 		print '- '*40
 		for fac in facilities.values():
 			print '{!s}   \t{!s}\t\t{!s}\t\t{!s}\t\t{:.3f}\t\t{!s}'.format(
@@ -519,7 +541,7 @@ def print_results():
 		print '- '*40
 		for qu in queues.values():
 			print '{}   \t\t{!s}\t\t{!s}'.format(
-			      qu.name, qu.enters_q, qu.curxacts)
+				  qu.name, qu.enters_q, qu.curxacts)
 	
 	if marks.keys():
 		print '\n\n----Marks:----'
@@ -547,7 +569,7 @@ def print_results():
 		print '- '*40
 		for xact in currentChain+tempCurrentChain:
 			print '{}\t\t{!s}   \t\t{!s}\t\t{}'.format(
-			      xact.group, xact.index, xact.curblk, xact.cond)
-			      
+				  xact.group, xact.index, xact.curblk, xact.cond)
+				  
 	print
 	print

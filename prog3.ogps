@@ -1,0 +1,12 @@
+mark exec;
+int i = 0;
+exitwhen(curticks > 3);
+{{
+inject("erm", 0,0,0,1);
+while(i < 5);
+{
+	copy(i, exec);
+	i++;
+}
+exec: reject(1);
+}}

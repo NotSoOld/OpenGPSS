@@ -3,48 +3,39 @@
 *	to buffer from RAM beforehand.
 */
 
-int bufer = 0;
+int buffer = 0;
 int BUFFER_CAPACITY = 20;
 int completedCommands = 0;
-fac RAM {isQueued = false, places = 1};
-fac CPUs{isQueued = false, places = 3};
-queue RAM;
-queue CPUs;
+fac RAM { places = 1 };
+fac CPUs{ isQueued = true, places = 3 };
 mark RAMCycle;
 mark CPUCycle;
 
-exitwhen(completedCommands > 1);
+exitwhen(completedCommands > 10);
 {{
 /* RAM imitation */
-: inject("RAM cycling Xact", 0, 0, 0, 1) {priority = 10, 
- 										  p1 = 4, 
- 										  p2 = 5, 
- 										  str1 = "ram"};
-RAMCycle: queue_enter(RAM);
-: fac_enter(RAM);
-: queue_leave(RAM);
-: wait(8, 3);
-: try(bufer < BUFFER_CAPACITY);
+inject("RAM cycling Xact", 0, 0, 0, 1) {priority = 10};
+RAMCycle: fac_enter(RAM);
+wait(10, 2);
+try(buffer < BUFFER_CAPACITY);
 {
-: fac_leave(RAM);
-: bufer++;
-: travel(RAMCycle);
+	fac_leave(RAM);
+	buffer++;
+	->> RAMCycle;
 }
 
 /* Multiple CPU system imitation */
-: inject("CPUs cycling Xact", 0, 0, 0, 3);
-CPUCycle: try(bufer > 0);
+inject("CPUs cycling Xact", 0, 0, 0, 3);
+CPUCycle: try(buffer > 0);
 {
-: queue_enter(CPUs);
-: fac_enter(CPUs);
-: bufer--;
-: queue_leave(CPUs);
-: wait(15, 6);
-: fac_leave(CPUs);
-: completedCommands++;
-/* It was maybe a command which will erase buffer: */
-: travel(CPUCycle, 0.9);
-: bufer = 0;
-: travel(CPUCycle);
+	fac_enter(CPUs);
+	buffer--;
+	wait(30, 6);
+	fac_leave(CPUs);
+	completedCommands++;
+	/* It was maybe a command which will erase buffer: */
+	->| CPUCycle, 0.9;
+	buffer = 0;
+	->> CPUCycle;
 }
 }}
