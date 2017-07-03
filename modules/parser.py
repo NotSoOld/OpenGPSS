@@ -106,6 +106,7 @@ def parseDefinition(line):
 			errors.print_error(12, lineindex, ['=', peek(0)])
 			
 	elif deftype == 'fac':
+		deftype = 'facilitie'
 		if tok[0] == 'eocl':
 			newobj = structs.Facility(name, 1, True)
 			# Note: let the interpreter create a queue for facility.
@@ -141,7 +142,6 @@ def parseDefinition(line):
 					continue
 				errors.print_error(4, lineindex, [peek(0)])
 			newobj = structs.Facility(name, places, isQueued)
-			deftype = 'facilitie'
 		else:
 			errors.print_error(12, lineindex, ['{', peek(0)])
 		
@@ -327,8 +327,10 @@ def evaluateAssignment(prim, sec, assg, key):
 	#print prim, sec, assg, key
 	if assg in assgs:
 		attr = getattr(interpreter, prim)
+		print attr
 		if sec != '': # xact.params[key]
 			attr = getattr(attr, sec)
+			print attr
 			if assg == 'inc':
 				if type(attr[key]) is str or type(attr[key]) is bool:
 					errors.print_error(7, lineindex, ['inc'])
@@ -646,7 +648,7 @@ def parsePrimary():
 			elif tk[1] in queue_params and tok[1] in interpreter.queues:
 				val = getattr(interpreter.queues[tok[1]], tk[1])
 				
-			elif tk[1] in queue_params and tok[1] in interpreter.chains:
+			elif tk[1] in chain_params and tok[1] in interpreter.chains:
 				val = getattr(interpreter.chains[tok[1]], tk[1])
 			
 			elif tok[1] == 'xact':
@@ -704,9 +706,23 @@ def parsePrimary():
 
 def parseBuiltin():
 	fun = getattr(builtins, peek(0)[1])
+	args = []
 	nexttok()
-	nexttok()
-	return fun(parseExpression())
+	consume('lparen')
+	while True:
+		if matchtok('rparen'):
+			break
+		args.append(parseExpression())
+		if peek(0)[0] == 'comma':
+			consume('comma')
+			continue
+		elif peek(0)[0] == 'rparen':
+			consume('rparen')
+			break;
+		else:
+			errors.print_error(16, lineindex, [peek(0)])
+
+	return fun(*args)
 
 def consume(toktype, toktext=''):
 	global pos

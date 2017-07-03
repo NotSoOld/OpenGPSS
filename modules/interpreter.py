@@ -29,15 +29,14 @@ class Xact:
 		self.index = index
 		self.curblk = curblk
 		self.params = params
-		if 'pr' not in self.params.keys():
-			self.params['pr'] = 0
+		#if 'pr' not in self.params.keys():
+		#	self.params['pr'] = 0
 		self.cond = 'injected'
 		self.eval_else = False
 	
 def inject(injector):
 	# Limit should be checked before calling this.
 	global futureChain
-	global curxact
 	global ints
 	xa = Xact(injector.group, ints['injected'].value, injector.block, injector.params)
 	ints['injected'].value += 1
@@ -110,6 +109,14 @@ def reject(decr):
 	global ints
 	ints['rejected'].value += decr
 	xact.curblk += 1
+	for fac in facilities.keys():
+		if xact.index in facilities[fac].busyxacts:
+			fac_leave(fac)
+			xact.curblk -= 1
+	for qu in queues.keys():
+		if xact.index in queues[qu].queuedxacts:
+			queue_leave(qu)
+			xact.curblk -= 1
 	xact.cond = 'rejected'
 	
 def chain_enter(chid):
@@ -240,8 +247,10 @@ def transport_if(block, cond, addblock=''):
 			xact.curblk = marks[addblock].block-1
 
 def output(outstr):
-	print '(T={!s}, L={!s}, X={!s})\t{!s}'.format(ints['curticks'].value, 
-	               xact.curblk+1, xact.index, outstr)
+	print '(T={!s}'.format(ints['curticks'].value).ljust(9) + \
+	       'L={!s}'.format(xact.curblk+1).ljust(8) + \
+	      'X={!s})'.format(xact.index).ljust(8) + \
+	      '{!s}'.format(outstr)
 	move()
 	
 def xact_report(args=[]):
@@ -260,6 +269,7 @@ def xact_report(args=[]):
 	print
 	
 def copy_block(cnt, toblk=''):
+	global ints
 	if toblk != '':
 		if toblk not in marks.keys():
 			errors.print_error(29, xact.curblk+1, [toblk])
@@ -273,6 +283,8 @@ def copy_block(cnt, toblk=''):
 		else:
 			xa.curblk += 1
 		xa.cond = 'canmove'
+		xa.index = ints['injected'].value
+		ints['injected'].value += 1
 		tempCurrentChain.append(xa)
 		
 def iter_next(args=[]):
@@ -312,6 +324,14 @@ def interrupt(args=[]):
 	
 def flush_cec(args=[]):
 	move()
+	for fac in facilities.keys():
+		if xact.index in facilities[fac].busyxacts:
+			fac_leave(fac)
+			xact.curblk -= 1
+	for qu in queues.keys():
+		if xact.index in queues[qu].queuedxacts:
+			queue_leave(qu)
+			xact.curblk -= 1
 	xact.cond = 'flush'
 	
 	
@@ -355,6 +375,7 @@ def start_interpreter(filepath):
 		lineindex = line[-1][0]
 		if line[0][0] == 'typedef':
 			defd = parser.parseDefinition(line)
+			#print defd
 			dic = globals()[defd[0]+'s']
 			if defd[1] in dic.keys():
 				errors.print_error(22, lineindex, [defd[1], defd[0]])
@@ -405,15 +426,20 @@ def start_interpreter(filepath):
 				if checkExitCond():
 					break
 		futureChain = [xa for xa in futureChain if xa[0] != -1]
+		currentChain = sorted(currentChain, key=lambda xa: xa.params['pr'])
+		currentChain.reverse()
 		print 'Future Events Chain: ', list(xa[0] for xa in futureChain)
-		print 'Current Events Chain:', list(xa.index for xa in currentChain)
-			
+		
 		restart = True
 		interrupt = False
 		flush = False
 		while restart:
+			currentChain = sorted(currentChain, key=lambda xa: xa.params['pr'])
+			currentChain.reverse()
+			print 'Current Events Chain:', list(xa.index for xa in currentChain)
 			restart = False
-			for xact in currentChain:
+			for cxact in currentChain:
+				xact = copy.deepcopy(cxact)
 				if restart or interrupt:
 					tempCurrentChain.append(xact)
 					continue
@@ -428,6 +454,8 @@ def start_interpreter(filepath):
 					func(*cmd[1])
 				
 					if xact.cond != 'canmove':
+						if xact.cond == 'rejected':
+							restart = True
 						if xact.cond == 'passagain':
 							tempCurrentChain.append(xact)
 							restart = True

@@ -76,9 +76,9 @@ blocks = [
           'else_if',      # tested
           'else',         # tested
           'try',          # tested
-          'chain_enter',  # implemented
-          'chain_leave',  # implemented
-          'chain_purge',  # implemented
+          'chain_enter',  # tested
+          'chain_leave',  # tested
+          'chain_purge',  # tested
           #'chain_leaveif',
           #'find',
           #'find_minmax',
@@ -89,10 +89,12 @@ blocks = [
           'xact_report',  # tested
           'review_cec',   # tested
           'move',         # tested
-          'iter_next',    # broken
-          'iter_stop',    # broken
-          'interrupt',    # implemented
-          'flush_cec'     # broken
+          'iter_next',    # --broken
+          'iter_stop',    # --broken
+          'interrupt',    # tested
+          'flush_cec'     # tested
+          #'pause_by_user'
+          #'system_info'
          ]
          
 builtins = [

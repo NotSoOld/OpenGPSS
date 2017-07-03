@@ -69,9 +69,6 @@ class Injector:
 		else:
 			self.limit = limit
 		self.block = block
-		if 'priority' in params.keys():
-			self.pr = params['priority']
-			del params['priority']
-		else:
-			self.pr = 0
+		if 'pr' not in params.keys():
+			params['pr'] = 0
 		self.params = params
