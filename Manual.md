@@ -53,9 +53,9 @@ assignments to variables or xact parameters (and increments/decrements):
 
 and single braces for *try* and *if*/*else_if*/... blocks.
 
-Every line in executive area (except braces) starts with *mark separator* ':', if no mark points to this line, or with name of the mark followed by mark separator. In other words, presence of mark separator in the line means that xact can be transported to this line.
+Every line in executive area (except curly braces) starts with name of the mark followed by mark separator. In other words, presence of mark separator in the line means that xact can be transported to this line. Curly braces **cannot** be addressed, it will lead to errors.
 
-If xact reaches some executive line, it tries to execute it (except single braces and *inject* block - it executes automatically) using its own parameters if needed.
+If xact reaches some executive line, it tries to execute it (except single curly braces and *inject* block - it executes automatically) using its own parameters if needed.
 
 Nearly every parameter - queue/facility name, *wait*/*travel*/*if* parameters - can be not just words, but complex expressions. They will be parsed to a string/number before block execution. (Except parameters in definitions and *inject* block, because these are parsed before any execution of blocks starts.)
 
@@ -90,6 +90,14 @@ Just a variable which can hold an integer value and be accessed by its name. Ran
 Notes:
 
 \- If a float value is assigned to int variable, it is implicitly converted to int.
+
+\- There are three read-only default integer variables which are used by interpreter and can be accessed by user:
+
+injected - count of xacts injected by injectors of the system;
+
+rejected - count of xacts rejected from the system through *reject* blocks;
+
+curticks - how long simulation is going.
 
 - float
 
@@ -140,7 +148,7 @@ Parameters: none.
 ### inject - add xacts into your system
 - Prototype: 
 ```
-:inject(
+inject(
          string xact_group_name, 
          int time, 
          int timedelta, 
@@ -152,7 +160,7 @@ Parameters: none.
          f1 = float, 
          str1 = string, 
          b1 = bool, 
-         priority = int/float, 
+         priority = int/float (default == 0), 
          custom_name_parameter = string
         };
 ```
@@ -160,10 +168,10 @@ Parameters: none.
 
 This block will add an xact of group *xact\_group\_name* every *time* beats until it reaches its *inject\_limit*. Xacts will start moving from the line where *inject* block stands. Time between injections can be modified: first xact can be delayed by *initdelay* beats, and *time* parameter can be randomized to *time±timedelta* with even distribution.
 
-{parameters} are optional (if you don't use them, just leave no braces or empty braces). p\* are names for integer parameters, f\* - for float parameters and str\* - for string parameters (their types will be recognized automatically). *priority* is a special number parameter to define priority to xacts. Priority can be used for controlling the order of a processing, etc.
+{parameters} are optional (if you don't use them, just leave no braces or empty braces). p\* are names for integer parameters, f\* - for float parameters, b\* - for boolean parameters and str\* - for string parameters (their types will be recognized automatically). "\*" can be anything from number to string. *priority* is a special number parameter to define priority to xacts. Priority can be used for controlling the order of a processing, etc.
 - Example:
 ```
-:inject("main", 10, 4, 0, 250) {p1 = 0, priority = 10};
+inject("main", 10, 4, 0, 250) {p1 = 0, priority = 10};
 ```
 - Additional hacks:
 
@@ -178,7 +186,7 @@ This block will add an xact of group *xact\_group\_name* every *time* beats unti
 ### queue_enter - enter unordered queue to gather statistics
 - Prototype:
 ```
-:queue_enter(
+queue_enter(
              word queue_name
             );
 ```
@@ -188,7 +196,7 @@ This block will queue executing xact in the queue *queue\_name*.
 
 - Example:
 ```
-:queue_enter(CPU);
+queue_enter(CPU);
 ```
 - Additional hacks:
 
@@ -197,7 +205,7 @@ This block will queue executing xact in the queue *queue\_name*.
 ### queue_leave - leave previously entered unordered queue
 - Prototype:
 ```
-:queue_leave(
+queue_leave(
              word queue_name
             );
 ```
@@ -207,7 +215,7 @@ This block will remove current xact from queue *queue\_name*. If xact will try t
 
 - Example:
 ```
-:queue_leave(CPU);
+queue_leave(CPU);
 ```
 - Additional hacks:
 
@@ -216,19 +224,20 @@ This block will remove current xact from queue *queue\_name*. If xact will try t
 ### fac_enter - occupy facility by taking one of its free places
 - Prototype:
 ```
-:fac_enter(
-             word fac_name
-            );
+fac_enter(
+          word fac_name,
+          int xact_volume (default == 1)
+         );
 ```
 - Usage:
 
-This block is used to simulate a facility which can be occupied by some number of xacts. If facility *fac\_name* has free places, xact will move further and will be present in facility's busyness list. If facility is fully busy, xact will stop at this block and will try to enter this facility again every beat until it proceeds.
+This block is used to simulate a facility which can be occupied by some number of xacts. If facility *fac\_name* has free places, xact will move further and will be present in facility's busyness list. If facility is fully busy, xact will stop at this block and will try to enter this facility again every beat until it proceeds. Xact can occupy more than one facility 'seat', it can be set by *xact\_volume* argument.
 
 *fac\_enter* is usually queued by *queue\_enter* and *queue\_leave* blocks to gather iformation about how long xacts wait to enter busy facility and how much of them are waiting.
 
 - Example:
 ```
-:fac_enter(CPU);
+fac_enter(CPU);
 ```
 - Additional hacks:
 
@@ -239,9 +248,9 @@ This block is used to simulate a facility which can be occupied by some number o
 ### fac_leave - free a place in previously occupied facility
 - Prototype:
 ```
-:fac_leave(
-             word fac_name
-            );
+fac_leave(
+          word fac_name
+         );
 ```
 - Usage:
 
@@ -249,13 +258,77 @@ This block will free a place in facility *fac\_name*, triggering CEC review to g
 
 - Example:
 ```
-:fac_leave(CPU);
+fac_leave(CPU);
 ```
 - Additional hacks:
 
 \- Facility name can be an expression with string result (for example, name of one of the facilities).
 
 \- This block automatically triggers interpreter to review CEC.
+
+### reject - delete xact entirely from system
+- Prototype:
+```
+reject(
+       int reject_counter_inc
+      );
+```
+- Usage:
+
+This block is used to delete xacts from system. It means that xact will not move through model anymore and will be erased from CEC. *reject\_counter\_inc* defines how much should be added to reject counter default variable.
+
+- Example:
+```
+reject(1);
+```
+- Additional hacks:
+
+\- If you are so inattentive that you send xacts to block *reject* which are in some facilities/queues, interpreter will automatically erase these xacts from corresponding facilities/queues.
+
+\- This block automatically triggers interpreter to review CEC (because of previous hack - after deleting xact from facility this facility can be occupied by other xacts).
+
+### wait - move xact to FEC for some amount of time
+- Prototype:
+```
+wait(
+     int time_to_wait,
+     int time_delta (default == 0)
+    );
+```
+- Usage:
+
+This block is used to simulate processing of a xact. It moves xact to FEC (preventing it from moving through model immediately) setting its exit time to *time\_to\_wait±time\_delta* (with even distribution).
+
+- Example:
+```
+wait(8, 3);
+```
+
+### transport family blocks ("->>", "->|", "->?") - transport xact or fork the path of xact
+- Prototypes:
+```
+->> word markname;
+->| word markname_if_true, 
+    float probability, 
+    word markname_if_false (default == block next to this block)
+->? word markname_if_true,
+    expression condition,
+    word markname_if_false (default == block next to this block)
+```
+- Usage:
+
+These blocks are used to transport xacts from one point in model to another. Transportation can be unconditional (*->>*), depend on probability (*->|*) or depend on condition (*->?*). You can also determine where xacts should go if probability/condition check fails (by default they will just go further through the model).
+
+- Examples:
+```
+->> CPU_mark;
+->| Mark1, 0.4, jmp;
+->? mark, xact.pr > 10;
+```
+- Additional hacks:
+
+\- If you don't like "->" notation, you can use block names as following: *transport()*, *transport\_prob()*, *transport\_if()*.
+
 
 
 ## Built-in functions

@@ -50,15 +50,19 @@ def inject(injector):
 	futureChain.append([futime, xa])
 
 def queue_enter(qid):
-	queues[qid].enters_q += 1
-	queues[qid].curxacts += 1
+	if qid not in queues.keys():
+		errors.print_error(44, xact.curblk+1, [qid])
 	if xact.index in queues[qid].queuedxacts:
 		errors.print_error(39, xact.curblk+1)
+	queues[qid].enters_q += 1
+	queues[qid].curxacts += 1
 	queues[qid].queuedxacts.append(xact.index)
 	xact.curblk += 1
 	xact.cond = 'canmove'
 	
 def queue_leave(qid):
+	if qid not in queues.keys():
+		errors.print_error(44, xact.curblk+1, [qid])
 	if xact.index not in queues[qid].queuedxacts:
 		errors.print_error(40, xact.curblk+1)
 	queues[qid].curxacts -= 1
@@ -66,14 +70,16 @@ def queue_leave(qid):
 	xact.curblk += 1
 	xact.cond = 'canmove'
 	
-def fac_enter(fid):
+def fac_enter(fid, v=1):
+	if fid not in facilities.keys():
+		errors.print_error(43, xact.curblk+1, [fid])
 	if facilities[fid].isQueued:
 		if xact.index not in queues[fid].queuedxacts:
 			queue_enter(fid)
 			xact.curblk -= 1
 		
-	if facilities[fid].curplaces > 0:
-		facilities[fid].curplaces -= 1
+	if facilities[fid].curplaces - v >= 0:
+		facilities[fid].curplaces -= v
 		facilities[fid].enters_f += 1
 		if xact.index in facilities[fid].busyxacts:
 			errors.print_error(41, xact.curblk+1)
@@ -91,11 +97,13 @@ def fac_enter(fid):
 def fac_leave(fid):
 	if xact.index not in facilities[fid].busyxacts:
 		errors.print_error(42, xact.curblk+1)
+	if fid not in facilities.keys():
+		errors.print_error(43, xact.curblk+1, [fid])
 	facilities[fid].curplaces += 1
 	facilities[fid].busyxacts.remove(xact.index)
 	review_cec()
 	
-def wait(time, tdelta):
+def wait(time, tdelta=0):
 	global futureChain
 	global ints
 	random.seed()
@@ -286,37 +294,6 @@ def copy_block(cnt, toblk=''):
 		xa.index = ints['injected'].value
 		ints['injected'].value += 1
 		tempCurrentChain.append(xa)
-		
-def iter_next(args=[]):
-	depth = -1
-	global toklines
-	for i in reversed(range(0, xact.curblk+2)):
-		if toklines[i][0][0] == 'lbrace':
-			depth += 1
-		elif toklines[i][0][0] == 'rbrace':
-			depth -= 1
-		if depth == 0:
-			break
-	if depth != 0:
-		errors.print_error(38, '', ['iter_next()', xact.curblk+1])
-	print i
-	xact.curblk = i - 1
-	xact.cond = 'canmove'
-	
-def iter_stop(args=[]):
-	depth = 1
-	global toklines
-	for i in range(xact.curblk+1, len(toklines)):
-		if toklines[i][0][0] == 'lbrace':
-			depth += 1
-		elif toklines[i][0][0] == 'rbrace':
-			depth -= 1
-		if depth == 0:
-			break
-	if depth != 0:
-		errors.print_error(38, '', ['iter_stop()', xact.curblk+1])
-	xact.curblk = i - 1
-	xact.cond = 'canmove'
 	
 def interrupt(args=[]):
 	move()
@@ -334,6 +311,13 @@ def flush_cec(args=[]):
 			xact.curblk -= 1
 	xact.cond = 'flush'
 	
+def pause_by_user(s=''):
+	print 'Paused in line {!s}'.format(xact.curblk+1),
+	if s:
+		print ': {!s}'.format(s)
+	print 'Press any key to continue.'
+	trash = raw_input()
+	move()
 	
 ###############################################################
 
@@ -356,6 +340,7 @@ def start_interpreter(filepath):
 	global ints
 	
 	toklines = parser.tocodelines(tokens)
+	toklines = parser.convertBlocks(toklines)
 	for line in toklines:
 		print str(line[-1][0]).zfill(2),
 		print line
@@ -570,6 +555,16 @@ def print_results():
 		for qu in queues.values():
 			print '{}   \t\t{!s}\t\t{!s}'.format(
 				  qu.name, qu.enters_q, qu.curxacts)
+				  
+	print '\n\n----User chains:----'
+	if not queues.keys():
+		print '<<NO USER CHAINS>>'
+	else:
+		print 'Name   \t\tLength\t\tCurrent xacts'
+		print '- '*40
+		for ch in chains.values():
+			print '{}   \t\t{!s}\t\t{!s}'.format(
+				  ch.name, ch.length, [xa.index for xa in ch.xacts])
 	
 	if marks.keys():
 		print '\n\n----Marks:----'

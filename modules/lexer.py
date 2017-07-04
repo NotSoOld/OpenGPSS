@@ -72,6 +72,9 @@ blocks = [
           'queue_enter',  # tested
           'queue_leave',  # tested
           'wait',         # tested
+          'transport',    # tested
+          'transport_prob',#tested
+          'transport_if', # tested
           'if',           # tested
           'else_if',      # tested
           'else',         # tested
@@ -89,11 +92,11 @@ blocks = [
           'xact_report',  # tested
           'review_cec',   # tested
           'move',         # tested
-          'iter_next',    # --broken
-          'iter_stop',    # --broken
+          'iter_next',    # tested
+          'iter_stop',    # tested
           'interrupt',    # tested
-          'flush_cec'     # tested
-          #'pause_by_user'
+          'flush_cec',    # tested
+          'pause_by_user' # tested
           #'system_info'
          ]
          

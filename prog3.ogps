@@ -3,10 +3,19 @@ int i = 0;
 exitwhen(curticks > 3);
 {{
 inject("erm", 0,0,0,1);
-while(i < 5);
+exec: while(i < 10);
 {
-	copy(i, exec);
 	i++;
+	if(i == 4);
+	{
+		iter_next();
+	}
+	else_if(i == 7);
+	{
+		iter_stop();
+	}
+	output(i);
 }
-exec: reject(1);
+pause_by_user("After cycle");
+reject(1);
 }}

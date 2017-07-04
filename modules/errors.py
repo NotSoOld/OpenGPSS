@@ -47,7 +47,9 @@ errors = {
           39:'Xact is trying to enter queue which it already entered',
           40:'Xact is trying to leave queue which it did not enter',
           41:'Xact is trying to occupy facility which it already occupies',
-          42:'Xact is trying to leave facility which it did not occupy'
+          42:'Xact is trying to leave facility which it did not occupy',
+          43:'No such facility: {}',
+          44:'No such queue: {}'
          }
 
 warnings = {

@@ -3,6 +3,7 @@ import structs
 import interpreter
 import errors
 import builtins
+import copy
 
 pos = 0
 tokline = []
@@ -60,6 +61,96 @@ def tocodelines(program):
 			if i >= len(program):
 				errors.print_error(2, '')
 	return parsed
+
+def convertBlocks(lines):
+	num = 0
+	nesting = []
+	skip = True
+	for i in range(len(lines)):
+		if lines[i][0][0] == 'lexec':
+			skip = False
+		if lines[i][0][0] == 'rexec':
+			skip = True
+		if skip:
+			continue
+		if lines[i][0][0] == 'lbrace':
+			if ['block', 'if'] in lines[i-1]:
+				nesting.append('if')
+			elif ['block', 'else_if'] in lines[i-1]:
+				nesting.append('else_if')
+			elif ['block', 'else'] in lines[i-1]:
+				nesting.append('else')
+			elif ['block', 'try'] in lines[i-1]:
+				nesting.append('try')
+			elif ['block', 'while'] in lines[i-1]:
+				nesting.append('while')
+		elif lines[i][0][0] == 'rbrace':
+			nesting.pop()
+		elif ['block', 'iter_next'] in lines[i]:
+			nest = copy.copy(nesting)
+			for j in reversed(range(0, i)):
+				if lines[j][0][0] == 'lbrace':
+					n = nest.pop()
+					if n == 'while':
+						l = []
+						if lines[i][1][0] == 'marksep':
+							l = lines[i][0:2]
+						if lines[j-1][1][0] == 'marksep':
+							lines[i] = l + [['transport', ''], ['gt', ''],
+							                lines[j-1][0], ['eocl', ''],
+							                lines[i][-1]]
+						else:
+							lines[j-1] = [['word', '&while'+str(num)],
+							              ['marksep', '']] + lines[j-1]
+							lines.append([['typedef', 'mark'],
+							              ['word', '&while'+str(num)],
+							              ['eocl', ''],
+							              [len(lines), 0, 0]])
+							lines[i] = l + [['transport', ''], ['gt', ''],
+							                ['word', '&while'+str(num)],
+							                ['eocl', ''], lines[i][-1]]
+							num += 1
+						break
+						
+				elif lines[j][0][0] == 'rbrace':
+					nest.append('smth')
+		
+		elif ['block', 'iter_stop'] in lines[i]:
+			nest = copy.copy(nesting)
+			for j in reversed(range(0, i)):
+				if lines[j][0][0] == 'lbrace':
+					n = nest.pop()
+					if n == 'while':
+						break
+							
+				elif lines[j][0][0] == 'rbrace':
+					nest.append('smth')
+			depth = 0
+			for k in range(j, len(lines)):
+				if lines[k][0][0] == 'lbrace':
+					depth += 1
+				elif lines[k][0][0] == 'rbrace':
+					depth -= 1
+				if depth == 0:
+					break
+			lines.append([['typedef', 'mark'],
+						  ['word', '&while'+str(num)],
+						  ['eocl', ''],
+						  [len(lines), 0, 0]])
+			l = []
+			if lines[i][1][0] == 'marksep':
+				l = lines[i][0:2]
+			lines[i] = l + [['transport', ''], ['gt', ''],
+			                ['word', '&while'+str(num)],
+							['eocl', ''], lines[i][-1]]
+			newln = [['word', '&while'+str(num)], ['marksep', ''],
+			         ['block', 'move'], ['lparen', ''], ['rparen', ''],
+			         ['eocl', ''], [k+1, 0, 0]]
+			lines = lines[0:k+1] + [newln] + lines[k+1:]
+			for j in range(k+2, len(lines)):
+				lines[j][-1][0] += 1
+		
+	return lines
 
 def parseDefinition(line):
 	global pos
@@ -201,9 +292,7 @@ def parseBlock(line):
 	
 	elif tok[0] == 'rbrace':
 		depth = 0
-		print interpreter.xact.curblk
 		for i in reversed(range(0, interpreter.xact.curblk+2)):
-			print 'i = '+str(i)
 			if interpreter.toklines[i][0][0] == 'rbrace':
 				depth += 1
 			elif interpreter.toklines[i][0][0] == 'lbrace':
@@ -213,7 +302,6 @@ def parseBlock(line):
 		if depth != 0:
 			errors.print_error(38, '', ['}', xact.curblk+1])
 		i -= 1
-		print i
 		if ['block', 'while'] in interpreter.toklines[i]:
 			interpreter.xact.curblk = i - 1
 			interpreter.xact.cond = 'canmove'
@@ -327,10 +415,8 @@ def evaluateAssignment(prim, sec, assg, key):
 	#print prim, sec, assg, key
 	if assg in assgs:
 		attr = getattr(interpreter, prim)
-		print attr
 		if sec != '': # xact.params[key]
 			attr = getattr(attr, sec)
-			print attr
 			if assg == 'inc':
 				if type(attr[key]) is str or type(attr[key]) is bool:
 					errors.print_error(7, lineindex, ['inc'])
