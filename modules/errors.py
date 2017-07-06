@@ -42,14 +42,18 @@ errors = {
           34:'What type of transport is there? Expected ">", "|" or "?", got "{}"',
           35:'Condition or probability argument is missing',
           36:'"}}" for "if"/"else_if"/"else" block is missing',
-          37:'"}}" for "while" block is missing',
+          37:'"}}" for "while"/"loop_times" block is missing',
           38:'Cannot find the "owner" (block) of "{}" in line "{}"',
           39:'Xact is trying to enter queue which it already entered',
           40:'Xact is trying to leave queue which it did not enter',
           41:'Xact is trying to occupy facility which it already occupies',
           42:'Xact is trying to leave facility which it did not occupy',
           43:'No such facility: {}',
-          44:'No such queue: {}'
+          44:'No such queue: {}',
+          45:'Expected ","; got end of line during parsing "loop_times" block',
+          46:'Cannot do assignment; "{}" is a read-only value',
+          47:'Xact is trying to interrupt facility which it already occupies',
+          48:'Xact is trying to go away from facility which it did not interrupt'
          }
 
 warnings = {

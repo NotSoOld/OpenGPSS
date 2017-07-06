@@ -34,8 +34,9 @@ class Facility:
 		self.maxplaces = places
 		self.isQueued = isQueued
 		self.curplaces = places
+		self.irruptch = []
 		# For stats
-		self.busyxacts = []
+		self.busyxacts = {}
 		self.busyticks = 0
 		self.enters_f = 0
 		

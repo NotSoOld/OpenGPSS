@@ -43,7 +43,8 @@ def inject(injector):
 	if injector.limit != -1:
 		injector.limit -= 1
 	random.seed()
-	futime = ints['curticks'].value + injector.time + random.randint(-injector.tdelta, injector.tdelta)
+	futime = ints['curticks'].value + injector.time + \
+	         random.randint(-injector.tdelta, injector.tdelta)
 	if injector.tdelay != 0:
 		futime += injector.tdelay
 		injector.tdelay = 0
@@ -83,7 +84,7 @@ def fac_enter(fid, v=1):
 		facilities[fid].enters_f += 1
 		if xact.index in facilities[fid].busyxacts:
 			errors.print_error(41, xact.curblk+1)
-		facilities[fid].busyxacts.append(xact.index)
+		facilities[fid].busyxacts[xact.index] = [v, 'entered']
 		#print 'added xact '+str(xact.index)+' to facility '+fid
 		
 		if facilities[fid].isQueued:
@@ -99,9 +100,164 @@ def fac_leave(fid):
 		errors.print_error(42, xact.curblk+1)
 	if fid not in facilities.keys():
 		errors.print_error(43, xact.curblk+1, [fid])
-	facilities[fid].curplaces += 1
-	facilities[fid].busyxacts.remove(xact.index)
+	leaving = facilities[fid].busyxacts[xact.index]
+	facilities[fid].curplaces += leaving[0]
+	del facilities[fid].busyxacts[xact.index]
 	review_cec()
+	
+def fac_irrupt(fid, vol, eject=False, mark='', elapsedto=[]):
+	# (fac, 1) === (fac, 1, False)
+	# (fac, 1, True) <-- eject xact and call move() for it
+	# (fac, 1, True, mark1) <-- eject to mark1
+	# (fac, 1, True, mark1, xact.p1) or
+	# (fac, 1, True, '', xact.p1) <-- in addition, save elapsed time to xact.p1
+	# (fac, 1, False) <-- flush to irrupt chain and save elapsed time
+	# (fac, 1, False, ...) <-- prohibited!
+	if fid not in facilities.keys():
+		errors.print_error(43, xact.curblk+1, [fid])
+	if xact.index in facilities[fid].busyxacts:
+		errors.print_error(47, xact.curblk+1)
+	if mark != '':
+		if mark not in marks.keys():
+			errors.print_error(29, xact.curblk+1, [mark])
+		if marks[mark].block == -1:
+			errors.print_error(30, xact.curblk+1, [mark])
+	
+	if facilities.maxplaces < vol:
+		move()
+		return
+	if facilities[fid].curplaces == facilities[fid].maxplaces:
+		fac_enter(fid, vol)
+		return
+		
+	while True:
+		if facilities[fid].curplaces == vol:
+			break
+			
+		# Take xact info from busy xacts.
+		ir_vol = facilities[fid].busyxacts[facilities[fid].busyxacts.keys()[-1]]
+		ir_index = facilities[fid].busyxacts.keys()[-1]
+		# Free facility from this xact.
+		del facilities[fid].busyxacts[ir_index]
+		facilities[fid].curplaces += ir_vol[0]
+		# Find this xact in one of system chains and pull it to CEC/irrput chain.
+		found = False
+		for i in range(len(currentChain)):
+			if currentChain[i].index == ir_index:
+				found = True
+				break
+		if found:
+			if eject:
+				xa = copy.deepcopy(currentChain[i])
+				xa.cond = 'canmove'
+				if mark == '':
+					xa.curblk = xact.curblk + 1
+				else:
+					xa.curblk = marks[mark].block - 1
+				# additionally parse assignment here (elapsed time = 0)
+				if elapsedto != []:
+					elapsedto += [['eq', ''], ['number', 0], ['eocl', '']]
+					# We need 'xa' for assignment:
+					oldxact = copy.deepcopy(xact)
+					xact = xa
+					parser.parseAssignment(elapsedto)
+					xact = oldxact
+				currentChain.append(xa)
+			else:
+				facilities[fid].irruptch.append([copy.deepcopy(currentChain[i]), 
+				                               0, ir_vol])
+			del currentChain[i]
+			continue
+			
+		found = False
+		for i in range(len(futureChain)):
+			if futureChain[i][1].index == ir_index:
+				found = True
+				break
+		if found:
+			if eject:
+				xa = copy.deepcopy(futureChain[i][1])
+				xa.cond = 'canmove'
+				if mark == '':
+					xa.curblk = xact.curblk + 1
+				else:
+					xa.curblk = marks[mark].block - 1
+				# additionally parse assignment here 
+				# (elapsed time = futureChain[i][0] - ints['curticks'])
+				if elapsedto != []:
+					elapsed = futureChain[i][0] - ints['curticks']
+					elapsedto += [['eq', ''], ['number', elapsed], ['eocl', '']]
+					# We need 'xa' for assignment:
+					oldxact = copy.deepcopy(xact)
+					xact = xa
+					parser.parseAssignment(elapsedto)
+					xact = oldxact
+				currentChain.append(xa)
+			else:
+				facilities[fid].irruptch.append(
+				     [copy.deepcopy(futureChain[i][1]),
+				     futureChain[i][0] - ints['curticks'], ir_vol])
+			del futureChain[i]
+			continue
+			
+		for ch in chains.keys():
+			found = False
+			for i in range(chains[ch].length):
+				if chains[ch].xacts[i].index == ir_index:
+					found = True
+					break
+			if found:
+				if eject:
+					xa = copy.deepcopy(chains[ch].xacts[i])
+					xa.cond = 'canmove'
+					if mark == '':
+						xa.curblk = xact.curblk + 1
+					else:
+						xa.curblk = marks[mark].block - 1
+					# additionally parse assignment here 
+					# (elapsed time = 0)
+					if elapsedto != []:
+						elapsedto += [['eq', ''], ['number', 0], ['eocl', '']]
+						# We need 'xa' for assignment:
+						oldxact = copy.deepcopy(xact)
+						xact = xa
+						parser.parseAssignment(elapsedto)
+						xact = oldxact
+					currentChain.append(xa)
+				else:
+					facilities[fid].irruptch.append(
+					          [copy.deepcopy(chains[ch].xacts[i]), 0, ir_vol])
+				del chains[ch].xacts[i]
+				chains[ch].length = len(chains[ch].xacts)
+				break
+	# Add irrupting xact to facility (will always succeed).
+	fac_enter(fid, vol)
+		
+def fac_goaway(fid):
+	if fid not in facilities.keys():
+		errors.print_error(43, xact.curblk+1, [fid])
+	if xact.index not in facilities[fid].busyxacts:
+		errors.print_error(48, xact.curblk+1)
+	
+	# Delete this xact from facility.
+	go = facilities[fid].busyxacts[xact.index]
+	facilities[fid].curplaces += go[0]
+	del facilities[fid].busyxacts[xact.index]
+	review_cec()
+	# Move xacts to freed places from irrupt chain.
+	for i in range(len(facilities[fid].irruptch)):
+		xainfo = facilities[fid].irruptch[i]
+		if facilities[fid].curplaces < xainfo[2]:
+			continue
+		if xainfo[1] == 0:
+			currentChain.append(copy.deepcopy(xainfo[0]))
+		else:
+			futureChain.append([xainfo[1], copy.deepcopy(xainfo[0])])
+		facilities[fid].busyxacts[xainfo[0].index] = [xainfo[2], 'entered']
+		#print 'added xact '+str(xainfo[0].index)+' back to facility '+fid
+		facilities[fid].curplaces += xainfo[2]
+		facilities[fid].irruptch[i] = []
+	facilities[fid].irruptch = [el for el in facilities[fid].irruptch if el != []]
 	
 def wait(time, tdelta=0):
 	global futureChain
@@ -154,8 +310,8 @@ def chain_leave(chid, cnt, toblk=''):
 def chain_purge(chid, toblk=''):
 	chain_leave(chid, len(chains[chid].xacts), toblk)
 	
-def chain_leaveif(chid, cond, cnt, toblk=''):
-	pass
+#def chain_leaveif(chid, cond, cnt, toblk=''):
+#	pass
 	
 def if_block(cond):
 	if cond:
@@ -258,7 +414,7 @@ def output(outstr):
 	print '(T={!s}'.format(ints['curticks'].value).ljust(9) + \
 	       'L={!s}'.format(xact.curblk+1).ljust(8) + \
 	      'X={!s})'.format(xact.index).ljust(8) + \
-	      '{!s}'.format(outstr)
+	      '{!s}'.format(outstr.decode('string_escape'))
 	move()
 	
 def xact_report(args=[]):
@@ -566,6 +722,8 @@ def print_results():
 			print '{}   \t\t{!s}\t\t{!s}'.format(
 				  ch.name, ch.length, [xa.index for xa in ch.xacts])
 	
+	global marks
+	marks = {k:v for k,v in marks.items() if not k.startswith('&')}
 	if marks.keys():
 		print '\n\n----Marks:----'
 		print 'Name   \tCorresponding line'

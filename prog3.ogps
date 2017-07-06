@@ -1,21 +1,18 @@
-mark exec;
-int i = 0;
 exitwhen(curticks > 3);
 {{
-inject("erm", 0,0,0,1);
-exec: while(i < 10);
+inject("erm", 0,0,0,1) {p1 = 0, p2 = 0};
+loop_times(xact.p1, 10);
 {
-	i++;
-	if(i == 4);
+	xact.p2 = 0;
+//	output(xact.p1);
+//	iter_next();
+	while(xact.p2 <= 10);
 	{
-		iter_next();
-	}
-	else_if(i == 7);
-	{
+		output(to_str(xact.p2));
+		xact.p2++;
 		iter_stop();
 	}
-	output(i);
+	output("\n");
 }
-pause_by_user("After cycle");
 reject(1);
 }}

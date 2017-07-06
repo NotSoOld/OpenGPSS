@@ -84,6 +84,8 @@ def convertBlocks(lines):
 				nesting.append('try')
 			elif ['block', 'while'] in lines[i-1]:
 				nesting.append('while')
+			elif ['block', 'loop_times'] in lines[i-1]:
+				nesting.append('loop_times')
 		elif lines[i][0][0] == 'rbrace':
 			nesting.pop()
 		elif ['block', 'iter_next'] in lines[i]:
@@ -91,7 +93,7 @@ def convertBlocks(lines):
 			for j in reversed(range(0, i)):
 				if lines[j][0][0] == 'lbrace':
 					n = nest.pop()
-					if n == 'while':
+					if n == 'while' or n == 'loop_times':
 						l = []
 						if lines[i][1][0] == 'marksep':
 							l = lines[i][0:2]
@@ -120,7 +122,7 @@ def convertBlocks(lines):
 			for j in reversed(range(0, i)):
 				if lines[j][0][0] == 'lbrace':
 					n = nest.pop()
-					if n == 'while':
+					if n == 'while' or n == 'loop_times':
 						break
 							
 				elif lines[j][0][0] == 'rbrace':
@@ -302,7 +304,8 @@ def parseBlock(line):
 		if depth != 0:
 			errors.print_error(38, '', ['}', xact.curblk+1])
 		i -= 1
-		if ['block', 'while'] in interpreter.toklines[i]:
+		if ['block', 'while'] in interpreter.toklines[i] or \
+		   ['block', 'loop_times'] in interpreter.toklines[i]:
 			interpreter.xact.curblk = i - 1
 			interpreter.xact.cond = 'canmove'
 			return parseBlock(interpreter.toklines[i])
@@ -312,6 +315,30 @@ def parseBlock(line):
 	elif tok[0] == 'block':
 		if tok[1] == 'inject':
 			name = 'move'
+		elif tok[1] == 'loop_times':
+			nexttok()
+			consume('lparen')
+			newln = []
+			oldpos = pos
+			while True:
+				t = peek(0)
+				if t[0] == 'comma':
+					break
+				newln.append(t)
+				if nexttok() == '':
+					errors.print_error(45, lineindex)
+			oldline = line
+			tokline = newln + [['inc', ''], ['eocl', '']]
+			pos = 0
+			parseAssignment()
+			tokline = oldline
+			pos = oldpos
+			l = parseExpression()
+			consume('comma')
+			r = parseExpression()
+			if l >= r:
+				return ('while_block', [False])
+			return ('while_block', [True])
 		else:
 			name = tok[1]
 			if tok[1] == 'if' or tok[1] == 'else_if' or \
@@ -322,14 +349,25 @@ def parseBlock(line):
 			consume('lparen')
 			while True:
 				if matchtok('rparen'):
+					break	
+				if name == 'fac_irrupt' and len(args) == 4:
+					toks = []
+					while True:
+						if peek(0)[0] == 'rparen':
+							consume('rparen')
+							break
+						toks.append(peek(0))
+						nexttok()
+					args.append(toks)
 					break
+						
 				args.append(parseExpression())
 				if peek(0)[0] == 'comma':
 					consume('comma')
 					continue
 				elif peek(0)[0] == 'rparen':
 					consume('rparen')
-					break;
+					break
 				else:
 					errors.print_error(16, lineindex, [peek(0)])
 		return (name, args)
@@ -360,7 +398,13 @@ def parseBlock(line):
 		errors.print_error(21, lineindex, ['executive block, '\
 		       'transport operator or assignment lvalue', tok], 'E')
 
-def parseAssignment():
+def parseAssignment(toks=[]):
+	global pos
+	global toklines
+	if toks != []:
+		pos = 0
+		toklines = toks
+	
 	tok = peek(0)
 	tok1 = peek(1)
 	tok2 = peek(2)
@@ -439,6 +483,8 @@ def evaluateAssignment(prim, sec, assg, key):
 			   	elif assg == 'remaineq': attr[key] %= result
 			   	
 		else: # ints[key].value, etc.
+			if key == 'injected' or key == 'rejected' or key == 'curticks':
+				errors.print_error(46, lineindex, [key])
 			if assg == 'inc':
 				if type(attr[key].value) is str or type(attr[key].value) is bool:
 					errors.print_error(7, lineindex, ['inc'])

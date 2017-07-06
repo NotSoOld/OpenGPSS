@@ -58,7 +58,6 @@ typedefs = [
             'queue', 
             'mark',
             'chain'
-            #'sub'
            ]
 
 blocks = [
@@ -67,8 +66,8 @@ blocks = [
           'reject',       # tested
           'fac_enter',    # tested
           'fac_leave',    # tested
-          #'fac_force',
-          #'fac_goaway',
+          'fac_irrupt',   # implemented
+          'fac_goaway',   # implemented
           'queue_enter',  # tested
           'queue_leave',  # tested
           'wait',         # tested
@@ -83,10 +82,8 @@ blocks = [
           'chain_leave',  # tested
           'chain_purge',  # tested
           #'chain_leaveif',
-          #'find',
-          #'find_minmax',
           'while',        # tested
-          #'loop_times',
+          'loop_times',   # tested
           'copy',         # tested
           'output',       # tested
           'xact_report',  # tested
@@ -107,7 +104,9 @@ builtins = [
             'to_bool',
             'random_int',
             'random_float',
-            'random01'
+            'random01',
+            'find',
+            'find_minmax'
            ]
 
 pos = 0
