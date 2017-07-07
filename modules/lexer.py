@@ -104,9 +104,9 @@ builtins = [
             'to_bool',
             'random_int',
             'random_float',
-            'random01',
-            'find',
-            'find_minmax'
+            'random01'
+            #'find',
+            #'find_minmax'
            ]
 
 pos = 0

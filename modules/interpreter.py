@@ -105,7 +105,7 @@ def fac_leave(fid):
 	del facilities[fid].busyxacts[xact.index]
 	review_cec()
 	
-def fac_irrupt(fid, vol, eject=False, mark='', elapsedto=[]):
+def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 	# (fac, 1) === (fac, 1, False)
 	# (fac, 1, True) <-- eject xact and call move() for it
 	# (fac, 1, True, mark1) <-- eject to mark1

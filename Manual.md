@@ -1,4 +1,4 @@
-# OpenGPSS Manual (alpha)
+# OpenGPSS Manual (beta v0.1)
 
 ## General
 Program in OpenGPSS language looks like following:
@@ -7,11 +7,11 @@ Program in OpenGPSS language looks like following:
 *definition area*
 *exit condition*
 {{
-:executive area
+executive area
 }}
 *another definition area if needed*
 {{
-:another executive area
+another executive area
 }}
 ...
 ...
@@ -262,9 +262,51 @@ fac_leave(CPU);
 ```
 - Additional hacks:
 
-\- Facility name can be an expression with string result (for example, name of one of the facilities).
+\- Facility name can be an expression with string result (for example, name of one of the facilities) (and you an also do this trick with queue names, chain names, etc. I won't mention it anymore below).
 
 \- This block automatically triggers interpreter to review CEC.
+
+### fac_irrupt - force into occupied facility
+- Prototype:
+```
+fac_irrupt(
+           word fac_name,
+           int xact_volume (default == 1),
+           bool eject (default == false),
+           word mark (default == next after this block),
+           word elapsedto (default == none)
+          );
+```
+- Usage:
+
+Sometimes you need not to just occupy free facility, but to come into it, stop processing of occupying xacts and/or occupy facility by yourself. For example, a person busy with something can be interrupted from signals or people coming outside. 
+
+So, *fac\_name* can be interrupted by xact with *xact\_volume* (how many places xact needs in facility for itself). If *eject* is false, currently processing xacts will be taken from model chains (CEC, FEC, user chains) and moved to facility interruption chain. When *eject* == false, there are no more arguments. No ejection means that xacts from interruption chain will continue processing after interrupting xact goes away with the help of *fac\_goaway* block. These xacts will process as much time as they have to process when they were interrupted.
+
+When *eject* == true, it means that interrupted xacts will be ejected from this facility and won't return to processing automatically. If *mark* is present, they'll be sent there. If *elapsedto* is present (it is a name of some variable/parameter), elapsed processing time wil be written there.
+
+- Examples:
+```
+fac_irrupt(CPU, 1, True, to_elapsed, xact.p3);
+fac_irrupt(fac, 1, True, '', xact.p1);
+fac_irrupt(fac, 3, False);
+```
+
+### fac_goaway - go away from previously interrupted facility
+- Prototype:
+```
+fac_goaway(
+           word fac_name
+          );
+```
+- Usage:
+
+After you interrupt facility, you need to go away from it (especially when you push some xacts into interrupt chain - otherwise they'll be there forever!). When interrupting xact passes this block, it deletes itself from facility and moves xacts to freed places from interrupt chain.
+
+- Example:
+```
+fac_goaway(CPU);
+```
 
 ### reject - delete xact entirely from system
 - Prototype:
@@ -317,7 +359,7 @@ wait(8, 3);
 ```
 - Usage:
 
-These blocks are used to transport xacts from one point in model to another. Transportation can be unconditional (*->>*), depend on probability (*->|*) or depend on condition (*->?*). You can also determine where xacts should go if probability/condition check fails (by default they will just go further through the model).
+These blocks are used to transport xacts from one point in model to another. Transportation can be unconditional (->>), depend on probability (->|) or depend on condition (->?). You can also determine where xacts should go if probability/condition check fails (by default they will just go further through the model).
 
 - Examples:
 ```
@@ -327,8 +369,297 @@ These blocks are used to transport xacts from one point in model to another. Tra
 ```
 - Additional hacks:
 
-\- If you don't like "->" notation, you can use block names as following: *transport()*, *transport\_prob()*, *transport\_if()*.
+\- If you don't like "->" notation, you can use following block names: *transport()*, *transport\_prob()*, *transport\_if()*.
 
+### if/else_if/else - make xact follow different paths according to some condition
+- Prototypes:
+```
+if(
+   bool condition
+  )
+{
+	blocks which will be executed in condition == true
+}
+else_if(
+        bool another_condition
+       )
+{
+	blocks which will be executed if another_condition == true
+}
+else_if...
+...
+else
+{
+	what to do if every other chained conditional blocks above failed
+}
+```
+- Usage:
+
+These blocks are used to execute different parts of a program. Choice is made according to conditions in parens - group of blocks in curly braces with a first true condition will be chosen to execute. **Curly braces cannot be omitted!** There can be many *else\_if()* blocks or no of them; also, *else* block can be omitted. Conditional blocks are considered chained and are tested as a whole thing if they are written as in the example, one right after another.
+
+- Examples:
+```
+if(xact.f3 > 0)
+{
+	fac_enter(CPU1);
+}
+else_if(myChain != 3)
+{
+	fac_enter(CPU2);
+}
+else
+{
+	reject(0);
+}
+
+if(boolVar)
+{
+	chain_purge(ch1, toTerm);
+}
+else
+{
+	chain_enter(ch1);
+}
+
+etc.
+```
+- Additional hacks:
+
+\- These conditional blocks can be nested. Use them as you'll use them in C or any other similar language.
+
+### try - block xact movement until condition becomes true
+- Prototype:
+```
+try(
+    bool condition
+   )
+{
+	blocks which will be executed when condition turns to true
+}
+```
+- Usage:
+
+Sometimes you don't need xacts to move through special part of program until something happened. So, you can prevent xacts from doing that by using *try* block. If xact enters this block and condition fails, it will remain staying on this block until condition turns to true.
+
+- Example:
+```
+try(buffer.length > 0)
+{
+	chain_leave(buffer, 1, toterm);
+	fac_enter(CPU);
+}
+```
+- Additional hacks:
+
+\- This block can also be nested.
+
+### chain_enter - move xact to one of user chains
+- Prototype:
+```
+chain_enter(
+            word chainname
+           );
+```
+- Usage:
+
+User chains are very powerful when you need a mechanism to buffer xacts in one place of the model and, when needed, take them out to another place. This block simply chains xact into *chainname* chain. New xact will be moved from CEC to the end of user chain.
+
+- Example:
+```
+chain_enter(buffer);
+```
+
+### chain_leave - take xacts from user chain
+- Prototype:
+```
+chain_leave(
+            word chainname,
+            int count,
+            word where_to_move (default is next block after that)
+           );
+```
+- Usage:
+
+You can move xacts from user chains back to your model with the help of *chain\_leave* block. *Count* xacts (or less, if there aren't enough xacts in the chain) will be taken from chain *chainname* and moved to the *where\_to\_move* mark in the model (or if there is no mark, they'll be moved one block further after *chain\_leave*).
+
+- Example:
+```
+chain_leave(buffer, 2, tofacility);
+```
+
+### chain_purge - take all xacts from the user chain
+- Prototype:
+```
+chain_purge(
+            word chainname,
+            word where_to_move (default is next block after that)
+           );
+```
+- Usage:
+
+It is equal to `chain_leave(chain, chain.length, block)`. The chain will be empty after calling this block.
+
+- Example:
+```
+chain_purge(buffer, killmark);
+```
+
+### while - do I really need to describe what it does..? :D
+- Prototype:
+```
+while(
+      bool condition
+     )
+{
+	blocks which will be executed while condition is true
+}
+```
+- Usage:
+
+This block will make xact cycle through some blocks in curly braces while condition in parens is true. When it turns to false, xact will move further. Be aware of infinite loops!
+
+- Example:
+```
+while(count > 0)
+{
+	wait(4);
+	count += 1;
+}
+```
+- Additional hacks:
+
+\- This block can also be nested.
+
+\- The process of iterating can be controlled by two blocks: *iter\_next* and *iter\_stop* (without empty parens after name). *Iter\_next* forces xact to go to the next iteration and *iter\_stop* forces xact to stop iterating at all (like *continue* and *break* in C).
+
+### loop_times - do something as much times as you need
+- Prototype:
+```
+loop_times(
+           word iterator,
+           int upper_border
+          )
+{
+	blocks which will be executed while iterator value is less than upper_border
+}
+```
+- Usage:
+
+This block will make xact cycle through some blocks in curly braces while *iterator* (it is the name of some variable or xact parameter) value is less than *upper\_border* value. Iterator will be incremented automatically after every cycle. **Un**like in other languages, you can change both iterator and upper border values while cycling, but, **like** in other languages, it can lead to awkward situations when done wrong.
+
+- Example:
+```
+loop_times(xact.p1, 10)
+{
+	output("Xact p1 value is "+to_str(xact.p1));
+}
+```
+- Additional hacks:
+
+\- This block can also be nested.
+
+\- The process of iterating can be controlled by two blocks: *iter\_next* and *iter\_stop* (without empty parens after name). *Iter\_next* forces xact to go to the next iteration and *iter\_stop* forces xact to stop iterating at all (like *continue* and *break* in C).
+
+### copy - make a full copy of a xact
+- Prototype:
+```
+copy(
+     int copies_count,
+     word where_to_go (default == next to this block)
+    );
+```
+- Usage:
+
+This block will make *copies\_count* copies of a xact which is executing this block. If *where\_to\_go* mark is present, copies will be sent there. Every parameter will be copied except unique xact index.
+
+- Example:
+```
+copy(4, tobuf);
+```
+- Additional hacks:
+
+\- This block is useful in certain situations as it immediately adds xacts to the system with known group and parameters. Use it as an advantage.
+
+### output - print something when you need to
+- Prototype:
+```
+output(
+       int/float/bool/string output
+      );
+```
+- Usage:
+
+If you need to print some values, info, debug messages while xacts are moveing throuth model, use this block. When xact will execute it, output message will be printed. Xact will simply move one line down. Output will be in such format: *(current time, current line, current xact index): your string*.
+
+- Example:
+```
+output("Xact p1 value is "+to_str(xact.p1));
+```
+- Additional hacks:
+
+\- Output string can be a whole expression with string (!) result or a simple number/boolean value.
+
+### xact_report - print all information about xact executing this block
+- Prototype:
+```
+xact_report();
+```
+- Usage:
+
+This block will print all information about xact which is executing this block right now: group, index, line of code, all parameters including priority. You can use this for statistics gathering or debugging.
+
+### move - just skip that line
+- Prototype:
+```
+move();
+```
+- Usage:
+
+When xact meets this block, it just moves to next line. That's all.
+
+This block is generally used inside other blocks in the interpreter, but you can also write it as some "foo" block in line which cannot be omitted but shouldn't do anything.
+
+### interrupt - force interpreter to go to next time beat
+- Prototype:
+```
+interrupt();
+```
+- Usage:
+
+When executed, this block will send signal to interpreter to stop looking through CEC and just move to next time beat (which leads to taking some xacts from FEC if it's their time to leave and looking CEC from beginning).
+
+### review_cec - force interpreter to look through CEC from beginning
+- Prototype:
+```
+review_cec();
+```
+- Usage:
+
+Just like *interrupt*, this block sends a signal to interpreter. CEC will be reviewed in the same time beat (interpreter won't move to next time beat).
+
+- Additional hacks:
+
+\- Following blocks automatically call *review\_cec* inside them: *fac\_leave*, *fac\_goaway* and *reject* (and also every assignment to *xact.pr* parameter).
+
+### flush_cec - clear CEC entirely
+- Prototype:
+```
+flush_cec();
+```
+- Usage:
+
+While *reject* presents a common and right way to delete xacts from model, *flush\_cec* simply and rudely annihilates all xacts from CEC. Calling this block might be very dangerous for model's health. Facilities and queues are checked if they contain executing xact (but nothing is done for xacts which are deleted!). Of course, after executing this block, current xact will stop its life too, and entirely system will halt until something arrives to CEC from FEC.
+
+### pause_by_user - halt simulation until user presses any key
+- Prototype:
+```
+pause_by_user(
+              string message (default == none)
+             );
+```
+- Usage:
+
+After executing this block, interpreter will wait until user presses any key to continue. If *message* is present, it will be printed. You can use this block among with *output* and *xact\_report* blocks while debugging.
 
 
 ## Built-in functions

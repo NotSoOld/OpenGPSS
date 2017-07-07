@@ -53,7 +53,8 @@ def tocodelines(program):
 			token = program[i]
 			line.append(token)
 			i += 1
-			if token[0] == 'eocl':
+			if token[0] == 'eocl' or token == ['block', 'else'] or \
+			   (token == ['rparen', ''] and program[i] == ['lbrace', '']):
 				line.append([li, 0, 0])
 				parsed.append(line)
 				li += 1
@@ -346,6 +347,8 @@ def parseBlock(line):
 			   tok[1] == 'while' or tok[1] == 'copy':
 				name += '_block'
 			nexttok()
+			if tok[1] == 'else':
+				return(name, [])
 			consume('lparen')
 			while True:
 				if matchtok('rparen'):
