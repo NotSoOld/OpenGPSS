@@ -10,17 +10,17 @@ xact_report();
 fac_enter(op);
 wait(20, 3);
 fac_leave(op);
-/*if(xact.index % 2 == 0);
+if(xact.index % 2 == 0)
 {
     output("index is even");
-    if(xact.index == 4);
+    if(xact.index == 4)
     {
     	output("and equals 4");
     }
-    else();
+    else
     {
     	output("is not equal 4");
     }
-}*/
+}
 reject(1);
 }}

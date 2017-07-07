@@ -516,7 +516,7 @@ while(
 ```
 - Usage:
 
-This block will make xact cycle through some blocks in curly braces while condition in parens is true. When it turns to false, xact will move further. Be aware of infinite loops!
+This block will make xact loop through some blocks in curly braces while condition in parens is true. When it turns to false, xact will move further. Be aware of infinite loops!
 
 - Example:
 ```
@@ -545,7 +545,9 @@ loop_times(
 ```
 - Usage:
 
-This block will make xact cycle through some blocks in curly braces while *iterator* (it is the name of some variable or xact parameter) value is less than *upper\_border* value. Iterator will be incremented automatically after every cycle. **Un**like in other languages, you can change both iterator and upper border values while cycling, but, **like** in other languages, it can lead to awkward situations when done wrong.
+This block will make xact loop through some blocks in curly braces while *iterator* (it is the name of some variable or xact parameter) value is less than *upper\_border* value. Iterator will be incremented automatically before every loop. **Un**like in other languages, you can change both iterator and upper border values while cycling, but, **like** in other languages, it can lead to awkward situations when done wrong.
+
+Inside loop iterator will consequently take values from its initial value **plus 1** to *upper\_border* minus 1. After exiting loop, iterator value will be equal to *upper\_border*.
 
 - Example:
 ```

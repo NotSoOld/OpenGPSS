@@ -12,7 +12,7 @@ exitwhen(rejected > 10);
 inject("RAM Xact", 0, 0, 0, 1);
 RAM: fac_enter(RAM);
 wait(10, 6);
-try(buf.length < max_buf);
+try(buf.length < max_buf)
 {
 	copy(4, tobuf);
 	fac_leave(RAM);
@@ -21,7 +21,7 @@ try(buf.length < max_buf);
 tobuf: chain_enter(buf);
 
 inject("CPU Xact", 0, 0, 0, 1);
-CPU: try(buf.length > 0);
+CPU: try(buf.length > 0)
 {
 	fac_enter(CPU);
 	chain_leave(buf, 1, rej);
