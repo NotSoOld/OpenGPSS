@@ -1,5 +1,6 @@
 import sys
 import structs
+import lexer
 import interpreter
 import errors
 import builtins
@@ -54,7 +55,8 @@ def tocodelines(program):
 			line.append(token)
 			i += 1
 			if token[0] == 'eocl' or token == ['block', 'else'] or \
-			   (token == ['rparen', ''] and program[i] == ['lbrace', '']):
+			   (token == ['rparen', ''] and program[i] == ['lbrace', ''] and \
+			    ['block', 'inject'] not in line):
 				line.append([li, 0, 0])
 				parsed.append(line)
 				li += 1
@@ -81,8 +83,6 @@ def convertBlocks(lines):
 				nesting.append('else_if')
 			elif ['block', 'else'] in lines[i-1]:
 				nesting.append('else')
-			elif ['block', 'try'] in lines[i-1]:
-				nesting.append('try')
 			elif ['block', 'while'] in lines[i-1]:
 				nesting.append('while')
 			elif ['block', 'loop_times'] in lines[i-1]:
@@ -343,7 +343,7 @@ def parseBlock(line):
 		else:
 			name = tok[1]
 			if tok[1] == 'if' or tok[1] == 'else_if' or \
-			   tok[1] == 'else' or tok[1] == 'try' or \
+			   tok[1] == 'else' or \
 			   tok[1] == 'while' or tok[1] == 'copy':
 				name += '_block'
 			nexttok()
@@ -747,12 +747,54 @@ def parseMult():
 	
 def parseUnary():
 	if matchtok('not'):
-		return (not parsePrimary())
+		return (not parseDotting())
 	if matchtok('minus'):
-		return -1 * parsePrimary()
+		return -1 * parseDotting()
 	if matchtok('plus'):
-		return parsePrimary()
-	return parsePrimary()
+		return parseDotting()
+	return parseDotting()
+
+def parseDotting():
+	lh = parsePrimary()
+	if matchtok('dot'):
+		return getAttrs(lh, parsePrimary())
+	return lh
+	
+def getAttrs(lh, rh):
+	if rh in fac_params and lh in interpreter.facilities:
+		val = getattr(interpreter.facilities[lh], rh)
+		
+	elif rh in queue_params and lh in interpreter.queues:
+		val = getattr(interpreter.queues[lh], rh)
+		
+	elif rh in chain_params and lh in interpreter.chains:
+		val = getattr(interpreter.chains[lh], rh)
+	
+	elif lh == 'xact':
+		if rh not in xact_params: #parameters from 'params' dict
+			if rh not in interpreter.xact.params.keys():
+				errors.print_error(25, lineindex, 
+				       [interpreter.xact.group, rh])
+			val = interpreter.xact.params[rh]
+				
+		else: #direct parameters
+			val = getattr(interpreter.xact, rh)
+	
+	elif rh == 'name':
+		if lh in interpreter.ints:
+			val = interpreter.ints[lh].name
+		elif lh in interpreter.floats:
+			val = interpreter.floats[lh].name
+		elif lh in interpreter.strs:
+			val = interpreter.strs[lh].name
+		elif lh in interpreter.bools:
+			val = interpreter.bools[lh].name
+		else:
+			errors.print_error(28, lineindex, [lh])
+	else:
+		errors.print_error(21, lineindex, 
+		       ["name of parameter of defined variable", lh+' '+rh], 'B')
+	return val
 	
 def parsePrimary():
 	if matchtok('lparen'):
@@ -761,57 +803,23 @@ def parsePrimary():
 		return result
 	tok = peek(0)
 	val = 0
+	if tok[0] == 'indirect':
+		return parseIndirect()
 	if tok[0] == 'number':
 		if '.' in tok[1]:
 			val = float(tok[1])
 		else:
 			val = int(tok[1])
 	elif tok[0] == 'string':
-		val = tok[1]
+		if tok[0].startswith('~'):
+			val = parseIndirectString()
+		else:
+			val = tok[1]
 	elif tok[0] == 'word':
 		if tok[1] == 'true':
 			val = True
 		elif tok[1] == 'false':
 			val = False
-		elif peek(1)[0] == 'dot':
-			nexttok()
-			consume('dot')
-			tk = peek(0)
-			if tk[1] in fac_params and tok[1] in interpreter.facilities:
-				val = getattr(interpreter.facilities[tok[1]], tk[1])
-				
-			elif tk[1] in queue_params and tok[1] in interpreter.queues:
-				val = getattr(interpreter.queues[tok[1]], tk[1])
-				
-			elif tk[1] in chain_params and tok[1] in interpreter.chains:
-				val = getattr(interpreter.chains[tok[1]], tk[1])
-			
-			elif tok[1] == 'xact':
-				if tk[1] not in xact_params: #parameters from 'params' dict
-					if tk[1] not in interpreter.xact.params.keys():
-						errors.print_error(25, lineindex, 
-						       [interpreter.xact.group, tk[1]])
-					val = interpreter.xact.params[tk[1]]
-						
-				else: #direct parameters
-					val = getattr(interpreter.xact, tk[1])
-			
-			elif tk[1] == 'name':
-				if tok[1] in interpreter.ints:
-					val = interpreter.ints[tok[1]].name
-				elif tok[1] in interpreter.floats:
-					val = interpreter.floats[tok[1]].name
-				elif tok[1] in interpreter.strs:
-					val = interpreter.strs[tok[1]].name
-				elif tok[1] in interpreter.bools:
-					val = interpreter.bools[tok[1]].name
-				else:
-					errors.print_error(28, lineindex, [tok[1]])
-			else:
-				errors.print_error(21, lineindex, 
-				       ["name of parameter of defined variable", tok[1]], 'B')
-			nexttok()	
-			return val
 		
 		# If there is no dot:
 		elif tok[1] in interpreter.ints:
@@ -831,13 +839,38 @@ def parsePrimary():
 		elif tok[1] in interpreter.chains:
 			val = interpreter.chains[tok[1]].name
 		else:
-			errors.print_error(6, lineindex, tok)
+			val = tok[1]
+		#else:
+		#	errors.print_error(6, lineindex, tok)
 	
 	elif tok[0] == 'builtin':
 		return parseBuiltin()
 	
 	nexttok()
 	return val
+	
+def parseIndirect(val=''):
+	global tokline
+	global pos
+	if val == '':
+		consume('indirect')
+		val = parseExpression()
+	ln = lexer.analyze(val+';\0')
+	ln.pop()
+	oldline = copy.deepcopy(tokline)
+	oldpos = pos
+	tokline = ln
+	pos = 0
+	val = parseExpression()
+	tokline = copy.deepcopy(oldline)
+	pos = oldpos
+	return val
+	
+def parseIndirectString():
+	global tokline
+	global pos
+	s = peek(0)[1][1:]
+	return parseIndirect(s)
 
 def parseBuiltin():
 	fun = getattr(builtins, peek(0)[1])
@@ -894,5 +927,5 @@ def peek(relpos):
 	global tokline
 	index = pos + relpos
 	if len(tokline) <= index:
-		return []
+		return ['', '']
 	return tokline[index]

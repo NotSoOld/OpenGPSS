@@ -4,7 +4,7 @@ import errors
 tokens = []
 numbers = '0123456789'
 letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-operatorChars = '+-*/%=<>()|&!{};:,.[]?'
+operatorChars = '+-*/%=<>()|&!{};:,.[]?~'
 operators = {
              '+':'plus', 
              '-':'minus', 
@@ -44,8 +44,8 @@ operators = {
              '}}':'rexec',
              '->':'transport',
              '|':'transport_prob',
-             '?':'transport_if'
-             #'~':'indirect_addr'
+             '?':'transport_if',
+             '~':'indirect'
             }
              
 typedefs = [
@@ -77,7 +77,7 @@ blocks = [
           'if',           # tested
           'else_if',      # tested
           'else',         # tested
-          'try',          # tested
+          'wait_until',   # tested
           'chain_enter',  # tested
           'chain_leave',  # tested
           'chain_purge',  # tested
@@ -104,8 +104,8 @@ builtins = [
             'to_bool',
             'random_int',
             'random_float',
-            'random01'
-            #'find',
+            'random01',
+            'find'
             #'find_minmax'
            ]
 
@@ -115,6 +115,9 @@ allprogram = []
 def analyze(program):
 	global pos
 	global allprogram
+	global tokens
+	tokens = []
+	pos = 0
 	allprogram = program
 	
 	while pos < len(allprogram):

@@ -349,7 +349,7 @@ def else_block(args=[]):
 		if_block(False)
 		xact.eval_else = False
 	
-def try_block(cond):
+def wait_until(cond):
 	if cond:
 		xact.curblk += 1
 		move()
@@ -411,6 +411,7 @@ def transport_if(block, cond, addblock=''):
 			xact.curblk = marks[addblock].block-1
 
 def output(outstr):
+	outstr = str(outstr)
 	print '(T={!s}'.format(ints['curticks'].value).ljust(9) + \
 	       'L={!s}'.format(xact.curblk+1).ljust(8) + \
 	      'X={!s})'.format(xact.index).ljust(8) + \

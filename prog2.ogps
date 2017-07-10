@@ -17,25 +17,21 @@ exitwhen(completedCommands > 10);
 inject("RAM cycling Xact", 0, 0, 0, 1) {priority = 10};
 RAMCycle: fac_enter(RAM);
 wait(10, 2);
-try(buffer < BUFFER_CAPACITY)
-{
-	fac_leave(RAM);
-	buffer++;
-	->> RAMCycle;
-}
+wait_until(buffer < BUFFER_CAPACITY);
+fac_leave(RAM);
+buffer++;
+->> RAMCycle;
 
 /* Multiple CPU system imitation */
 inject("CPUs cycling Xact", 0, 0, 0, 3);
-CPUCycle: try(buffer > 0)
-{
-	fac_enter(CPUs);
-	buffer--;
-	wait(30, 6);
-	fac_leave(CPUs);
-	completedCommands++;
-	/* It was maybe a command which will erase buffer: */
-	->| CPUCycle, 0.9;
-	buffer = 0;
-	->> CPUCycle;
-}
+CPUCycle: wait_until(buffer > 0)
+fac_enter(CPUs);
+buffer--;
+wait(30, 6);
+fac_leave(CPUs);
+completedCommands++;
+/* It was maybe a command which will erase buffer: */
+->| CPUCycle, 0.9;
+buffer = 0;
+->> CPUCycle;
 }}

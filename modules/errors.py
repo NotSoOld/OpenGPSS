@@ -53,7 +53,9 @@ errors = {
           45:'Expected ","; got end of line during parsing "loop_times" block',
           46:'Cannot do assignment; "{}" is a read-only value',
           47:'Xact is trying to interrupt facility which it already occupies',
-          48:'Xact is trying to go away from facility which it did not interrupt'
+          48:'Xact is trying to go away from facility which it did not interrupt',
+          49:'Unknown search criteria for "find()" function: "{}"',
+          50:'Unknown parameter "{}", cannot execute search for it'
          }
 
 warnings = {

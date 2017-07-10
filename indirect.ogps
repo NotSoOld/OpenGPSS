@@ -1,0 +1,14 @@
+fac cpu1;
+str var2 = "s1";
+str s1 = "iter";
+int iter = 121;
+exitwhen(curticks > 50);
+{{
+inject("main", 5, 0, 0, 0) {str1 = "cpu1"};
+
+output(~~var2);
+fac_enter(cpu1);
+wait(10);
+fac_leave(cpu1);
+reject(0);
+}}
