@@ -39,6 +39,7 @@ class Facility:
 		self.busyxacts = {}
 		self.busyticks = 0
 		self.enters_f = 0
+		self.processedxactsticks = 0
 		
 class Queue:
 	def __init__(self, name):
@@ -73,3 +74,25 @@ class Injector:
 		if 'pr' not in params.keys():
 			params['pr'] = 0
 		self.params = params
+		
+class Histogram:
+	def __init__(self, param, startval, interval, count):
+		self.param = param
+		self.startval = startval
+		self.interval = interval
+		self.count = count
+		self.intervals = [0 for _ in range(self.count+2)]
+		
+	def add(self, value):
+		if value < self.startval:
+			self.intervals[0] += 1
+		elif value > self.startval + self.interval * self.count:
+			self.intervals[-1] += 1
+		else:
+			for i in range(1, self.count+1):
+				l = self.startval + self.interval * (i - 1)
+				r = self.startval + self.interval * i
+				if l < value < r:
+					self.intervals[i] += 1
+					break
+				

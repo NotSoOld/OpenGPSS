@@ -54,7 +54,7 @@ typedefs = [
             'str',
             'bool',
             'fac', 
-            #'gist',
+            'hist',
             'queue', 
             'mark',
             'chain'
@@ -81,7 +81,8 @@ blocks = [
           'chain_enter',  # tested
           'chain_leave',  # tested
           'chain_purge',  # tested
-          #'chain_leaveif',
+          'chain_pick',   # implemented
+          'chain_find',   # implemented
           'while',        # tested
           'loop_times',   # tested
           'copy',         # tested
@@ -94,19 +95,18 @@ blocks = [
           'interrupt',    # tested
           'flush_cec',    # tested
           'pause_by_user' # tested
-          #'system_info'
          ]
          
 builtins = [
-            'to_str',
-            'to_int',
-            'to_float',
-            'to_bool',
-            'random_int',
-            'random_float',
-            'random01',
-            'find'
-            #'find_minmax'
+            'to_str',		# tested
+            'to_int',		# tested
+            'to_float',		# tested
+            'to_bool',		# tested
+            'random_int',	# tested
+            'random_float',	# tested
+            'random01',		# tested
+            'find',			# implemented
+            'find_minmax'	# implemented
            ]
 
 pos = 0

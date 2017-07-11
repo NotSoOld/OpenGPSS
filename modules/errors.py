@@ -4,9 +4,8 @@ errors = {
           1:'No such file: "{}"',
           2:'Unexpected end of file during parsing program into lines',
           3:'Name of the definition expected; got "{}" "{}"',
-          4:'Unknown facility parameter "{}" or missing "}}"',
-          5:'Expected parameter of type "{}" for facility parameter '\
-          '"{}"; got "{}"',
+          4:'Unknown parameter "{}" or missing "}}" during initialization',
+          5:'Expected initial value of type "{}" for parameter "{}"; got "{}"',
           6:'Expected name of defined variable/structure or value; got "{} {}"',
           7:'Cannot {}rement string or boolean',
           8:'Cannot apply operation "{}" for string values',
@@ -15,7 +14,7 @@ errors = {
           11:'Initial value for float variable "{}" must be a number',
           12:'Nothing or "{}" expected; got "{}"',
           13:'Mark "{}" found more than one time as transporting label ' \
-          '(at the left of ":")',
+             '(at the left of ":")',
           14:'Xact is trying to leave executive area',
           15:'Unknown word "{}" used as mark name',
           16:'"," or ")" expected while parsing arguments; got "{}"',
@@ -29,16 +28,16 @@ errors = {
           24:'Index of executive line is out of bounds (probably missing "}}}}")',
           25:'Current xact from group "{}" does not have a parameter "{}"',
           26:'Unknown structure value "{}" (are you trying to assign to ' \
-          'read-only parameters?)',
+             'read-only parameters?)',
           27:'Unknown variable "{}"',
           28:'Cannot take name of "{}", because it is unknown',
           29:'Error while transporting: undefined mark "{}"',
           30:'Mark "{}" is not present anywhere as transporting label '\
-          '(at the left of ":")',
+             '(at the left of ":")',
           31:'Cannot convert "{}" into "{}"',
           32:'Initial value for boolean variable "{}" must be true/false word',
           33:'Cannot perform "{}" for types "{}" and "{}".\nYou can use '\
-          'builtin functions to convert types.',
+             'builtin functions to convert types.',
           34:'What type of transport is there? Expected ">", "|" or "?", got "{}"',
           35:'Condition or probability argument is missing',
           36:'"}}" for "if"/"else_if"/"else" block is missing',
@@ -54,20 +53,23 @@ errors = {
           46:'Cannot do assignment; "{}" is a read-only value',
           47:'Xact is trying to interrupt facility which it already occupies',
           48:'Xact is trying to go away from facility which it did not interrupt',
-          49:'Unknown search criteria for "find()" function: "{}"',
-          50:'Unknown parameter "{}", cannot execute search for it'
+          49:'Unknown search criteria for "find/find_minmax" function: "{}"',
+          50:'Unknown parameter "{}", cannot execute search for it',
+          51:'Expected parameters for histogram initialization',
+          52:'Some parameters for histogram initialization are missing ' \
+             '(must be "start", "interval" and "count")'
          }
 
 warnings = {
             1:'Everything except definitions in non-executive area will be '\
-            'totally IGNORED.\nIf you see this, double-check definition '\
-            'area of your program.',
+              'totally IGNORED.\nIf you see this, double-check definition '\
+              'area of your program.',
             2:'Xact parameters\' custom names (like "{}") are acceptible but '\
-            'HIGHLY undesirable because they can lead to "parameter not found"'\
-            ' errors very easily (for example, for xacts from other group). '\
-            'They also got type "string" by default which you may not want.',
+              'HIGHLY undesirable because they can lead to "parameter not found"'\
+              ' errors very easily (for example, for xacts from other group). '\
+              'They also got type "string" by default which you may not want.',
             3:'Mark "{}" cannot be found as transporting label (at the left of '\
-            '":"). Is it needed at all?'
+              '":"). Is it needed at all?'
            }
 
 def print_error(error_code, line, args=[], add=''):

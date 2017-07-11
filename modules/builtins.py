@@ -3,6 +3,7 @@ import random
 import parser
 import interpreter
 import copy
+import sys
 
 def random01():
 	random.seed()
@@ -51,7 +52,7 @@ def find(line):
 	# find(facilities.curplaces > 0) ==> name of facility
 	# find(chains.length < 10) ==> name of chain
 	# find(chains.xacts.p2 == 5) ==> xact index
-	i = 0
+	
 	parserline = copy.deepcopy(parser.tokline)
 	oldpos = parser.pos
 	
@@ -73,6 +74,7 @@ def find(line):
 					parser.tokline = copy.deepcopy(parserline)
 					parser.pos = oldpos
 					return xa.index
+			return -1
 	   			
 	   	for item in attr.keys():
 	   		val = 0
@@ -87,6 +89,72 @@ def find(line):
 				parser.tokline = copy.deepcopy(parserline)
 				parser.pos = oldpos
 				return '~'+item
-		return -1
+		return ''
+	else:
+		errors.print_error(49, parser.lineindex, [line[0][1]+'.'+line[2][1]])
+		
+def find_minmax(mode, line):
+	# find_minmax(max, facilities.curplaces) ==> name of the facility
+	# find_minmax(min, chains.length) ==> name of the chain
+	# find_minmax(max, chains.xacts.pr) ==> index of xact
+
+	if line[0][1] == 'facilities' or line[0][1] == 'queues' or \
+       line[0][1] == 'chains':
+	   	attr = getattr(interpreter, line[0][1])
+	   	if line[0][1] == 'chains' and line[2][1] == 'xacts':
+	   		buf = getattr(attr, line[2][1])
+	   		if mode == 'min':
+		   		minval = sys.maxint
+		   		index = -1
+		   		for xa in buf:
+		   			xa_attr = None
+		   			try:
+		   				xa_attr = getattr(xa, line[4][1])
+		   			except AttributeError:
+		   				errors.print_error(50, parser.lineindex, [line[4][1]])
+		   			if xa_attr < minval:
+		   				index = xa.index
+		   				minval = xa_attr
+		   	else:
+		   		maxval = -sys.maxint-1
+		   		index = -1
+		   		for xa in buf:
+		   			xa_attr = None
+		   			try:
+		   				xa_attr = getattr(xa, line[4][1])
+		   			except AttributeError:
+		   				errors.print_error(50, parser.lineindex, [line[4][1]])
+		   			if xa_attr > maxval:
+		   				index = xa.index
+		   				maxval = xa_attr
+		   			
+			return index
+		
+		if mode == 'min':		
+			minval = sys.maxint
+			name = ''			
+			for item in attr.keys():
+		   		val = 0
+		   		try:
+		   			val = getattr(attr, line[2][1])
+		   		except AttributeError:
+		   			errors.print_error(50, parser.lineindex, [line[2][1]])
+		   		if val < minval:
+		   			name = item
+		   			minval = val
+		else:
+			maxval = -sys.maxint-1
+			name = ''			
+			for item in attr.keys():
+		   		val = 0
+		   		try:
+		   			val = getattr(attr, line[2][1])
+		   		except AttributeError:
+		   			errors.print_error(50, parser.lineindex, [line[2][1]])
+		   		if val > maxval:
+		   			name = item
+		   			maxval = val
+		   			
+		return name
 	else:
 		errors.print_error(49, parser.lineindex, [line[0][1]+'.'+line[2][1]])

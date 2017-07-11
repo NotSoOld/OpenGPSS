@@ -166,6 +166,15 @@ def parseDefinition(line):
 	global lineindex
 	lineindex = line[-1][0]
 	
+	typ = []
+	if deftype == 'hist':
+		consume('less')
+		while True:
+			if matchtok('gt'):
+				break
+			typ.append(peek(0))
+			nexttok()
+	
 	tok = nexttok()
 	if not tok or tok[0] != 'word':
 	   errors.print_error(3, lineindex, tok)
@@ -265,8 +274,43 @@ def parseDefinition(line):
 		else:
 			errors.print_error(12, lineindex, ['=', peek(0)])
 			
-	else: # If deftype is fac_enum
-		pass
+	else: # If deftype is hist
+		if not mathctok('lbrace'):
+			errors.print_error(51, lineindex)
+		else:
+			startval = None
+			interval = None
+			count = None
+			while True:
+				if matchtok('rbrace'):
+					break
+				if matchtok('comma'):
+					continue
+				if matchtok('word', 'start') or \
+				   matchtok('word', 'interval') or \
+				   matchtok('word', 'count'):
+					consume('eq')
+					tok = peek(0)
+					valuename = peek(-2)[1]
+					tempvalue = 0
+					try:
+						tempvalue = float(tok[1])
+					except ValueError:
+						errors.print_error(5, lineindex, 
+						       ['int/float', valuename, tok])
+					if valuename == 'start':
+						startval = tempvalue
+					elif valuename == 'interval':
+						interval = tempvalue
+					else:
+						count = tempvalue
+					nexttok()
+					continue
+				errors.print_error(4, lineindex, [peek(0)])
+			if startval != None and interval != None and count != None:
+				newobj = structs.Histogram(typ, startval, interval, count)
+			else:
+				errors.print_error(52, lineindex)
 	
 	return (deftype, name, newobj)
 
@@ -353,16 +397,23 @@ def parseBlock(line):
 			while True:
 				if matchtok('rparen'):
 					break	
-				if name == 'fac_irrupt' and len(args) == 4:
+				if name == 'fac_irrupt' and len(args) == 4 or \
+				   name == 'chain_pick' and len(args) == 1 or \
+				   name == 'chain_find' and len(args) == 1:
 					toks = []
+					depth = 0
 					while True:
 						if peek(0)[0] == 'rparen':
+							depth -= 1
+						elif peek(0)[0] == 'lparen':
+							depth += 1
+						if depth == -1:
 							consume('rparen')
 							break
 						toks.append(peek(0))
 						nexttok()
 					args.append(toks)
-					break
+					continue
 						
 				args.append(parseExpression())
 				if peek(0)[0] == 'comma':
@@ -776,6 +827,12 @@ def getAttrs(lh, rh):
 				errors.print_error(25, lineindex, 
 				       [interpreter.xact.group, rh])
 			val = interpreter.xact.params[rh]
+	elif lh == 'chxact':
+		if rh not in xact_params: #parameters from 'params' dict
+			if rh not in interpreter.chxact.params.keys():
+				errors.print_error(25, lineindex, 
+				       [interpreter.chxact.group, rh])
+			val = interpreter.chxact.params[rh]		
 				
 		else: #direct parameters
 			val = getattr(interpreter.xact, rh)
@@ -838,10 +895,11 @@ def parsePrimary():
 			val = interpreter.marks[tok[1]].name
 		elif tok[1] in interpreter.chains:
 			val = interpreter.chains[tok[1]].name
-		else:
+		elif tok[1] in fac_params+queue_params+xact_params+\
+		               chain_params+['xact', 'chxact']:
 			val = tok[1]
-		#else:
-		#	errors.print_error(6, lineindex, tok)
+		else:
+			errors.print_error(6, lineindex, tok)
 	
 	elif tok[0] == 'builtin':
 		return parseBuiltin()
@@ -877,6 +935,30 @@ def parseBuiltin():
 	args = []
 	nexttok()
 	consume('lparen')
+	name = peek(-2)[1]
+	if name == 'find_minmax':
+		if peek(0)[1] != 'min' and peek(0)[1] != 'max':
+			errors.print_error(21, lineindex, ['min/max', peek(0)[1]], 'F')
+		args.append(peek(0)[1])
+		nexttok()
+		consume('comma')
+	if name == 'find' or name == 'find_minmax':
+		toks = []
+		depth = 0
+		while True:
+			if peek(0)[0] == 'rparen':
+				depth -= 1
+			elif peek(0)[0] == 'lparen':
+				depth += 1
+			if depth == -1:
+				consume('rparen')
+				break
+			toks.append(peek(0))
+			nexttok()
+		args.append(toks)
+		
+		return fun(*args)
+	# For other builtins:	
 	while True:
 		if matchtok('rparen'):
 			break

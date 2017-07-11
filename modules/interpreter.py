@@ -16,10 +16,12 @@ queues = {}
 marks = {}
 chains = {}
 injectors = {}
+hists = {}
 currentChain = []
 tempCurrentChain = []
 futureChain = []
 xact = None
+chxact = None
 toklines = []
 exitcond = -1
 		
@@ -84,7 +86,7 @@ def fac_enter(fid, v=1):
 		facilities[fid].enters_f += 1
 		if xact.index in facilities[fid].busyxacts:
 			errors.print_error(41, xact.curblk+1)
-		facilities[fid].busyxacts[xact.index] = [v, 'entered']
+		facilities[fid].busyxacts[xact.index] = [v, ints['curticks']]
 		#print 'added xact '+str(xact.index)+' to facility '+fid
 		
 		if facilities[fid].isQueued:
@@ -102,6 +104,7 @@ def fac_leave(fid):
 		errors.print_error(43, xact.curblk+1, [fid])
 	leaving = facilities[fid].busyxacts[xact.index]
 	facilities[fid].curplaces += leaving[0]
+	facilities[fid].processedxactsticks += ints['curticks'] - leaving[1]
 	del facilities[fid].busyxacts[xact.index]
 	review_cec()
 	
@@ -123,7 +126,7 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 		if marks[mark].block == -1:
 			errors.print_error(30, xact.curblk+1, [mark])
 	
-	if facilities.maxplaces < vol:
+	if facilities[fid].maxplaces < vol:
 		move()
 		return
 	if facilities[fid].curplaces == facilities[fid].maxplaces:
@@ -135,8 +138,8 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 			break
 			
 		# Take xact info from busy xacts.
-		ir_vol = facilities[fid].busyxacts[facilities[fid].busyxacts.keys()[-1]]
 		ir_index = facilities[fid].busyxacts.keys()[-1]
+		ir_vol = facilities[fid].busyxacts[ir_index]
 		# Free facility from this xact.
 		del facilities[fid].busyxacts[ir_index]
 		facilities[fid].curplaces += ir_vol[0]
@@ -158,6 +161,8 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 				if elapsedto != []:
 					elapsedto += [['eq', ''], ['number', 0], ['eocl', '']]
 					# We need 'xa' for assignment:
+					# (pos and tokline are corrected automatically
+					# in parseAssignment)
 					oldxact = copy.deepcopy(xact)
 					xact = xa
 					parser.parseAssignment(elapsedto)
@@ -188,6 +193,8 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 					elapsed = futureChain[i][0] - ints['curticks']
 					elapsedto += [['eq', ''], ['number', elapsed], ['eocl', '']]
 					# We need 'xa' for assignment:
+					# (pos and tokline are corrected automatically
+					# in parseAssignment)
 					oldxact = copy.deepcopy(xact)
 					xact = xa
 					parser.parseAssignment(elapsedto)
@@ -219,6 +226,8 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 					if elapsedto != []:
 						elapsedto += [['eq', ''], ['number', 0], ['eocl', '']]
 						# We need 'xa' for assignment:
+						# (pos and tokline are corrected automatically
+						# in parseAssignment)
 						oldxact = copy.deepcopy(xact)
 						xact = xa
 						parser.parseAssignment(elapsedto)
@@ -236,26 +245,31 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 def fac_goaway(fid):
 	if fid not in facilities.keys():
 		errors.print_error(43, xact.curblk+1, [fid])
+	# Because this xact could skip fac_irrupt() block because it's too "fat"
+	# to irrupt that facility:
 	if xact.index not in facilities[fid].busyxacts:
-		errors.print_error(48, xact.curblk+1)
-	
+		move()
+		return
+		
 	# Delete this xact from facility.
+	# go: [vol, enter time]
 	go = facilities[fid].busyxacts[xact.index]
 	facilities[fid].curplaces += go[0]
 	del facilities[fid].busyxacts[xact.index]
 	review_cec()
 	# Move xacts to freed places from irrupt chain.
 	for i in range(len(facilities[fid].irruptch)):
+		# xainfo: [xact, elapsed time, [xact vol, enter time]]
 		xainfo = facilities[fid].irruptch[i]
-		if facilities[fid].curplaces < xainfo[2]:
+		if facilities[fid].curplaces < xainfo[2][0]:
 			continue
 		if xainfo[1] == 0:
 			currentChain.append(copy.deepcopy(xainfo[0]))
 		else:
 			futureChain.append([xainfo[1], copy.deepcopy(xainfo[0])])
-		facilities[fid].busyxacts[xainfo[0].index] = [xainfo[2], 'entered']
+		facilities[fid].busyxacts[xainfo[0].index] = xainfo[2]
 		#print 'added xact '+str(xainfo[0].index)+' back to facility '+fid
-		facilities[fid].curplaces += xainfo[2]
+		facilities[fid].curplaces += xainfo[2][0]
 		facilities[fid].irruptch[i] = []
 	facilities[fid].irruptch = [el for el in facilities[fid].irruptch if el != []]
 	
@@ -297,7 +311,7 @@ def chain_leave(chid, cnt, toblk=''):
 	move()
 	for i in range(cnt):
 		if len(chains[chid].xacts) == 0:
-			continue
+			break
 		xa = chains[chid].xacts.pop()
 		chains[chid].length = len(chains[chid].xacts)
 		xa.cond = 'canmove'
@@ -310,8 +324,72 @@ def chain_leave(chid, cnt, toblk=''):
 def chain_purge(chid, toblk=''):
 	chain_leave(chid, len(chains[chid].xacts), toblk)
 	
-#def chain_leaveif(chid, cond, cnt, toblk=''):
-#	pass
+def chain_pick(chid, cond, cnt, toblk=''):
+	# chain_pick(buf, chxact.p1 == 10, 5) => will pick all xacts from buf 
+	#                                        according to condition (5 or less)
+	if toblk != '':
+		if toblk not in marks.keys():
+			errors.print_error(29, xact.curblk+1, [toblk])
+		if marks[toblk].block == -1:
+			errors.print_error(30, xact.curblk+1, [toblk])
+	move()
+	global chxact
+	while True:
+		if len(chains[chid].xacts) == 0:
+			break
+		for temp_chxa in chains[chid].xacts:
+			chxact = copy.deepcopy(temp_chxa)
+			parser.pos = 0
+			parser.tokline = cond
+			if parser.parseExpression():
+				cnt -= 1
+				xa = copy.deepcopy(chxact)
+				chains[chid].xacts.remove(temp_chxa)
+				chains[chid].length = len(chains[chid].xacts)
+				xa.cond = 'canmove'
+				if toblk != '':
+					xa.curblk = marks[toblk].block - 1
+				else:
+					xa.curblk = xact.curblk
+				tempCurrentChain.append(xa)
+				break
+		if cnt == 0:
+			break
+	chxact = None		
+			
+def chain_find(chid, index_expr, cnt, toblk):
+	# chain_find(buf, find(buf.xacts.pr < 10), 5) => will evaluate condition 5 times
+	if toblk != '':
+		if toblk not in marks.keys():
+			errors.print_error(29, xact.curblk+1, [toblk])
+		if marks[toblk].block == -1:
+			errors.print_error(30, xact.curblk+1, [toblk])
+	move()
+	while True:
+		if len(chains[chid].xacts) == 0:
+			break
+		index = -1
+		if type(index_expr) is int:
+			index = index_expr
+		else:
+			parser.pos = 0
+			parser.tokline = index_expr
+			index = parser.parseExpression()
+		for chxa in chains[chid].xacts:
+			if chxa.index == index:
+				cnt -= 1
+				xa = copy.deepcopy(chxa)
+				chains[chid].xacts.remove(chxa)
+				chains[chid].length = len(chains[chid].xacts)
+				xa.cond = 'canmove'
+				if toblk != '':
+					xa.curblk = marks[toblk].block - 1
+				else:
+					xa.curblk = xact.curblk
+				tempCurrentChain.append(xa)
+				break
+		if cnt == 0:
+			break
 	
 def if_block(cond):
 	if cond:
@@ -548,11 +626,6 @@ def start_interpreter(filepath):
 		print 'timestep =', ints['curticks'].value
 		ttt = raw_input()
 		
-		# Statistics gathering.
-		for fac in facilities.values():
-			if fac.busyxacts:
-				fac.busyticks += len(fac.busyxacts)/float(fac.maxplaces)
-		
 		for xa in futureChain:
 			if xa[0] == ints['curticks'].value:
 				currentChain.append(xa[1])
@@ -620,10 +693,16 @@ def start_interpreter(filepath):
 			currentChain = tempCurrentChain
 			tempCurrentChain = []
 		ints['curticks'].value += 1
+			
+		# Statistics gathering.
+		for fac in facilities.values():
+			if fac.busyxacts:
+				fac.busyticks += len(fac.busyxacts)/float(fac.maxplaces)
+				
 		# Stop by modelling enough amount of time.
 		if checkExitCond():
 			break
-			
+					
 	print_results()
 	
 def checkExitCond():
