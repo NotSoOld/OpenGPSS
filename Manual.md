@@ -1,11 +1,16 @@
 # OpenGPSS Manual (beta v0.2)
 
 ## Navigation
-[General] (https://github.com/NotSoOld/OpenGPSS/blob/master/Manual.md#general)
-[Definition types] (https://github.com/NotSoOld/OpenGPSS/blob/master/Manual.md#definition-types)
-\- [Simple variables] (https://github.com/NotSoOld/OpenGPSS/blob/master/Manual.md#simple-variables)
-\- [Structure types] (https://github.com/NotSoOld/OpenGPSS/blob/master/Manual.md#structure-types)
-[Executive blocks] (https://github.com/NotSoOld/OpenGPSS/blob/master/Manual.md#executive-blocks)
+[General](#general)
+
+[Definition types](#definition-types)
+
+\- [Simple variables](#simple-variables)
+
+\- [Structure types](#structure-types)
+
+[Executive blocks](#executive-blocks)
+
 
 ## General
 Program in OpenGPSS language looks like following:
@@ -59,6 +64,12 @@ assignments to variables or xact parameters (and increments/decrements):
 `optional_mark_name:var_name++;`
 
 and single braces for *try* and *if*/*else_if*/*else*/*while*/*loop_times* blocks.
+
+Xact parameters can be accessed like this:
+
+`xact.p1, xact.str5, xact.p_my_parameter, xact.priority`
+
+(*xact.priority* is a special parameter which is used by interpreter to drive some logic, so every xact has it by default.)
 
 Every line in executive area (except curly braces) starts with name of the mark followed by mark separator. In other words, presence of mark separator in the line means that xact can be transported to this line. Curly braces **cannot** be addressed, it will lead to errors.
 
@@ -186,7 +197,7 @@ inject(
 
 This block will add an xact of group *xact\_group\_name* every *time* beats until it reaches its *inject\_limit*. Xacts will start moving from the line where *inject* block stands. Time between injections can be modified: first xact can be delayed by *initdelay* beats, and *time* parameter can be randomized to *time±timedelta* with even distribution.
 
-{parameters} are optional (if you don't use them, just leave no braces or empty braces). p\* are names for integer parameters, f\* - for float parameters, b\* - for boolean parameters and str\* - for string parameters (their types will be recognized automatically). "\*" can be anything from number to string. *priority* is a special number parameter to define priority to xacts. Priority can be used for controlling the order of a processing, etc.
+{parameters} are optional (if you don't use them, just leave no braces or empty braces). p\* are names for integer parameters, f\* - for float parameters, b\* - for boolean parameters and str\* - for string parameters (their types will be recognized automatically). "\*" can be anything from number to string. *priority* is a special number parameter to define priority to xacts. Priority can be used for controlling the order of a processing, etc. Xact parameters can be accessed using keyword *xact* followed by dot and parameter name.
 - Example:
 ```
 inject("main", 10, 4, 0, 250) {p1 = 0, priority = 10};
