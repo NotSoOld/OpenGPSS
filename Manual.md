@@ -3,14 +3,45 @@
 ## Navigation
 [General](#general)
 
-[Definition types](#definition-types)
+[Definition types:](#definition-types)
 
-\- [Simple variables](#simple-variables)
+- [Simple variables](#simple-variables)
 
-\- [Structure types](#structure-types)
+- [Structure types](#structure-types)
 
-[Executive blocks](#executive-blocks)
+[Executive blocks:](#executive-blocks) 
 
+[inject](#inject---add-xacts-into-your-system)
+\-- [queue_enter](#queue_enter---enter-unordered-queue-to-gather-statistics)
+\-- [queue_leave](#queue_leave---leave-previously-entered-unordered-queue)
+\-- [fac_enter](#fac_enter---occupy-facility-by-taking-one-of-its-free-places)
+\-- [fac_leave](#fac_leave---free-a-place-in-previously-occupied-facility)
+\-- [fac_irrupt](#fac_irrupt---force-into-occupied-facility)
+\-- [fac_goaway](#fac_goaway---go-away-from-previously-interrupted-facility)
+\-- [reject](#reject---delete-xact-entirely-from-system)
+\-- [wait](#wait---move-xact-to-fec-for-some-amount-of-time)
+\-- [transport/transport_prob/transport_if](#transport-family-blocks---------transport-xact-or-fork-the-path-of-xact)
+\-- [if/else_if/else](#ifelse_ifelse---make-xact-follow-different-paths-according-to-some-condition)
+\-- [wait_until](#wait_until---block-xact-movement-until-condition-becomes-true)
+\-- [chain_enter](#chain_enter---move-xact-to-one-of-user-chains)
+\-- [chain_leave](#chain_leave---take-xacts-from-user-chain)
+\-- [chain_purge](#chain_purge---take-all-xacts-from-the-user-chain)
+\-- [while](#while---do-i-really-need-to-describe-what-it-does-d)
+\-- [loop_times](#loop_times---do-something-as-much-times-as-you-need)
+\-- [copy](#copy---make-a-full-copy-of-a-xact)
+\-- [output](#output---print-something-when-you-need-to)
+\-- [xact_report](#xact_report---print-all-information-about-xact-executing-this-block)
+\-- [move](#move---just-skip-that-line)
+\-- [interrupt](#interrupt---force-interpreter-to-go-to-next-time-beat)
+\-- [review_cec](#review_cec---force-interpreter-to-look-through-cec-from-beginning)
+\-- [flush_cec](#flush_cec---clear-cec-entirely)
+\-- [pause_by_user](#pause_by_user---halt-simulation-until-user-presses-any-key)
+
+[Built-in functions:](#built-in-functions)
+
+- [Random generators](#random-generators)
+
+- [Type converters](#type-converters)
 
 ## General
 Program in OpenGPSS language looks like following:
@@ -456,15 +487,12 @@ etc.
 
 \- These conditional blocks can be nested. Use them as you'll use them in C or any other similar language.
 
-### try - block xact movement until condition becomes true
+### wait\_until - block xact movement until condition becomes true
 - Prototype:
 ```
-try(
-    bool condition
-   )
-{
-	blocks which will be executed when condition turns to true
-}
+wait_until(
+           bool condition
+          );
 ```
 - Usage:
 
@@ -472,15 +500,8 @@ Sometimes you don't need xacts to move through special part of program until som
 
 - Example:
 ```
-try(buffer.length > 0)
-{
-	chain_leave(buffer, 1, toterm);
-	fac_enter(CPU);
-}
+wait_until(buffer.length > 0);
 ```
-- Additional hacks:
-
-\- This block can also be nested.
 
 ### chain_enter - move xact to one of user chains
 - Prototype:
@@ -531,6 +552,23 @@ It is equal to `chain_leave(chain, chain.length, block)`. The chain will be empt
 - Example:
 ```
 chain_purge(buffer, killmark);
+```
+
+### hist_add - add a sample to the histogram
+- Prototype:
+```
+hist_add(
+         word histogram_name,
+	 int weight (default == 1)
+        );
+```
+- Usage:
+
+This block, when executed, adds a sample (i.e. a value of parameter which is tracked by *histogram\_name* histogram) to the specified histogram. Weight is a simple multiplier (how much samples should this particular sample be counted as).
+
+- Example:
+```
+hist_add(buffer_hist);
 ```
 
 ### while - do I really need to describe what it does..? :D
@@ -704,3 +742,42 @@ After executing this block, interpreter will wait until user presses any key to 
 - to_int(val) - tries to convert *val* into integer and returns integer. Can raise "cannot convert" error.
 - to_float(val) - tries to convert *val* into floating point number and returns it. Can raise "cannot convert" error.
 - to_bool(val) - tries to convert *val* into boolean value (true/false). Following values can be converted: true/false boolean values, "true"/"false" strings, any numbers (==0 - false, !=0 - true); otherwise, error will be raised.
+
+### find() - find name of struct by condition connected to struct's parameter
+- Prototype:
+```
+find(
+     condition (looks like "structure.parameter ? expression")
+     );
+```
+- Usage:
+
+In situations where you need to know name of free facility, chain with known length, etc., *find()* can help you.
+
+First word at the left of conditional expression is "facilities"/"queues"/"chains"/"chains.xacts"; second word after dot can be any available parameter name for according structure. According to first word, return value will differ: if you search for a facility/queue/chain, it will be a structure name (and "", if nothing was found); if you search for xact in chain, it will be xact index (and -1, if nothing was found).
+
+- Examples:
+```
+find(facilities.curplaces > 0) ==> returns name of facility
+find(chains.length < 10) ==> returns name of chain
+find(chains.xacts.p2 == 5) ==> returns xact index
+```
+
+### find_minmax() - similar to find(), but finds struct with min/max value of its parameter
+- Prototype:
+```
+find_minmax(
+            word min/max,
+            name of the structure and its parameter
+           );
+```
+- Usage:
+
+This function acts as *find()* function, but it doesn't actually operates with a condition. Instead, it will execute search of a structure (in the range of given names, for example, *facilities.curplaces*) to end up with a structure with minimal or maximal value of its parameter. Again, return value depends on what search do you perform.
+
+- Examples:
+```
+find_minmax(max, facilities.curplaces) ==> returns name of the facility
+find_minmax(min, chains.length) ==> returns name of the chain
+find_minmax(max, chains.xacts.pr) ==> returns index of xact
+```
