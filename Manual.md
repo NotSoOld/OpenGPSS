@@ -1,8 +1,11 @@
 # OpenGPSS Manual (beta v0.2)
 
 ## Navigation
-[General] (./Manual#general)
-[Definition types] (./Manual#definitiontypes)
+[General] (https://github.com/NotSoOld/OpenGPSS/blob/master/Manual.md#general)
+[Definition types] (https://github.com/NotSoOld/OpenGPSS/blob/master/Manual.md#definition-types)
+\- [Simple variables] (https://github.com/NotSoOld/OpenGPSS/blob/master/Manual.md#simple-variables)
+\- [Structure types] (https://github.com/NotSoOld/OpenGPSS/blob/master/Manual.md#structure-types)
+[Executive blocks] (https://github.com/NotSoOld/OpenGPSS/blob/master/Manual.md#executive-blocks)
 
 ## General
 Program in OpenGPSS language looks like following:
