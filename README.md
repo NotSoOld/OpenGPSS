@@ -1,4 +1,4 @@
-# OpenGPSS Interpreter (beta v0.1)
+# OpenGPSS Interpreter (beta v0.2)
 
 ## What's GPSS?
 GPSS (General Purpose Simulation System) is a special programming language which is used for modelling different systems to get knowledge about their efficiency with selected parameters (so, some conclusions can be made: maybe, parameters should be changed, the system itself should be reorganized, etc.)

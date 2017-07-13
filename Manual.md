@@ -1,4 +1,8 @@
-# OpenGPSS Manual (beta v0.1)
+# OpenGPSS Manual (beta v0.2)
+
+## Navigation
+[General] (./Manual#general)
+[Definition types] (./Manual#definitiontypes)
 
 ## General
 Program in OpenGPSS language looks like following:
@@ -51,7 +55,7 @@ assignments to variables or xact parameters (and increments/decrements):
 
 `optional_mark_name:var_name++;`
 
-and single braces for *try* and *if*/*else_if*/... blocks.
+and single braces for *try* and *if*/*else_if*/*else*/*while*/*loop_times* blocks.
 
 Every line in executive area (except curly braces) starts with name of the mark followed by mark separator. In other words, presence of mark separator in the line means that xact can be transported to this line. Curly braces **cannot** be addressed, it will lead to errors.
 
@@ -74,13 +78,6 @@ New xacts can be added to the model through *inject* and *copy* blocks. Inject b
 There is a special situation called *CEC review*. When interpreter receives a signal "review CEC", it interrupts movement of current xact and starts to go through CEC from its beginning. Blocks like *fac\_leave*, *refresh* and changing xact's *priority* can trigger CEC review (because these actions can affect simulation process. For example, if some xact leaves facility, it becomes available for xacts which wait at *fac\_enter* block but cannot proceed. And when CEC will be reviewed, xacts will be able to move to unlocked facility. Changing of priority may affect the order of xacts' processing.)
 
 
-## Language types
-- int - simple integer number, value limited by Python language
-- float - simple floating point number, value limited by Python language
-- string - string (line of characters) with (theoretically) unlimited length. Bounded by "double quotes"
-- word - string without quotes, can be used to reach parameters of structure by name of this structure. Often parsed to a string by interpreter or is needed for parser's work.
-
- 
 ## Definition types
 ### Simple variables:
 - int
@@ -93,11 +90,11 @@ Notes:
 
 \- There are three read-only default integer variables which are used by interpreter and can be accessed by user:
 
-injected - count of xacts injected by injectors of the system;
+**injected** - count of xacts injected by injectors of the system;
 
-rejected - count of xacts rejected from the system through *reject* blocks;
+**rejected** - count of xacts rejected from the system through *reject* blocks;
 
-curticks - how long simulation is going.
+**curticks** - how long simulation is going.
 
 - float
 
@@ -142,6 +139,24 @@ Additional notes:
 User chains are used to store transacts here when you need to control their flow through the model. User chains enable user to buffer xacts (and to simulate buffering devices), to release xacts one by one at some point in the model, etc.
 
 Parameters: none.
+
+- hist (histogram)
+
+Histograms are one of the ways to gather statistics. Histogram can collect value of a one parameter during simulating. Parameter name is specified in <> brackets after *hist* keyword. Value of this parameter is added to the histogram by calling *hist\_add* block. After simulating, histogram will be printed in both text and pseudo-graphical representations.
+
+Parameters (all of them **must** be set in curly braces):
+
+\- start - it is first bounding value of histogram
+
+\- interval - it is a constant interval between histogram marks
+
+\- count - total number of intervals (excluding interval from -infinity to start and from last mark to +infinity).
+
+Here is graphical representation:
+
+(todo image)
+
+When parameter value is about to be added to histogram, according interval will be chosen. Each interval contains not value of the parameter, but a number of parameter value additions of this interval.
 
 
 ## Executive blocks

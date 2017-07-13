@@ -71,16 +71,17 @@ class Injector:
 		else:
 			self.limit = limit
 		self.block = block
-		if 'pr' not in params.keys():
-			params['pr'] = 0
+		if 'priority' not in params.keys():
+			params['priority'] = 0
 		self.params = params
 		
 class Histogram:
-	def __init__(self, param, startval, interval, count):
+	def __init__(self, name, param, startval, interval, count):
+		self.name = name
 		self.param = param
 		self.startval = startval
 		self.interval = interval
-		self.count = count
+		self.count = int(count)
 		self.intervals = [0 for _ in range(self.count+2)]
 		
 	def add(self, value):

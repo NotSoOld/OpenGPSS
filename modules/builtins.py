@@ -4,6 +4,7 @@ import parser
 import interpreter
 import copy
 import sys
+import math
 
 def random01():
 	random.seed()
@@ -158,3 +159,20 @@ def find_minmax(mode, line):
 		return name
 	else:
 		errors.print_error(49, parser.lineindex, [line[0][1]+'.'+line[2][1]])
+		
+def abs(val):
+	if type(val) is not int or type(val) is not float:
+		errors.print_error(18, parser.lineindex, [val])
+		
+	return math.fabs(val)
+		
+def exp_distr(x, l):
+	if type(x) is not int or type(x) is not float:
+		errors.print_error(18, parser.lineindex, [x])
+	if type(l) is not int or type(l) is not float:
+		errors.print_error(18, parser.lineindex, [l])
+		
+	if x < 0:
+		return 0
+	else:
+		return 1 - math.exp(-l * x)

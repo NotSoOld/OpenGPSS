@@ -57,7 +57,8 @@ errors = {
           50:'Unknown parameter "{}", cannot execute search for it',
           51:'Expected parameters for histogram initialization',
           52:'Some parameters for histogram initialization are missing ' \
-             '(must be "start", "interval" and "count")'
+             '(must be "start", "interval" and "count")',
+          53:'No such histogram: "{}"'
          }
 
 warnings = {
@@ -69,7 +70,9 @@ warnings = {
               ' errors very easily (for example, for xacts from other group). '\
               'They also got type "string" by default which you may not want.',
             3:'Mark "{}" cannot be found as transporting label (at the left of '\
-              '":"). Is it needed at all?'
+              '":"). Is it needed at all?',
+            4:'Duplicate xact parameter "{}"; previous value of "{}" '\
+              'will be overwritten.'
            }
 
 def print_error(error_code, line, args=[], add=''):

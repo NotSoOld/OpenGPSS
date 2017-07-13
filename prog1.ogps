@@ -5,10 +5,10 @@ exitwhen(rejected > 10);
 {{
 inject("main", 6, 2, 0, 0) {priority = 1, pav = 11};
 xact_report();
-xact.pr = random_float(0, 10);
+xact.priority = random_float(0, 10);
 xact_report();
 fac_enter(op);
-wait(20, 3);
+wait(10, 3);
 fac_leave(op);
 if(xact.index % 2 == 0)
 {

@@ -94,19 +94,22 @@ blocks = [
           'iter_stop',    # tested
           'interrupt',    # tested
           'flush_cec',    # tested
-          'pause_by_user' # tested
+          'pause_by_user',# tested
+          'hist_add'      # tested
          ]
          
 builtins = [
-            'to_str',		# tested
-            'to_int',		# tested
-            'to_float',		# tested
-            'to_bool',		# tested
-            'random_int',	# tested
-            'random_float',	# tested
-            'random01',		# tested
-            'find',			# implemented
-            'find_minmax'	# implemented
+            'to_str',       # tested
+            'to_int',       # tested
+            'to_float',     # tested
+            'to_bool',      # tested
+            'random_int',   # tested
+            'random_float', # tested
+            'random01',     # tested
+            'find',         # implemented
+            'find_minmax',  # implemented
+            'abs',          # implemented
+            'exp_distr'     # implemented
            ]
 
 pos = 0

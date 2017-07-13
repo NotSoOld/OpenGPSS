@@ -168,9 +168,10 @@ def parseDefinition(line):
 	
 	typ = []
 	if deftype == 'hist':
+		nexttok()
 		consume('less')
 		while True:
-			if matchtok('gt'):
+			if peek(0)[0] == 'gt':
 				break
 			typ.append(peek(0))
 			nexttok()
@@ -275,7 +276,7 @@ def parseDefinition(line):
 			errors.print_error(12, lineindex, ['=', peek(0)])
 			
 	else: # If deftype is hist
-		if not mathctok('lbrace'):
+		if not matchtok('lbrace'):
 			errors.print_error(51, lineindex)
 		else:
 			startval = None
@@ -308,7 +309,7 @@ def parseDefinition(line):
 					continue
 				errors.print_error(4, lineindex, [peek(0)])
 			if startval != None and interval != None and count != None:
-				newobj = structs.Histogram(typ, startval, interval, count)
+				newobj = structs.Histogram(name, typ, startval, interval, count)
 			else:
 				errors.print_error(52, lineindex)
 	
@@ -509,7 +510,7 @@ def evaluateAssignment(prim, sec, assg, key):
 	#prim = xact, ints[], floats[], strs[]
 	#sec = '', params[]
 	#key = dict key if prim==ints,floats,strs and sec=='' - .value
-	   #or dict key/'pr' if prim==xact and sec==params - []directly
+	   #or dict key if prim==xact and sec==params - []directly
 	#print prim, sec, assg, key
 	if assg in assgs:
 		attr = getattr(interpreter, prim)
@@ -561,7 +562,7 @@ def evaluateAssignment(prim, sec, assg, key):
 			   		attr[key].value = attr[key].value ** result
 			   	elif assg == 'remaineq': attr[key].value %= result
 		
-		if prim == 'xact' and sec == 'params' and key == 'pr':
+		if prim == 'xact' and sec == 'params' and key == 'priority':
 			return ('review_cec', [])	
 		return ('move', [])
 	else:
@@ -645,7 +646,9 @@ def parseInjector(line):
 		if tok1[1] == 'priority':
 			if tok2[0] != 'number':
 				errors.print_error(19, lineindex, ['number', tok1[1], tok2])
-			params['pr'] = float(tok2[1])
+			if tok1[1] in params.keys():
+				errors.print_warning(4, lineindex, [tok1[1]])
+			params[tok1[1]] = float(tok2[1])
 			
 		elif tok1[1].startswith('p'):
 			if tok2[0] != 'number' or '.' in tok2[1]:
@@ -812,6 +815,8 @@ def parseDotting():
 	return lh
 	
 def getAttrs(lh, rh):
+	val = None
+	print lh, rh
 	if rh in fac_params and lh in interpreter.facilities:
 		val = getattr(interpreter.facilities[lh], rh)
 		
@@ -827,13 +832,14 @@ def getAttrs(lh, rh):
 				errors.print_error(25, lineindex, 
 				       [interpreter.xact.group, rh])
 			val = interpreter.xact.params[rh]
+		else: #direct parameters
+			val = getattr(interpreter.xact, rh)
 	elif lh == 'chxact':
 		if rh not in xact_params: #parameters from 'params' dict
 			if rh not in interpreter.chxact.params.keys():
 				errors.print_error(25, lineindex, 
 				       [interpreter.chxact.group, rh])
-			val = interpreter.chxact.params[rh]		
-				
+			val = interpreter.chxact.params[rh]			
 		else: #direct parameters
 			val = getattr(interpreter.xact, rh)
 	
@@ -895,6 +901,8 @@ def parsePrimary():
 			val = interpreter.marks[tok[1]].name
 		elif tok[1] in interpreter.chains:
 			val = interpreter.chains[tok[1]].name
+		elif tok[1] in interpreter.hists:
+			val = interpreter.hists[tok[1]].name
 		elif tok[1] in fac_params+queue_params+xact_params+\
 		               chain_params+['xact', 'chxact']:
 			val = tok[1]
