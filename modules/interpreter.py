@@ -54,12 +54,15 @@ def inject(injector):
 
 def queue_enter(qid):
 	global toklines
+	global queues
 	if qid not in queues.keys():
 		errors.print_error(44, xact.curblk+1, [qid])
 	if xact.index in queues[qid].queuedxacts:
 		errors.print_error(39, xact.curblk+1)
 	queues[qid].enters_q += 1
 	queues[qid].curxacts += 1
+	if queues[qid].curxacts > queues[qid].maxxacts:
+		queues[qid].maxxacts = queues[qid].curxacts
 	queues[qid].queuedxacts.append(xact.index)
 	xact.curblk += 1
 	xact.cond = 'canmove'
@@ -574,14 +577,14 @@ def pause_by_user(s=''):
 	trash = raw_input()
 	move()
 	
-def hist_add(hist):
+def hist_add(hist, weight=1):
 	if hist not in hists.keys():
 		errors.print_error(53, xact.curblk+1, [hist])
 		
 	parser.tokline = hists[hist].param
 	parser.pos = 0
 	val = parser.parseExpression()
-	hists[hist].add(val)
+	hists[hist].add(val, weight)
 	move()
 	
 ###############################################################
@@ -692,10 +695,6 @@ def start_interpreter(filepath):
 					#ttt = raw_input()
 					func = globals()[cmd[0]]
 					func(*cmd[1])
-					
-					# Let's try:
-					#if xact.cond != 'blocked':
-					#	toklines[xact.curblk][-1][2] += 1
 				
 					if xact.cond != 'canmove':
 						if xact.cond == 'rejected':
@@ -724,6 +723,8 @@ def start_interpreter(filepath):
 		for fac in facilities.values():
 			if fac.busyxacts:
 				fac.busyticks += len(fac.busyxacts)/float(fac.maxplaces)
+		for qu in queues.values():
+			qu.sumforavg += qu.curxacts
 				
 		# Stop modelling.
 		if checkExitCond():
@@ -869,12 +870,17 @@ def print_results():
 				lname = len(qu.name)
 		print 'Name'.ljust(lname+5) + \
 		      'Enters'.ljust(11) + \
+		      'Max length'.ljust(15) + \
+		      'Avg length'.ljust(15) + \
 		      'Current length'.ljust(19) + \
 		      'Current xacts (indexes)'
 		print '- '*40
 		for qu in queues.values():
 			print str(qu.name).ljust(lname+5) + \
 			      str(qu.enters_q).ljust(11) + \
+			      str(qu.maxxacts).ljust(15) + \
+			      ('{:.2f}'.format(qu.sumforavg/float(ints['curticks']
+			      .value)).ljust(15)) + \
 			      str(qu.curxacts).ljust(19) + \
 			      str(qu.queuedxacts)
 				  
@@ -928,13 +934,17 @@ def print_results():
 				  'Parameter'.ljust(lpar) + \
 				  'Start value'.ljust(15) + \
 				  'Interval'.ljust(11) + \
-				  'Intervals count'
+				  'Intervals count'.ljust(19) + \
+				  'Total entries'.ljust(18) + \
+				  'Avg value'
 			print '- '*40
 			print str(hist.name).ljust(lname) + \
 			      str(par).ljust(lpar) + \
 			      str(hist.startval).ljust(15) + \
 			      str(hist.interval).ljust(11) + \
-			      str(hist.count)
+			      str(hist.count).ljust(19) + \
+			      str(hist.enters_h).ljust(18) + \
+			      '{:.3f}'.format(hist.average)
 			print 
 			print '- '*40
 			print 'Interval'.ljust(20) + \
@@ -946,7 +956,7 @@ def print_results():
 			      str(hist.intervals[0]).ljust(11) + \
 			      '{:.2f}'.format(hist.intervals[0]/float(totalcnt) 
 			      * 100).ljust(15) + \
-			      '#'*int(hist.intervals[0]/float(totalcnt) * 50)
+			      '*'*int(hist.intervals[0]/float(totalcnt) * 50)
 			for i in range(1, hist.count+1):
 				print ('{!s} -- {!s}'.format(
 				      hist.startval + hist.interval * (i - 1),
@@ -955,13 +965,13 @@ def print_results():
 				      str(hist.intervals[i]).ljust(11) + \
 				      '{:.2f}'.format(hist.intervals[i]/float(totalcnt)
 				      * 100).ljust(15) + \
-				      '#'*int(hist.intervals[i]/float(totalcnt) * 50)
+				      '*'*int(hist.intervals[i]/float(totalcnt) * 50)
 			print ('< '+str(hist.startval + hist.interval * 
 			      hist.count)).ljust(20) + \
 			      str(hist.intervals[-1]).ljust(11) + \
 			      '{:.2f}'.format(hist.intervals[-1]/float(totalcnt)
 			      * 100).ljust(15) + \
-			      '#'*int(hist.intervals[-1]/float(totalcnt) * 50)
+			      '*'*int(hist.intervals[-1]/float(totalcnt) * 50)
 		print
 		print
 			      		

@@ -48,6 +48,8 @@ class Queue:
 		self.queuedxacts = []
 		self.enters_q = 0
 		self.curxacts = 0
+		self.maxxacts = 0
+		self.sumforavg = 0 # in the end this will be divided by curticks
 		
 class Mark:
 	def __init__(self, name, block):
@@ -83,17 +85,24 @@ class Histogram:
 		self.interval = interval
 		self.count = int(count)
 		self.intervals = [0 for _ in range(self.count+2)]
+		# for stats:
+		self.sum = 0
+		self.enters_h = 0
+		self.average = 0
 		
-	def add(self, value):
+	def add(self, value, weight):
 		if value < self.startval:
-			self.intervals[0] += 1
+			self.intervals[0] += weight
 		elif value > self.startval + self.interval * self.count:
-			self.intervals[-1] += 1
+			self.intervals[-1] += weight
 		else:
 			for i in range(1, self.count+1):
 				l = self.startval + self.interval * (i - 1)
 				r = self.startval + self.interval * i
 				if l < value < r:
-					self.intervals[i] += 1
+					self.intervals[i] += weight
 					break
+		self.sum += value * weight
+		self.enters_h += weight
+		self.average = self.sum / float(self.enters_h)
 				

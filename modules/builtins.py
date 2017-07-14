@@ -160,7 +160,7 @@ def find_minmax(mode, line):
 	else:
 		errors.print_error(49, parser.lineindex, [line[0][1]+'.'+line[2][1]])
 		
-def abs(val):
+def abs_value(val):
 	if type(val) is not int or type(val) is not float:
 		errors.print_error(18, parser.lineindex, [val])
 		

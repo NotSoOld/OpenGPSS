@@ -108,7 +108,7 @@ builtins = [
             'random01',     # tested
             'find',         # implemented
             'find_minmax',  # implemented
-            'abs',          # implemented
+            'abs_value',    # implemented
             'exp_distr'     # implemented
            ]
 

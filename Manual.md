@@ -9,6 +9,8 @@
 
 - [Structure types](#structure-types)
 
+[About name ambiguity](#about-name-ambiguity)
+
 [Executive blocks:](#executive-blocks) 
 
 [inject](#inject---add-xacts-into-your-system)
@@ -26,6 +28,9 @@
 \-- [chain_enter](#chain_enter---move-xact-to-one-of-user-chains)
 \-- [chain_leave](#chain_leave---take-xacts-from-user-chain)
 \-- [chain_purge](#chain_purge---take-all-xacts-from-the-user-chain)
+\-- [chain_pick](#chain_pick---take-xacts-which-satisfy-a-condition)
+\-- [chain_find](#chain_find---take-xacts-from-user-chain-by-index)
+\-- [hist_add](#hist_add---add-a-sample-to-the-histogram)
 \-- [while](#while---do-i-really-need-to-describe-what-it-does-d)
 \-- [loop_times](#loop_times---do-something-as-much-times-as-you-need)
 \-- [copy](#copy---make-a-full-copy-of-a-xact)
@@ -42,6 +47,12 @@
 - [Random generators](#random-generators)
 
 - [Type converters](#type-converters)
+
+- [find](#find-----find-name-of-struct-by-condition-connected-to-struct-s-parameter)
+
+- [find_minmax](#find_minmax-----similar-to-find----but-finds-struct-with-min-max-value-of-its-parameter)
+
+- [Math functions](#math-functions)
 
 ## General
 Program in OpenGPSS language looks like following:
@@ -124,6 +135,27 @@ There is a special situation called *CEC review*. When interpreter receives a si
 
 
 ## Definition types
+
+**For all types:** 
+
+Name of the variable (as string) can be accessed through dot: *variable.name*.
+
+There is also indirect addressing (tilde sign, "~"), which allows to get the value of variable *which* name is in other variable, for example:
+```
+str var1 = 'buffered';
+int buffered = 5;
+
+~var1++; <== will increment variable "buffered".
+```
+
+**Also:**
+
+Current xact (which executes block, assignment, etc.) has some accessible parameters along with its own parameters. They are accessed through dot operator:
+```
+xact.index
+xact.group
+```
+
 ### Simple variables:
 - int
 
@@ -158,22 +190,39 @@ Just a variable which can hold a boolean value (true/false) and be accessed by i
 
 This is a device which can be occupied by xacts. Usual practice is to use facility to simulate something that can be occupied by somebody for some amount of time and therefore make other transacts wait until it'll be freed. So, when facility is free (has spare places), xacts can occupy it and move further, but facility is fully busy, xacts will wait until it'll have free places.
 
-Parameters (can be set in curly braces):
+Initial parameters (can be set in curly braces):
+
 \- isQueued = bool *(default == true)* - if true, this facility will be automatically queued as if there are *queue\_enter* and *queue\_leave* blocks around *fac\_enter* block. Queue will be named with this facility's name.
 
 \- places = int *(default == 1)* - how many xacts can occupy this facility until it becomes busy.
+
+Accessible parameters (through dot operator):
+
+\- curplaces - how many free places are currently available
+
+\- maxplaces - how many places facility has at all
+
+\- enters_f - how many xacts entered the facility at this time
 
 - queue
 
 This is a device which is generally used for gathering statistics about the flow of transacts near facilities. But queueing can be used not only around *fac\_enter* blocks. Statistics include number of entered xacts, current xacts in the queue, etc. It is important to mention that queues doesn't really sort or queue xacts, it's only gather statistics.
 
-Parameters: none.
+Initial parameters: none.
+
+Accessible parameters (through dot operator):
+
+\- curxacts - how many xacts are currently queued
+
+\- enters_q - how many xacts entered the queue at this time
 
 - mark
 
 This is a definition of a transporting mark which can be used in the executive area of a program. When mark is at the left of ':' in the line, it is called a *transporting label*. When mark is present as argument of transport operator (or somewhere else where xacts can be moved around the model), it declares where xact should go, which line it should follow after execution.
 
-Parameters: none.
+Initial parameters: none.
+
+Accessible parameters: none.
 
 Additional notes:
 
@@ -183,13 +232,19 @@ Additional notes:
 
 User chains are used to store transacts here when you need to control their flow through the model. User chains enable user to buffer xacts (and to simulate buffering devices), to release xacts one by one at some point in the model, etc.
 
-Parameters: none.
+Initial parameters: none.
+
+Accesible parameters (through dot operator):
+
+\- length - how many xacts are currently in this user chain
+
+\- xacts (only available inside find/find\_minmax functions!) - list of current xacts in the chain
 
 - hist (histogram)
 
 Histograms are one of the ways to gather statistics. Histogram can collect value of a one parameter during simulating. Parameter name is specified in <> brackets after *hist* keyword. Value of this parameter is added to the histogram by calling *hist\_add* block. After simulating, histogram will be printed in both text and pseudo-graphical representations.
 
-Parameters (all of them **must** be set in curly braces):
+Initial parameters (all of them **must** be set in curly braces):
 
 \- start - it is first bounding value of histogram
 
@@ -197,11 +252,36 @@ Parameters (all of them **must** be set in curly braces):
 
 \- count - total number of intervals (excluding interval from -infinity to start and from last mark to +infinity).
 
-Here is graphical representation:
+Here is graphical representation of these parameters:
 
-(todo image)
+![alt text](./histillustr.jpg)
 
 When parameter value is about to be added to histogram, according interval will be chosen. Each interval contains not value of the parameter, but a number of parameter value additions of this interval.
+
+Accessible parameters (can be accessed thorugh dot operator):
+
+\- enters_h - how many samples have been added to histogram (weighted)
+
+\- average - average value of observing parameter
+
+
+## About name ambiguity
+
+OpenGPSS is a case-sensitive language. Names can consist of upper and lower register letters, digits (but they cannot start with digit) and underscores.
+
+In some cases identical names are allowed:
+
+\- names of facilities and queues can be the same;
+
+\- ??? (should be tested :D)
+
+But:
+
+\- **do not** name variables with identical words, they'll be messed up;
+
+\- **never** name any variables/structures as keywords (including xact, chxact, etc.)
+
+Remember, this project is still in beta, so rules are a subject to change.
 
 
 ## Executive blocks
@@ -554,12 +634,55 @@ It is equal to `chain_leave(chain, chain.length, block)`. The chain will be empt
 chain_purge(buffer, killmark);
 ```
 
+### chain_pick - take xacts which satisfy a condition
+- Prototype:
+```
+chain_pick(
+           word chainname,
+           condition,
+           int count,
+           word where_to_move (default - next block after this)
+          );
+```
+- Usage:
+
+While *chain\_leave* gives an opportunity to unconditionally remove xacts from user chains, *chain\_pick* allows to take only xacts which meet specified condition. Condition may look like "chxact.parameter ==/<=/... some value or expression" (it's just an example; left side also may vary). New keyword *chxact* represents xact from user chain which is currently observed (when checking condition, every xacts from user chain will be observed, from first to last). *count* represents how many times should condition be checked; if chain has less "good to go" xacts than *count*, it is OK.
+
+This block is important because it gives a possibility to remove xacts from chains according to their parameters' values, it may be used in some situations (and cannot be made in other way, I think).
+
+- Examples:
+```
+chain_pick(buffer, chxact.ptime > 10, 3);
+chain_pick(buffer, buffer.length > 5, 10, to_kill);
+```
+
+### chain_find - take xacts from user chain by index
+- Prototype:
+```
+chain_find(
+           word chainname,
+           int xact_index,
+           int count,
+           word where_to_move (default is next block after that)
+          );
+```
+- Usage:
+
+As it is somewhat silly to remove xacts by their index (it is not such parameter which is always important or known), this block is generally used with *find()/find\_minmax()* builtin functions (which return xact index when searching a xact in the user chain). Other behaviour is similar to *chain_pick* block - *count* or less xacts will be removed and every chain xact will be observed through check.
+
+Sometimes this block can be replaced with *chain\_pick* block (and vise versa).
+
+- Example:
+```
+chain_find(buf, find(buf.xacts.pr < 10), 5);
+```
+
 ### hist_add - add a sample to the histogram
 - Prototype:
 ```
 hist_add(
          word histogram_name,
-	 int weight (default == 1)
+	     int weight (default == 1)
         );
 ```
 - Usage:
@@ -781,3 +904,7 @@ find_minmax(max, facilities.curplaces) ==> returns name of the facility
 find_minmax(min, chains.length) ==> returns name of the chain
 find_minmax(max, chains.xacts.pr) ==> returns index of xact
 ```
+
+### Math functions:
+- abs_value(number) - returns an absolute value of int/float number.
+- exp\_distr(x, lambda) - returns value of a cumulative exponential distribution function with given x and lambda (more on [Wikipedia](https://en.wikipedia.org/wiki/Exponential_distribution#Cumulative_distribution_function)). Is useful when setting processing times, etc.

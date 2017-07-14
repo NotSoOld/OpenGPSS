@@ -36,6 +36,10 @@ xact_params = [
                'group',
                'index'
               ]
+hist_params = [
+               'enters_h',
+               'average'
+              ]
              
 def tocodelines(program):
 	parsed = [['padding', [0, 0, 0]]]
@@ -825,6 +829,9 @@ def getAttrs(lh, rh):
 		
 	elif rh in chain_params and lh in interpreter.chains:
 		val = getattr(interpreter.chains[lh], rh)
+		
+	elif rh in hist_params and lh in interpreter.hists:
+		val = getattr(interpreter.hists[lh], rh)
 	
 	elif lh == 'xact':
 		if rh not in xact_params: #parameters from 'params' dict
@@ -904,7 +911,7 @@ def parsePrimary():
 		elif tok[1] in interpreter.hists:
 			val = interpreter.hists[tok[1]].name
 		elif tok[1] in fac_params+queue_params+xact_params+\
-		               chain_params+['xact', 'chxact']:
+		               chain_params+hist_params+['xact', 'chxact']:
 			val = tok[1]
 		else:
 			errors.print_error(6, lineindex, tok)
