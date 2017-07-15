@@ -14,11 +14,18 @@ There already is properly working GPS language and pretty good interpreter. But 
 
 So, I try to recreate an idea of GPSS with C-like syntax, open source interpreter and (maybe?) more possibilities without restrictions. 
 
-Btw, you may contribute your ideas, I'll go through all of them - we can make OpenGPSS better together!
+Feel free to contribute your ideas, I'll go through all of them - we can make OpenGPSS better together!
 
 ## Usage:
+
+1. Install Python 2.7 (or newer version of Python 2.x)
+
+2. Run in terminal from root folder:
+
 `python OpenGPSS\ Interpreter.py`
+
+or start Python IDE/interpreter/etc. and run *OpenGPSS Interpreter.py*
 
 ## Manuals:
 - [EN](./Manual.md) 
-- RU: (will be someday)
+- [RU](./Manual_RU.md)

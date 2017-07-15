@@ -77,7 +77,7 @@ Definiton area contains definitions of variables, facilities, queues and marks t
 `type name = initial_value;`
 - For structures:
 
-`type name {optional parameters};`
+`type name {initial parameters};`
 
 Every separate line in OpenGPSS finishes with ';'. If the line doesn't have ';' at the end, next line is recognized as the continuation of current line.
 Comments are C-like: 
@@ -105,7 +105,7 @@ assignments to variables or xact parameters (and increments/decrements):
 
 `optional_mark_name:var_name++;`
 
-and single braces for *try* and *if*/*else_if*/*else*/*while*/*loop_times* blocks.
+and single braces for *if*/*else_if*/*else*/*while*/*loop_times* blocks.
 
 Xact parameters can be accessed like this:
 
@@ -113,7 +113,7 @@ Xact parameters can be accessed like this:
 
 (*xact.priority* is a special parameter which is used by interpreter to drive some logic, so every xact has it by default.)
 
-Every line in executive area (except curly braces) starts with name of the mark followed by mark separator. In other words, presence of mark separator in the line means that xact can be transported to this line. Curly braces **cannot** be addressed, it will lead to errors.
+Every line in executive area (except curly braces) can start with name of the mark followed by mark separator. In other words, presence of mark separator in the line means that xact can be transported to this line. Curly braces **cannot** be addressed, it will lead to errors.
 
 If xact reaches some executive line, it tries to execute it (except single curly braces and *inject* block - it executes automatically) using its own parameters if needed.
 

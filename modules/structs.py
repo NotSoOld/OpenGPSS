@@ -1,5 +1,6 @@
 import errors
 import parser
+import copy
 
 class IntVar:
 	def __init__(self, name, initval):
@@ -105,4 +106,49 @@ class Histogram:
 		self.sum += value * weight
 		self.enters_h += weight
 		self.average = self.sum / float(self.enters_h)
+
+class ConditionalFunction:
+	def __init__(self, name, args, choices):
+		self.name = name
+		self.args = args       # ['arg1', 'arg2']
+		self.choices = choices # [[cond1, ret1], [cond2, ret2]]
+		
+	def call(self, argvalues):
+		oldchoices = copy.deepcopy(self.choices)
+		oldpos = parser.pos
+		oldline = copy.deepcopy(parser.tokline)
+		self.replaceArgsWithValues(argvalues)
+		for choice in self.choices:
+			parser.pos = 0
+			parser.tokline = choice[0]
+			if parser.parseExpression():
+				parser.pos = 0
+				parser.tokline = choice[1]
+				retval = parser.parseExpression()
+				parser.pos = oldpos
+				parser.tokline = copy.deepcopy(oldline)
+				self.choices = copy.deepcopy(oldchoices)
+				return retval
+		# If no condition evaluated to true:
+		parser.pos = oldpos
+		parser.tokline = copy.deepcopy(oldline)
+		self.choices = copy.deepcopy(oldchoices)
+		return 0
+		
+	def replaceArgsWithValues(self, values):
+		for i in range(len(self.args)):
+			if type(values[i]) is int or type(values[i]) is float:
+				valuetype = 'number'
+			elif type(values[i]) is bool:
+				valuetype = 'word'
+			elif type(values[i]) is str:
+				valuetype = 'string'
 				
+			for choice in self.choices:
+				for expr in choice:
+					prevtoken = []
+					for token in expr:
+						if token[1] == self.args[i] and prevtoken != ['dot', '']:
+							token[0] = valuetype
+							token[1] = values[i]
+						prevtoken = token

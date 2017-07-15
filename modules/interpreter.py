@@ -17,6 +17,7 @@ marks = {}
 chains = {}
 injectors = {}
 hists = {}
+functions = {}
 currentChain = []
 tempCurrentChain = []
 futureChain = []

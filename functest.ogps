@@ -1,0 +1,14 @@
+function my_func(value) {
+						 value >= 0, value |
+						 value < 0, -value
+						};
+							 
+exitwhen(rejected >= 1);
+{{
+inject("main", 1, 0, 0, 1);
+output(abs_value(10));
+output(my_func(10));
+output(my_func(-33.5));
+output(my_func("strlol")); // lol wtf
+reject(1);
+}}

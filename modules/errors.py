@@ -52,13 +52,16 @@ errors = {
           45:'Expected ","; got end of line during parsing "loop_times" block',
           46:'Cannot do assignment; "{}" is a read-only value',
           47:'Xact is trying to interrupt facility which it already occupies',
-          48:'Xact is trying to go away from facility which it did not interrupt',
+         #48:'Xact is trying to go away from facility which it did not interrupt',
           49:'Unknown search criteria for "find/find_minmax" function: "{}"',
           50:'Unknown parameter "{}", cannot execute search for it',
           51:'Expected parameters for histogram initialization',
           52:'Some parameters for histogram initialization are missing ' \
              '(must be "start", "interval" and "count")',
-          53:'No such histogram: "{}"'
+          53:'No such histogram: "{}"',
+          54:'Wrong function definition (expecting one condition per each ' \
+             'return expression; got "{}" expressions when expected "{}")',
+          55:'Wrong number of arguments for function "{}" (takes "{}", "{}" given)'
          }
 
 warnings = {
@@ -72,7 +75,7 @@ warnings = {
             3:'Mark "{}" cannot be found as transporting label (at the left of '\
               '":"). Is it needed at all?',
             4:'Duplicate xact parameter "{}"; previous value of "{}" '\
-              'will be overwritten.'
+              'will be OVERWRITTEN.'
            }
 
 def print_error(error_code, line, args=[], add=''):

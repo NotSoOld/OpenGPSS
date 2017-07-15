@@ -57,7 +57,8 @@ typedefs = [
             'hist',
             'queue', 
             'mark',
-            'chain'
+            'chain',
+            'function'
            ]
 
 blocks = [

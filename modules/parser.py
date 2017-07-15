@@ -5,6 +5,7 @@ import interpreter
 import errors
 import builtins
 import copy
+import inspect
 
 pos = 0
 tokline = []
@@ -60,7 +61,8 @@ def tocodelines(program):
 			i += 1
 			if token[0] == 'eocl' or token == ['block', 'else'] or \
 			   (token == ['rparen', ''] and program[i] == ['lbrace', ''] and \
-			    ['block', 'inject'] not in line):
+			    ['block', 'inject'] not in line and 
+			    ['typedef', 'function'] not in line):
 				line.append([li, 0, 0])
 				parsed.append(line)
 				li += 1
@@ -278,44 +280,85 @@ def parseDefinition(line):
 			newobj = structs.StrVar(name, parseExpression())
 		else:
 			errors.print_error(12, lineindex, ['=', peek(0)])
-			
+	
+	elif deftype == 'function':
+		consume('lparen')
+		args = []
+		while True:
+			if matchtok('rparen'):
+				break
+			if matchtok('comma'):
+				continue
+			if peek(0)[0] != 'word':
+				errors.print_error(21, lineindex, ['word', peek(0)], 'F')
+			args.append(peek(0)[1])
+			nexttok()
+		consume('lbrace')
+		choices = []
+		choice = []
+		toks = []
+		while True:
+			if matchtok('rbrace'):
+				choice.append(toks)
+				if len(choice) != 2:
+					errors.print_error(54, lineindex, [len(choices), 2])
+				choices.append(choice)
+				break
+			if matchtok('transport_prob'):
+				choice.append(toks)
+				toks = []
+				if len(choice) != 2:
+					errors.print_error(54, lineindex, [len(choices), 2])
+				choices.append(choice)
+				choice = []
+				continue
+			if matchtok('comma'):
+				choice.append(toks)
+				toks = []
+				if len(choice) != 1:
+					errors.print_error(54, lineindex, [len(choices), 1])
+				continue
+			toks.append(peek(0))
+			nexttok()
+		
+		newobj = structs.ConditionalFunction(name, args, choices)
+				
 	else: # If deftype is hist
 		if not matchtok('lbrace'):
 			errors.print_error(51, lineindex)
+		startval = None
+		interval = None
+		count = None
+		while True:
+			if matchtok('rbrace'):
+				break
+			if matchtok('comma'):
+				continue
+			if matchtok('word', 'start') or \
+			   matchtok('word', 'interval') or \
+			   matchtok('word', 'count'):
+				consume('eq')
+				tok = peek(0)
+				valuename = peek(-2)[1]
+				tempvalue = 0
+				try:
+					tempvalue = float(tok[1])
+				except ValueError:
+					errors.print_error(5, lineindex, 
+					       ['int/float', valuename, tok])
+				if valuename == 'start':
+					startval = tempvalue
+				elif valuename == 'interval':
+					interval = tempvalue
+				else:
+					count = tempvalue
+				nexttok()
+				continue
+			errors.print_error(4, lineindex, [peek(0)])
+		if startval != None and interval != None and count != None:
+			newobj = structs.Histogram(name, typ, startval, interval, count)
 		else:
-			startval = None
-			interval = None
-			count = None
-			while True:
-				if matchtok('rbrace'):
-					break
-				if matchtok('comma'):
-					continue
-				if matchtok('word', 'start') or \
-				   matchtok('word', 'interval') or \
-				   matchtok('word', 'count'):
-					consume('eq')
-					tok = peek(0)
-					valuename = peek(-2)[1]
-					tempvalue = 0
-					try:
-						tempvalue = float(tok[1])
-					except ValueError:
-						errors.print_error(5, lineindex, 
-						       ['int/float', valuename, tok])
-					if valuename == 'start':
-						startval = tempvalue
-					elif valuename == 'interval':
-						interval = tempvalue
-					else:
-						count = tempvalue
-					nexttok()
-					continue
-				errors.print_error(4, lineindex, [peek(0)])
-			if startval != None and interval != None and count != None:
-				newobj = structs.Histogram(name, typ, startval, interval, count)
-			else:
-				errors.print_error(52, lineindex)
+			errors.print_error(52, lineindex)
 	
 	return (deftype, name, newobj)
 
@@ -647,11 +690,14 @@ def parseInjector(line):
 		consume('eq')
 		tok2 = peek(0)
 		
+		if tok1[0] != 'word':
+			errors.print_error(21, lineindex, ['parameter name', tok1[0]], 'P')
+		if tok1[1] in params.keys():
+				errors.print_warning(4, lineindex, [tok1[1]])
+		
 		if tok1[1] == 'priority':
 			if tok2[0] != 'number':
 				errors.print_error(19, lineindex, ['number', tok1[1], tok2])
-			if tok1[1] in params.keys():
-				errors.print_warning(4, lineindex, [tok1[1]])
 			params[tok1[1]] = float(tok2[1])
 			
 		elif tok1[1].startswith('p'):
@@ -805,20 +851,20 @@ def parseMult():
 	
 def parseUnary():
 	if matchtok('not'):
-		return (not parseDotting())
+		return (not parseDot())
 	if matchtok('minus'):
-		return -1 * parseDotting()
+		return -1 * parseDot()
 	if matchtok('plus'):
-		return parseDotting()
-	return parseDotting()
+		return parseDot()
+	return parseDot()
 
-def parseDotting():
+def parseDot():
 	lh = parsePrimary()
 	if matchtok('dot'):
-		return getAttrs(lh, parsePrimary())
+		return getAttrsForDotOperator(lh, parsePrimary())
 	return lh
 	
-def getAttrs(lh, rh):
+def getAttrsForDotOperator(lh, rh):
 	val = None
 	print lh, rh
 	if rh in fac_params and lh in interpreter.facilities:
@@ -873,25 +919,32 @@ def parsePrimary():
 		return result
 	tok = peek(0)
 	val = 0
+	
 	if tok[0] == 'indirect':
 		return parseIndirect()
+		
 	if tok[0] == 'number':
-		if '.' in tok[1]:
+		if '.' in str(tok[1]):
 			val = float(tok[1])
 		else:
 			val = int(tok[1])
+			
 	elif tok[0] == 'string':
 		if tok[0].startswith('~'):
-			val = parseIndirectString()
+			return parseIndirectString()
 		else:
 			val = tok[1]
+			
 	elif tok[0] == 'word':
 		if tok[1] == 'true':
 			val = True
 		elif tok[1] == 'false':
 			val = False
 		
-		# If there is no dot:
+		elif tok[1] in interpreter.functions:
+			return parseConditionalFunction(tok[1])
+		
+		# Variables and structs' names (if there is no dot):
 		elif tok[1] in interpreter.ints:
 			val = interpreter.ints[tok[1]].value
 		elif tok[1] in interpreter.floats:
@@ -921,7 +974,29 @@ def parsePrimary():
 	
 	nexttok()
 	return val
-	
+
+def parseConditionalFunction(functionName):
+	func = interpreter.functions[functionName]
+	argvalues = []
+	nexttok()
+	consume('lparen')
+	while True:
+		if matchtok('rparen'):
+			break
+		argvalues.append(parseExpression())
+		if peek(0)[0] == 'comma':
+			consume('comma')
+			continue
+		elif peek(0)[0] == 'rparen':
+			consume('rparen')
+			break
+		else:
+			errors.print_error(16, lineindex, [peek(0)])
+	if len(argvalues) != len(func.args):
+		errors.print_error(55, lineindex, [functionName, len(func.args),
+		                                   len(argvalues)])
+	return func.call(argvalues)
+
 def parseIndirect(val=''):
 	global tokline
 	global pos
@@ -946,14 +1021,14 @@ def parseIndirectString():
 	return parseIndirect(s)
 
 def parseBuiltin():
-	fun = getattr(builtins, peek(0)[1])
+	name = peek(0)[1]
+	fun = getattr(builtins, name)
 	args = []
 	nexttok()
 	consume('lparen')
-	name = peek(-2)[1]
 	if name == 'find_minmax':
 		if peek(0)[1] != 'min' and peek(0)[1] != 'max':
-			errors.print_error(21, lineindex, ['min/max', peek(0)[1]], 'F')
+			errors.print_error(21, lineindex, ['min/max', peek(0)[1]], 'D')
 		args.append(peek(0)[1])
 		nexttok()
 		consume('comma')
@@ -972,7 +1047,12 @@ def parseBuiltin():
 			nexttok()
 		args.append(toks)
 		
+		if len(inspect.getargspec(fun).args) != len(args):
+			errors.print_error(55, lineindex, [name, 
+			                       len(inspect.getargspec(fun).args), 
+			                       len(args)])
 		return fun(*args)
+		
 	# For other builtins:	
 	while True:
 		if matchtok('rparen'):
@@ -983,10 +1063,14 @@ def parseBuiltin():
 			continue
 		elif peek(0)[0] == 'rparen':
 			consume('rparen')
-			break;
+			break
 		else:
 			errors.print_error(16, lineindex, [peek(0)])
-
+	
+	if len(inspect.getargspec(fun).args) != len(args):
+			errors.print_error(55, lineindex, [name, 
+			                       len(inspect.getargspec(fun).args), 
+			                       len(args)])
 	return fun(*args)
 
 def consume(toktype, toktext=''):
@@ -1014,7 +1098,7 @@ def nexttok():
 
 def matchtok(toktype, toktext=''):
 	global pos
-	if peek(0)[0] != toktype or peek(0)[1] != toktext:
+	if not peek(0) or peek(0)[0] != toktype or peek(0)[1] != toktext:
 		return False
 	pos += 1
 	return True
@@ -1024,5 +1108,5 @@ def peek(relpos):
 	global tokline
 	index = pos + relpos
 	if len(tokline) <= index:
-		return ['', '']
+		return []
 	return tokline[index]

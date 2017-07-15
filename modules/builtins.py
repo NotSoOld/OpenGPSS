@@ -22,8 +22,8 @@ def to_str(val):
 	return str(val)
 	
 def to_bool(val):
-	if (type(val) is not int or type(val) is not float
-	    or type(val) is not bool) and val != 'true' and val != 'false':
+	if type(val) is not int and type(val) is not float and \
+	   type(val) is not bool and val != 'true' and val != 'false':
 		errors.print_error(31, parser.lineindex, [val, 'bool'])
 	if val == 'true':
 		return True
@@ -161,15 +161,15 @@ def find_minmax(mode, line):
 		errors.print_error(49, parser.lineindex, [line[0][1]+'.'+line[2][1]])
 		
 def abs_value(val):
-	if type(val) is not int or type(val) is not float:
+	if type(val) is not int and type(val) is not float:
 		errors.print_error(18, parser.lineindex, [val])
 		
 	return math.fabs(val)
 		
 def exp_distr(x, l):
-	if type(x) is not int or type(x) is not float:
+	if type(x) is not int and type(x) is not float:
 		errors.print_error(18, parser.lineindex, [x])
-	if type(l) is not int or type(l) is not float:
+	if type(l) is not int and type(l) is not float:
 		errors.print_error(18, parser.lineindex, [l])
 		
 	if x < 0:
