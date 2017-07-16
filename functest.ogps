@@ -2,11 +2,23 @@ function my_func(value) {
 						 value >= 0, value |
 						 value < 0, -value
 						};
-							 
+
+int massiv[10];
+int i = 0;
+ 
 exitwhen(rejected >= 1);
 {{
 inject("main", 1, 0, 0, 1);
-output(abs_value(10));
+loop_times(i, 10)
+{
+	massiv[i] = i*i;
+	output(i);
+}
+i = 0;
+loop_times(i, 10)
+{
+	output(massiv[i]);
+}
 output(my_func(10));
 output(my_func(-33.5));
 output(my_func("strlol")); // lol wtf

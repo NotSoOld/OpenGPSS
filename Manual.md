@@ -117,7 +117,7 @@ Every line in executive area (except curly braces) can start with name of the ma
 
 If xact reaches some executive line, it tries to execute it (except single curly braces and *inject* block - it executes automatically) using its own parameters if needed.
 
-Nearly every parameter - queue/facility name, *wait*/*travel*/*if* parameters - can be not just words, but complex expressions. They will be parsed to a string/number before block execution. (Except parameters in definitions and *inject* block, because these are parsed before any execution of blocks starts.)
+Nearly every parameter - queue/facility name, *wait*/*travel*/*if* parameters - can be not just words, but complex expressions. They will be parsed to a string/number before block execution. (Except parameters in definitions and *inject* block, because these are parsed before any execution of blocks starts. But initial values for variables and array/matrix size can be expressions.)
 
 Model while simulating has two very important lists: *future events chain*, FEC, and *current events chain*, CEC. Time in model is measured in beats (so, it's discrete). Every beat FEC is watched if there are xacts that need to move in the current beat. If they do, they are moved from FEC to CEC. Then, every xact in CEC is moving through executive blocks until it will be a) rejected from the model b) blocked c) moved to a user chain d) executing *wait* block. 
 
@@ -271,15 +271,15 @@ OpenGPSS is a case-sensitive language. Names can consist of upper and lower regi
 
 In some cases identical names are allowed:
 
-\- names of facilities and queues can be the same;
+\- names of structures with different types can be the same (queue CPU, mark CPU, fac CPU)
 
-\- ??? (should be tested :D)
+\- names of arrays and names of variables can be the same (int myvar, int myvar\[10], int myvar\[\[5, 4]])
 
 But:
 
-\- **do not** name variables with identical words, they'll be messed up;
+\- **do not** name variables with identical words, they'll be messed up (little explanation: structures are either used as blocks' arguments (in this case, their names are parsed as strings, so, there's no big difference what type this structure was of, if name is correct for block) or their accessible parameters are accessed by dot operator (and different parameters have different names for each structure type, as you can mention). And variables can be accessed just like "my\_variable\_name = ...", and you cannot say, what variable is accessed here if you have multiple of them with different types)
 
-\- **never** name any variables/structures as keywords (including xact, chxact, etc.)
+\- **never** name any variables/structures as keywords (including "xact", "chxact", etc.)
 
 Remember, this project is still in beta, so rules are a subject to change.
 
@@ -737,7 +737,7 @@ loop_times(
 
 This block will make xact loop through some blocks in curly braces while *iterator* (it is the name of some variable or xact parameter) value is less than *upper\_border* value. Iterator will be incremented automatically before every loop. **Un**like in other languages, you can change both iterator and upper border values while cycling, but, **like** in other languages, it can lead to awkward situations when done wrong.
 
-Inside loop iterator will consequently take values from its initial value **plus 1** to *upper\_border* minus 1. After exiting loop, iterator value will be equal to *upper\_border*.
+Inside loop *iterator* will consequently take values from its initial value to *upper\_border* minus 1. After exiting loop, iterator value will be equal to *upper\_border*.
 
 - Example:
 ```

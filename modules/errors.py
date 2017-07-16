@@ -6,7 +6,7 @@ errors = {
           3:'Name of the definition expected; got "{}" "{}"',
           4:'Unknown parameter "{}" or missing "}}" during initialization',
           5:'Expected initial value of type "{}" for parameter "{}"; got "{}"',
-          6:'Expected name of defined variable/structure or value; got "{} {}"',
+          6:'Expected name of defined variable/structure/array or value; got "{} {}"',
           7:'Cannot {}rement string or boolean',
           8:'Cannot apply operation "{}" for string values',
           9:'Found incorrect float number "{}" during analysis',
@@ -29,7 +29,7 @@ errors = {
           25:'Current xact from group "{}" does not have a parameter "{}"',
           26:'Unknown structure value "{}" (are you trying to assign to ' \
              'read-only parameters?)',
-          27:'Unknown variable "{}"',
+          27:'Unknown variable: "{}"',
           28:'Cannot take name of "{}", because it is unknown',
           29:'Error while transporting: undefined mark "{}"',
           30:'Mark "{}" is not present anywhere as transporting label '\
@@ -61,7 +61,8 @@ errors = {
           53:'No such histogram: "{}"',
           54:'Wrong function definition (expecting one condition per each ' \
              'return expression; got "{}" expressions when expected "{}")',
-          55:'Wrong number of arguments for function "{}" (takes "{}", "{}" given)'
+          55:'Wrong number of arguments for function "{}" (takes "{}", "{}" given)',
+          56:'Array index "{}" is out of range "({}, {})"'
          }
 
 warnings = {

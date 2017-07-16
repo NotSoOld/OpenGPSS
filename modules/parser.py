@@ -41,6 +41,11 @@ hist_params = [
                'enters_h',
                'average'
               ]
+
+defined_var_names = []  
+arrays_info = {}     # name: [lbound, rbound]
+matrices_info = {}   # name: [[horl, horr], [vertl, vertr]]
+
              
 def tocodelines(program):
 	parsed = [['padding', [0, 0, 0]]]
@@ -187,8 +192,28 @@ def parseDefinition(line):
 	   errors.print_error(3, lineindex, tok)
 	name = tok[1]
 	
-	tok = nexttok()
+	nexttok()
+	indexes = []
+	if matchtok('lbracket'):
+		indexes.append(parseExpression())
+		consume('rbracket')
+		if name in arrays_info:
+			errors.print_error(22, lineindex, [name, 'array of "'+deftype+'"'])
+		arrays_info[name] = [0, indexes[0] - 1]
+	elif matchtok('lmatrix'):
+		indexes.append(parseExpression())
+		consume('comma')
+		indexes.append(parseExpression())
+		consume('rmatrix')
+		if name in arrays_info:
+			errors.print_error(22, lineindex, [name, 'matrix of "'+deftype+'"'])
+		matrices_info[name] = [[0, indexes[0] - 1], [0, indexes[1] - 1]]
+	
+	tok = peek(0)
 	if deftype == 'int':
+		if name in defined_var_names:
+			errors.print_error(22, lineindex, [name, deftype])
+		defined_var_names.append(name)
 		if tok[0] == 'eocl':
 			newobj = structs.IntVar(name, 0)
 		elif tok[0] == 'eq':
@@ -198,6 +223,9 @@ def parseDefinition(line):
 			errors.print_error(12, lineindex, ['=', peek(0)])
 		
 	elif deftype == 'float':
+		if name in defined_var_names:
+			errors.print_error(22, lineindex, [name, deftype])
+		defined_var_names.append(name)
 		if tok[0] == 'eocl':
 			newobj = structs.FloatVar(name, 0)
 		elif tok[0] == 'eq':
@@ -207,6 +235,9 @@ def parseDefinition(line):
 			errors.print_error(12, lineindex, ['=', peek(0)])
 			
 	elif deftype == 'bool':
+		if name in defined_var_names:
+			errors.print_error(22, lineindex, [name, deftype])
+		defined_var_names.append(name)
 		if tok[0] == 'eocl':
 			newobj = structs.BoolVar(name, 0)
 		elif tok[0] == 'eq':
@@ -273,6 +304,9 @@ def parseDefinition(line):
 			errors.print_warning(3, '', [name])
 			
 	elif deftype == 'str':
+		if name in defined_var_names:
+			errors.print_error(22, lineindex, [name, deftype])
+		defined_var_names.append(name)
 		if tok[0] == 'eocl':
 			newobj = structs.StrVar(name, '')
 		elif tok[0] == 'eq':
@@ -360,9 +394,9 @@ def parseDefinition(line):
 		else:
 			errors.print_error(52, lineindex)
 	
-	return (deftype, name, newobj)
+	return (deftype, name, newobj, indexes)
 
-def parseBlock(line):
+def parseBlock(line, not_first_loop=False):
 	global tokline
 	global pos
 	tokline = line
@@ -397,11 +431,14 @@ def parseBlock(line):
 		if depth != 0:
 			errors.print_error(38, '', ['}', xact.curblk+1])
 		i -= 1
-		if ['block', 'while'] in interpreter.toklines[i] or \
-		   ['block', 'loop_times'] in interpreter.toklines[i]:
+		if ['block', 'while'] in interpreter.toklines[i]:
 			interpreter.xact.curblk = i - 1
 			interpreter.xact.cond = 'canmove'
 			return parseBlock(interpreter.toklines[i])
+		elif ['block', 'loop_times'] in interpreter.toklines[i]:
+			interpreter.xact.curblk = i - 1
+			interpreter.xact.cond = 'canmove'
+			return parseBlock(interpreter.toklines[i], True)
 		else:
 			return ('move', '')
 	
@@ -411,21 +448,22 @@ def parseBlock(line):
 		elif tok[1] == 'loop_times':
 			nexttok()
 			consume('lparen')
-			newln = []
-			oldpos = pos
-			while True:
-				t = peek(0)
-				if t[0] == 'comma':
-					break
-				newln.append(t)
-				if nexttok() == '':
-					errors.print_error(45, lineindex)
-			oldline = line
-			tokline = newln + [['inc', ''], ['eocl', '']]
-			pos = 0
-			parseAssignment()
-			tokline = oldline
-			pos = oldpos
+			if not_first_loop:
+				newln = []
+				oldpos = pos
+				while True:
+					t = peek(0)
+					if t[0] == 'comma':
+						break
+					newln.append(t)
+					if nexttok() == '':
+						errors.print_error(45, lineindex)
+				oldline = line
+				tokline = newln + [['inc', ''], ['eocl', '']]
+				pos = 0
+				parseAssignment()
+				tokline = oldline
+				pos = oldpos
 			l = parseExpression()
 			consume('comma')
 			r = parseExpression()
@@ -507,8 +545,8 @@ def parseAssignment(toks=[]):
 		pos = 0
 		toklines = toks
 	
-	tok = peek(0)
-	tok1 = peek(1)
+	tok = copy.deepcopy(peek(0))
+	tok1 = copy.deepcopy(peek(1))
 	tok2 = peek(2)
 	tok3 = peek(3)
 	prim = ''
@@ -534,6 +572,22 @@ def parseAssignment(toks=[]):
 		res = evaluateAssignment(prim, sec, assg, key)
 		
 	else:
+		if tok[1] in arrays_info and tok1[0] == 'lbracket':
+			nexttok()
+			consume('lbracket')
+			index = parseExpression()
+			tok[1] = getArrayElementName(tok[1], index)
+			tok1[0] = peek(1)[0]
+		
+		if tok[1] in matrices_info and tok1[0] == 'lmatrix':
+			nexttok()
+			consume('lmatrix')
+			index1 = parseExpression()
+			consume('comma')
+			index2 = parseExpression()
+			tok[1] = getMatrixElementName(tok[1], index1, index2)
+			tok1[0] = peek(1)[0]
+		
 		if tok[1] in interpreter.ints:
 			prim = 'ints'
 		elif tok[1] in interpreter.floats:
@@ -559,6 +613,7 @@ def evaluateAssignment(prim, sec, assg, key):
 	#key = dict key if prim==ints,floats,strs and sec=='' - .value
 	   #or dict key if prim==xact and sec==params - []directly
 	#print prim, sec, assg, key
+	
 	if assg in assgs:
 		attr = getattr(interpreter, prim)
 		if sec != '': # xact.params[key]
@@ -614,7 +669,7 @@ def evaluateAssignment(prim, sec, assg, key):
 		return ('move', [])
 	else:
 		errors.print_error(21, lineindex, 
-			   ['assignment operator or "."', tok], 'C')
+			   ['assignment operator or "."', assg], 'C')
 
 def checkAssignmentTypes(l, r, asg):
 	if type(l) is int:
@@ -728,7 +783,8 @@ def parseInjector(line):
 			params[tok1[1]] = tok2[1]
 		nexttok()
 		
-	newinj = structs.Injector(group, args[0], args[1], args[2], args[3], blk, params)
+	newinj = structs.Injector(group, args[0], args[1], args[2], args[3], 
+	                          blk, params)
 	return newinj
 	
 def parseExitCondition(line):
@@ -859,9 +915,9 @@ def parseUnary():
 	return parseDot()
 
 def parseDot():
-	lh = parsePrimary()
+	lh = parseArray()
 	if matchtok('dot'):
-		return getAttrsForDotOperator(lh, parsePrimary())
+		return getAttrsForDotOperator(lh, parseArray())
 	return lh
 	
 def getAttrsForDotOperator(lh, rh):
@@ -912,6 +968,41 @@ def getAttrsForDotOperator(lh, rh):
 		       ["name of parameter of defined variable", lh+' '+rh], 'B')
 	return val
 	
+def parseArray():
+	arrayname = parsePrimary()
+	if matchtok('lbracket'):
+		arrname = getArrayElementName(arrayname, parsePrimary())
+		consume('rbracket')
+		val = parsePrimaryWord(arrname)
+		return val
+	elif matchtok('lmatrix'):
+		index1 = parsePrimary()
+		consume('comma')
+		index2 = parsePrimary()
+		consume('rmatrix')
+		mxname = getMatrixElementName(arrayname, index1, index2)
+		val = parsePrimaryWord(mxname)
+		return val
+	return arrayname
+	
+def getArrayElementName(arrayname, index):
+	lbound = arrays_info[arrayname][0]
+	rbound = arrays_info[arrayname][1]
+	if lbound <= index <= rbound:
+		return arrayname + '&&' + str(index)
+	errors.print_error(56, lineindex, [index, lbound, rbound])
+	
+def getMatrixElementName(matrixname, index1, index2):
+	horlbound = matrices_info[matrixname][0][0]
+	horrbound = matrices_info[matrixname][0][1]
+	vertlbound = matrices_info[matrixname][1][0]
+	vertrbound = matrices_info[matrixname][1][1]
+	if vertlbound <= index1 <= vertrbound and \
+	   horlbound <= index2 <= horrbound:
+		return arrayname + '&&(' + str(index1) + ',' + str(index2) + ')'
+	errors.print_error(56, lineindex, [[index1, index2], 
+	                  [vertlbound, vertrbound], [horlbound, horrbound]])
+	
 def parsePrimary():
 	if matchtok('lparen'):
 		result = parseExpression()
@@ -936,43 +1027,50 @@ def parsePrimary():
 			val = tok[1]
 			
 	elif tok[0] == 'word':
-		if tok[1] == 'true':
-			val = True
-		elif tok[1] == 'false':
-			val = False
-		
-		elif tok[1] in interpreter.functions:
-			return parseConditionalFunction(tok[1])
-		
-		# Variables and structs' names (if there is no dot):
-		elif tok[1] in interpreter.ints:
-			val = interpreter.ints[tok[1]].value
-		elif tok[1] in interpreter.floats:
-			val = interpreter.floats[tok[1]].value
-		elif tok[1] in interpreter.strs:
-			val = interpreter.strs[tok[1]].value
-		elif tok[1] in interpreter.bools:
-			val = interpreter.bools[tok[1]].value
-		elif tok[1] in interpreter.facilities:
-			val = interpreter.facilities[tok[1]].name
-		elif tok[1] in interpreter.queues:
-			val = interpreter.queues[tok[1]].name
-		elif tok[1] in interpreter.marks:
-			val = interpreter.marks[tok[1]].name
-		elif tok[1] in interpreter.chains:
-			val = interpreter.chains[tok[1]].name
-		elif tok[1] in interpreter.hists:
-			val = interpreter.hists[tok[1]].name
-		elif tok[1] in fac_params+queue_params+xact_params+\
-		               chain_params+hist_params+['xact', 'chxact']:
-			val = tok[1]
-		else:
-			errors.print_error(6, lineindex, tok)
+		val = parsePrimaryWord(tok[1])
 	
 	elif tok[0] == 'builtin':
 		return parseBuiltin()
 	
 	nexttok()
+	return val
+
+def parsePrimaryWord(word):
+	global pos
+	if word == 'true':
+		val = True
+	elif word == 'false':
+		val = False
+	
+	elif word in interpreter.functions:
+		val = parseConditionalFunction(word)
+		pos -= 1
+	
+	elif word in interpreter.ints:
+		val = interpreter.ints[word].value
+	elif word in interpreter.floats:
+		val = interpreter.floats[word].value
+	elif word in interpreter.strs:
+		val = interpreter.strs[word].value
+	elif word in interpreter.bools:
+		val = interpreter.bools[word].value
+	elif word in interpreter.facilities:
+		val = interpreter.facilities[word].name
+	elif word in interpreter.queues:
+		val = interpreter.queues[word].name
+	elif word in interpreter.marks:
+		val = interpreter.marks[word].name
+	elif word in interpreter.chains:
+		val = interpreter.chains[word].name
+	elif word in interpreter.hists:
+		val = interpreter.hists[word].name
+	elif word in fac_params+queue_params+xact_params+ \
+	               chain_params+hist_params+['xact', 'chxact']+ \
+	               arrays_info.keys()+matrices_info.keys():
+		val = word
+	else:
+		errors.print_error(6, lineindex, tok)
+
 	return val
 
 def parseConditionalFunction(functionName):

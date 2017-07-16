@@ -588,6 +588,7 @@ def hist_add(hist, weight=1):
 	hists[hist].add(val, weight)
 	move()
 	
+	
 ###############################################################
 
 
@@ -634,8 +635,16 @@ def start_interpreter(filepath):
 			if defd[1] in dic.keys():
 				errors.print_error(22, lineindex, [defd[1], defd[0]])
 			dic[defd[1]] = defd[2]
+			withqueue = False
 			if defd[0] == 'facilitie' and defd[2].isQueued:
 				queues[defd[1]] = structs.Queue(defd[1])
+				withqueue = True
+			if defd[3]:
+				del dic[defd[1]]
+				if withqueue:
+					del queues[defd[1]]
+				turnIntoArray(dic, defd, withqueue)
+			
 		elif line[0][0] == 'block': 
 			if line[0][1] == 'exitwhen':
 				if exitcond != -1:
@@ -646,8 +655,8 @@ def start_interpreter(filepath):
 		else:
 			errors.print_warning(1, lineindex)
 	
-	ttt = raw_input('Read the info above, it may contain some warnings. When '\
-					'ready, press any key')			
+	anykey = raw_input('Read the info above, it may contain some warnings. ' \
+	                   'When ready, press any key')			
 	
 	for line in toklines:
 		if ['block', 'inject'] in line:
@@ -678,7 +687,8 @@ def start_interpreter(filepath):
 		interrupt = False
 		flush = False
 		while restart:
-			currentChain = sorted(currentChain, key=lambda xa: xa.params['priority'])
+			currentChain = sorted(currentChain, 
+			                      key=lambda xa: xa.params['priority'])
 			currentChain.reverse()
 			print 'Current Events Chain:', list(xa.index for xa in currentChain)
 			restart = False
@@ -733,6 +743,29 @@ def start_interpreter(filepath):
 	
 	count_xacts_on_blocks()
 	print_results()
+	
+def turnIntoArray(dic, definition, withqueue):
+	obj = definition[2]
+	name = definition[1]
+	if len(definition[3]) == 1:
+		# Array
+		for i in range(definition[3][0]):
+			newname = name+'&&'+str(i)
+			obj.name = newname
+			dic[newname] = copy.deepcopy(obj)
+			if withqueue:
+				# It was an auto queued facility array.
+				queues[newname] = structs.Queue(newname)
+	else:
+		# Matrix
+		for i in range(definition[3][0]):
+			for j in range(definition[3][1]):
+				newname = name+'&&('+str(i)+','+str(j)+')'
+				obj.name = newname
+				dic[newname] = copy.deepcopy(obj)
+				if withqueue:
+					# It was an auto queued facility array.
+					queues[newname] = structs.Queue(newname)
 	
 def checkExitCond():
 	global toklines
@@ -799,7 +832,7 @@ def print_program():
 			elif token[0] == 'word' or \
 				 token[0] == 'number' or token[0] == 'block' or \
 				 token[0] == 'builtin':
-				prog += token[1]
+				prog += str(token[1])
 			elif token[0] == 'string':
 				prog += '"'+token[1]+'"'
 			elif token[0] == 'typedef':

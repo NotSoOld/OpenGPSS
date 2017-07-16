@@ -45,7 +45,9 @@ operators = {
              '->':'transport',
              '|':'transport_prob',
              '?':'transport_if',
-             '~':'indirect'
+             '~':'indirect',
+             '[[':'lmatrix',
+             ']]':'rmatrix'
             }
              
 typedefs = [
@@ -109,7 +111,7 @@ builtins = [
             'random01',     # tested
             'find',         # implemented
             'find_minmax',  # implemented
-            'abs_value',    # implemented
+            'abs_value',    # tested
             'exp_distr'     # implemented
            ]
 
