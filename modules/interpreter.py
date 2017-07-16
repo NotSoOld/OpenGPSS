@@ -1,6 +1,7 @@
 import sys
 import random
 import copy
+import importlib
 import lexer
 import parser
 import structs
@@ -18,6 +19,7 @@ chains = {}
 injectors = {}
 hists = {}
 functions = {}
+attachables = {}
 currentChain = []
 tempCurrentChain = []
 futureChain = []
@@ -652,9 +654,11 @@ def start_interpreter(filepath):
 				exitcond = line[-1][0]
 			else:
 				errors.print_warning(1, lineindex)
+		elif line[0] == ['word', 'attach']:
+			attachFileWithFunctions(line)
 		else:
 			errors.print_warning(1, lineindex)
-	
+	print attachables
 	anykey = raw_input('Read the info above, it may contain some warnings. ' \
 	                   'When ready, press any key')			
 	
@@ -743,6 +747,19 @@ def start_interpreter(filepath):
 	
 	count_xacts_on_blocks()
 	print_results()
+
+def attachFileWithFunctions(line):
+	global attachables
+	filename = line[1][1]
+	newlib = None
+	if filename in attachables:
+		errors.print_warning(5, line[-1][0], [filename])
+		return
+	try:
+		newlib = importlib.import_module(filename)
+	except ImportError:
+		errors.print_error(57, line[-1][0], [filename])
+	attachables[filename] = newlib
 	
 def turnIntoArray(dic, definition, withqueue):
 	obj = definition[2]

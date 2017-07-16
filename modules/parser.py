@@ -1046,6 +1046,10 @@ def parsePrimaryWord(word):
 		val = parseConditionalFunction(word)
 		pos -= 1
 	
+	elif word in interpreter.attachables:
+		val = parseAttachableFunction(word)
+		pos -= 1
+	
 	elif word in interpreter.ints:
 		val = interpreter.ints[word].value
 	elif word in interpreter.floats:
@@ -1069,7 +1073,7 @@ def parsePrimaryWord(word):
 	               arrays_info.keys()+matrices_info.keys():
 		val = word
 	else:
-		errors.print_error(6, lineindex, tok)
+		errors.print_error(6, lineindex, [word])
 
 	return val
 
@@ -1089,11 +1093,42 @@ def parseConditionalFunction(functionName):
 			consume('rparen')
 			break
 		else:
-			errors.print_error(16, lineindex, [peek(0)])
+			errors.print_error(16, lineindex, [peek(0)], 'C')
 	if len(argvalues) != len(func.args):
 		errors.print_error(55, lineindex, [functionName, len(func.args),
 		                                   len(argvalues)])
 	return func.call(argvalues)
+
+def parseAttachableFunction(modulename):
+	nexttok()
+	consume('dot')
+	functionname = peek(0)[1]
+	func = None
+	try:
+		func = getattr(interpreter.attachables[modulename], functionname)
+	except AttributeError:
+		errors.print_error(58, lineindex, [modulename, functionname])
+	nexttok()
+	consume('lparen')
+	args = []
+	while True:
+		if matchtok('rparen'):
+			break
+		args.append(parseExpression())
+		if peek(0)[0] == 'comma':
+			consume('comma')
+			continue
+		elif peek(0)[0] == 'rparen':
+			consume('rparen')
+			break
+		else:
+			errors.print_error(16, lineindex, [peek(0)], 'A')
+	
+	if len(inspect.getargspec(func).args) != len(args):
+			errors.print_error(55, lineindex, [name, 
+			                       len(inspect.getargspec(func).args), 
+			                       len(args)])
+	return func(*args)
 
 def parseIndirect(val=''):
 	global tokline
@@ -1163,9 +1198,13 @@ def parseBuiltin():
 			consume('rparen')
 			break
 		else:
-			errors.print_error(16, lineindex, [peek(0)])
+			errors.print_error(16, lineindex, [peek(0)], 'B')
 	
-	if len(inspect.getargspec(fun).args) != len(args):
+	if name == 'round_to' and (len(args) != 1 or len(args) != 2):
+		errors.print_error(55, lineindex, ['round_to', 
+			                       '1 or 2', 
+			                       len(args)])
+	elif len(inspect.getargspec(fun).args) != len(args):
 			errors.print_error(55, lineindex, [name, 
 			                       len(inspect.getargspec(fun).args), 
 			                       len(args)])

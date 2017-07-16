@@ -6,7 +6,8 @@ errors = {
           3:'Name of the definition expected; got "{}" "{}"',
           4:'Unknown parameter "{}" or missing "}}" during initialization',
           5:'Expected initial value of type "{}" for parameter "{}"; got "{}"',
-          6:'Expected name of defined variable/structure/array or value; got "{} {}"',
+          6:'Expected name of defined variable/structure/array or value; '\
+            'got "{}"',
           7:'Cannot {}rement string or boolean',
           8:'Cannot apply operation "{}" for string values',
           9:'Found incorrect float number "{}" during analysis',
@@ -62,7 +63,10 @@ errors = {
           54:'Wrong function definition (expecting one condition per each ' \
              'return expression; got "{}" expressions when expected "{}")',
           55:'Wrong number of arguments for function "{}" (takes "{}", "{}" given)',
-          56:'Array index "{}" is out of range "({}, {})"'
+          56:'Array index "{}" is out of range "({}, {})"',
+          57:'Cannot find attachable module "{}" (it must be in the same '\
+             'folder where .ogps file is)',
+          58:'Attachable module "{}" does not have function "{}"'
          }
 
 warnings = {
@@ -76,7 +80,10 @@ warnings = {
             3:'Mark "{}" cannot be found as transporting label (at the left of '\
               '":"). Is it needed at all?',
             4:'Duplicate xact parameter "{}"; previous value of "{}" '\
-              'will be OVERWRITTEN.'
+              'will be OVERWRITTEN.',
+            5:'Attachable module "{}" is either already imported or its name '\
+              'conflicts with one of other attachable modules. Double-check '\
+              '"attach" statements in your program.'
            }
 
 def print_error(error_code, line, args=[], add=''):

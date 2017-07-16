@@ -176,3 +176,10 @@ def exp_distr(x, l):
 		return 0
 	else:
 		return 1 - math.exp(-l * x)
+		
+def round_to(value, digits=0):
+	if type(value) is not int and type(value) is not float:
+		errors.print_error(18, parser.lineindex, [value])
+	if type(digits) is not int and type(digits) is not float:
+		errors.print_error(18, parser.lineindex, [digits])
+	return round(value, digits)

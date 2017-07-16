@@ -112,7 +112,8 @@ builtins = [
             'find',         # implemented
             'find_minmax',  # implemented
             'abs_value',    # tested
-            'exp_distr'     # implemented
+            'exp_distr',    # implemented
+            'round_to'      # implemented
            ]
 
 pos = 0
