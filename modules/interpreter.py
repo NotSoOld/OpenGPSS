@@ -1,4 +1,5 @@
 import sys
+import os
 import random
 import copy
 import importlib
@@ -6,6 +7,10 @@ import lexer
 import parser
 import structs
 import errors
+import datetime
+
+sys.path.insert(1, os.path.join(sys.path[0], '..'))
+import config
 
 ints = {}
 floats = {}
@@ -18,6 +23,7 @@ marks = {}
 chains = {}
 injectors = {}
 hists = {}
+graphs = {}
 functions = {}
 attachables = {}
 currentChain = []
@@ -27,6 +33,10 @@ xact = None
 chxact = None
 toklines = []
 exitcond = -1
+original_stdout = None
+logfile = None
+results_file = None
+file_path = ''
 		
 class Xact:
 	def __init__(self, group, index, curblk, params={}):
@@ -98,7 +108,9 @@ def fac_enter(fid, v=1):
 		if xact.index in facilities[fid].busyxacts:
 			errors.print_error(41, xact.curblk+1)
 		facilities[fid].busyxacts[xact.index] = [v, ints['curticks'].value]
-		#print 'added xact '+str(xact.index)+' to facility '+fid
+		
+		if config.log_xact_blocking:
+			print 'Added xact '+str(xact.index)+' to facility '+fid
 		
 		if facilities[fid].isQueued:
 			queue_leave(fid)
@@ -281,7 +293,8 @@ def fac_goaway(fid):
 		else:
 			futureChain.append([xainfo[1], copy.deepcopy(xainfo[0])])
 		facilities[fid].busyxacts[xainfo[0].index] = xainfo[2]
-		#print 'added xact '+str(xainfo[0].index)+' back to facility '+fid
+		if config.log_facility_entering:
+			print 'added xact '+str(xainfo[0].index)+' back to facility '+fid
 		facilities[fid].curplaces += xainfo[2][0]
 		facilities[fid].irruptch[i] = []
 	facilities[fid].irruptch = [el for el in facilities[fid].irruptch if el != []]
@@ -295,7 +308,8 @@ def wait(time, tdelta=0):
 	xact.curblk += 1
 	xact.cond = 'waiting'
 	toklines[xact.curblk][-1][2] += 1
-	print 'exit time =', futime
+	if config.log_FEC_entering:
+		print 'Wait(): exit time =', futime
 	futureChain.append([futime, xact])
 	
 def reject(decr):
@@ -580,16 +594,28 @@ def pause_by_user(s=''):
 	trash = raw_input()
 	move()
 	
-def hist_add(hist, weight=1):
+def hist_sample(hist, weight=1):
 	if hist not in hists.keys():
 		errors.print_error(53, xact.curblk+1, [hist])
 		
 	parser.tokline = hists[hist].param
 	parser.pos = 0
 	val = parser.parseExpression()
-	hists[hist].add(val, weight)
+	hists[hist].sample(val, weight)
 	move()
 	
+def graph_sample(graph):
+	if graph not in graphs.keys():
+		errors.print_error(59, xact.curblk+1, [graph])
+		
+	parser.tokline = graphs[graph].paramX
+	parser.pos = 0
+	x = parser.parseExpression()
+	parser.tokline = graphs[graph].paramY
+	parser.pos = 0
+	y = parser.parseExpression()
+	graphs[graph].sample(x, y)
+	move()
 	
 ###############################################################
 
@@ -610,12 +636,38 @@ def start_interpreter(filepath):
 	global facitilies
 	global injectors
 	global ints
+	global original_stdout
+	global logfile
+	global results_file
+	global file_path
+	file_path = filepath
 	
 	toklines = parser.tocodelines(tokens)
 	toklines = parser.convertBlocks(toklines)
-	for line in toklines:
-		print str(line[-1][0]).zfill(2),
-		print line
+	
+	logfile = None
+	if config.log_to_file:
+		print 'All logs will be saved in "log.txt" file (they can be very big!).'
+		original_stdout = sys.stdout
+		logfile = open('log.txt', 'a')
+		sys.stdout = logfile
+	
+	now = datetime.datetime.now()
+
+	print '\n\nSimulating system '+filepath+' at',
+	print now.strftime("%Y-%m-%d %H:%M")
+	print
+	
+	if config.print_program_in_tokens:	
+		for line in toklines:
+			print str(line[-1][0]).zfill(2),
+			print line
+		print
+	
+	# Program will be always printed in console, so user can check it 
+	# before simulation.
+	if original_stdout:
+		sys.stdout = original_stdout
 	print
 	print_program()
 	
@@ -632,7 +684,6 @@ def start_interpreter(filepath):
 		lineindex = line[-1][0]
 		if line[0][0] == 'typedef':
 			defd = parser.parseDefinition(line)
-			#print defd
 			dic = globals()[defd[0]+'s']
 			if defd[1] in dic.keys():
 				errors.print_error(22, lineindex, [defd[1], defd[0]])
@@ -658,9 +709,12 @@ def start_interpreter(filepath):
 			attachFileWithFunctions(line)
 		else:
 			errors.print_warning(1, lineindex)
-	print attachables
+
 	anykey = raw_input('Read the info above, it may contain some warnings. ' \
 	                   'When ready, press any key')			
+	
+	if logfile:
+		sys.stdout = logfile
 	
 	for line in toklines:
 		if ['block', 'inject'] in line:
@@ -671,7 +725,8 @@ def start_interpreter(filepath):
 	while True:
 		tempCurrentChain = []
 		print '\ntimestep =', ints['curticks'].value
-		#ttt = raw_input()
+		if config.tick_by_tick_simulation:
+			ttt = raw_input()
 		
 		for xa in futureChain:
 			if xa[0] == ints['curticks'].value:
@@ -704,10 +759,12 @@ def start_interpreter(filepath):
 				while True:
 					if xact.curblk+1 >= len(toklines):
 						errors.print_error(24, lineindex)
-					print 'xact', xact.index, 'entering block', xact.curblk+1
 					cmd = parser.parseBlock(toklines[xact.curblk+1])
-					#print cmd
-					#ttt = raw_input()
+					if config.log_xact_trace:
+						print 'xact', xact.index, 'is about to enter block', \
+						       xact.curblk+1, cmd
+					if config.block_by_block_simulation:
+						ttt = raw_input()
 					func = globals()[cmd[0]]
 					func(*cmd[1])
 				
@@ -719,7 +776,8 @@ def start_interpreter(filepath):
 							restart = True
 						elif xact.cond == 'blocked':
 							tempCurrentChain.append(xact)
-							print 'xact', xact.index, 'was blocked'
+							if config.log_xact_blocking:
+								print 'xact', xact.index, 'was blocked'
 						elif xact.cond == 'interrupt':
 							tempCurrentChain.append(xact)
 							interrupt = True
@@ -736,8 +794,8 @@ def start_interpreter(filepath):
 			
 		# Statistics gathering.
 		for fac in facilities.values():
-			if fac.busyxacts:
-				fac.busyticks += len(fac.busyxacts)/float(fac.maxplaces)
+			fac.busyticks += len(fac.busyxacts)/float(fac.maxplaces)
+			fac.unweightedbusyticks += len(fac.busyxacts)
 		for qu in queues.values():
 			qu.sumforavg += qu.curxacts
 				
@@ -746,7 +804,20 @@ def start_interpreter(filepath):
 			break
 	
 	count_xacts_on_blocks()
+	
+	print '\n'*5
+	print '='*80
+	if original_stdout:
+		sys.stdout = original_stdout
+	if config.results_to_file:
+		if not original_stdout:
+			original_stdout = sys.stdout
+		results_file = open('results.txt', 'a')
+		sys.stdout = results_file
 	print_results()
+	if results_file:
+		sys.stdout = original_stdout
+		print 'Simulation finished, results are saved in "results.txt".'
 
 def attachFileWithFunctions(line):
 	global attachables
@@ -817,7 +888,8 @@ def print_program():
 			max1 = len(str(line[-1][1]))
 		if len(str(line[-1][2])) > max2:
 			max2 = len(str(line[-1][2]))
-		
+	
+	indent = 0	
 	for line in toklines[1:]:
 		prog += str(line[-1][0]).zfill(max0)
 		prog += '  '
@@ -831,21 +903,44 @@ def print_program():
 		else:
 			prog += ' '*max2
 		prog += '  '
+		prog += '   '*indent
 		prevtoken = []
 		for token in line:
 			t = ''
 			if token[0] in lexer.operators.values():
 				t = lexer.operators.keys()[lexer.operators.values()
 										   .index(token[0])]
+				if t == '{' and not prevtoken:
+					indent += 1
+				elif t == '}' and not prevtoken:
+					indent -= 1
+					prog = prog[:-3]
+				
 				if t in ',:':
 					t += ' '
-				elif t == '{':
+				elif t == '{' and prevtoken:
 					t = ' '+t
-				elif t == '>' and prevtoken[0] == 'transport':
+				elif t in '>|?' and prevtoken[0] == 'transport':
+					t += ' '
+				elif t == '<' and (
+				     ['typedef', 'hist'] in line or 
+				     ['typedef', 'graph'] in line):
+					prog = prog[:-1]
+				elif t == '>' and (
+				     ['typedef', 'hist'] in line or 
+				     ['typedef', 'graph'] in line):
+					t += ' '
+				elif t == '-' and (
+				prevtoken[0] == 'word' or prevtoken[0] == 'comma' or
+				prevtoken[0] == 'lparen' or prevtoken[0] == 'lbracket' or
+				prevtoken[0] == 'lbrace'):
 					pass
-				elif t in '+,-,*,/,%,**,+=,-=,==,*=,/=,%=,**=,<,>,<=,>=,!=':
+				elif t in '+,-,*,/,%,**,+=,-=,==,*=,/=,%=,**=,<,>,<=,>=,!=,' \
+				          '|,||,&,&&':
 					t = ' '+t+' '
 				prog += t
+			elif token == ['word', 'attach']:
+				prog += 'attach '
 			elif token[0] == 'word' or \
 				 token[0] == 'number' or token[0] == 'block' or \
 				 token[0] == 'builtin':
@@ -859,12 +954,16 @@ def print_program():
 	print prog
 
 def print_results():
-	print '\n\n\n\n======== MODELLING INFORMATION ========'
+	now = datetime.datetime.now()
+
+	print '\n\nSIMULATION RESULTS OF SYSTEM '+file_path
+	print 'Simulation finished at',
+	print now.strftime("%Y-%m-%d %H:%M")
 	
 	print '\n\n---- Generated program: ----\n' \
 	      '(line index, current xacts, total executions, line of code)\n'
 	print_program()
-	print '\nModeling time: '+str(ints['curticks'].value)+' beats'
+	print '\nSimulation time: '+str(ints['curticks'].value)+' beats'
 	
 	if ints.keys():
 		print '\n\n---- Integer variables: ----'
@@ -889,24 +988,29 @@ def print_results():
 		for fac in facilities.values():
 			if len(fac.name) > lname:
 				lname = len(fac.name)
-		print ''.ljust(lname+5+13+16+11+13) + \
+		print ''.ljust(lname+5+13+16+11) + \
+		      'Busyness'.ljust(15) + \
+		      'Busyness'.ljust(15) + \
 		      'Average'.ljust(19) + \
 		      'Current xacts'
 		print 'Name'.ljust(lname+5) + \
 		      'Max xacts'.ljust(13) + \
 		      'Auto queued'.ljust(16) + \
 		      'Enters'.ljust(11) + \
-		      'Busyness'.ljust(13) + \
+		      '(weighted)'.ljust(15) + \
+		      '(unweighted)'.ljust(15) + \
 		      'processing time'.ljust(19) + \
 		      '(index: [vol, enter time])'
-		print '- '*45
+		print '- '*55
 		for fac in facilities.values():
 			print str(fac.name).ljust(lname+5) + \
 			      str(fac.maxplaces).ljust(13) + \
 			      str(fac.isQueued).ljust(16) + \
 			      str(fac.enters_f).ljust(11) + \
 			      ('{:.3f}'.format(fac.busyticks/float(ints['curticks']
-			      .value)).ljust(13)) + \
+			      .value)).ljust(15)) + \
+			      ('{:.3f}'.format(fac.unweightedbusyticks/float(ints['curticks']
+			      .value)).ljust(15)) + \
 			      ('{:.2f}'.format(fac.processedxactsticks/float(
 			      fac.enters_f - (fac.maxplaces - fac.curplaces)))).ljust(19) + \
 			      str(fac.busyxacts)
@@ -1072,4 +1176,5 @@ def print_results():
 			      str(xact.curblk).ljust(17) + \
 			      str(xact.cond)	  
 	print
-	print
+	print '\n'*5
+	print '='*80

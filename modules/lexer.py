@@ -57,6 +57,7 @@ typedefs = [
             'bool',
             'fac', 
             'hist',
+            'graph',
             'queue', 
             'mark',
             'chain',
@@ -98,7 +99,8 @@ blocks = [
           'interrupt',    # tested
           'flush_cec',    # tested
           'pause_by_user',# tested
-          'hist_add'      # tested
+          'hist_sample',  # tested
+          'graph_sample'  # implemented
          ]
          
 builtins = [

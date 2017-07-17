@@ -1,4 +1,5 @@
 import sys
+import os
 import structs
 import lexer
 import interpreter
@@ -6,6 +7,9 @@ import errors
 import builtins
 import copy
 import inspect
+
+sys.path.insert(1, os.path.join(sys.path[0], '..'))
+import config
 
 pos = 0
 tokline = []
@@ -186,6 +190,24 @@ def parseDefinition(line):
 				break
 			typ.append(peek(0))
 			nexttok()
+	elif deftype == 'graph':
+		nexttok()
+		consume('less')
+		typ1 = []
+		while True:
+			if peek(0)[0] == 'comma':
+				break
+			typ1.append(peek(0))
+			nexttok()
+		typ.append(typ1)
+		consume('comma')
+		typ1 = []
+		while True:
+			if peek(0)[0] == 'gt':
+				break
+			typ1.append(peek(0))
+			nexttok()
+		typ.append(typ1)
 	
 	tok = nexttok()
 	if not tok or tok[0] != 'word':
@@ -356,6 +378,9 @@ def parseDefinition(line):
 			nexttok()
 		
 		newobj = structs.ConditionalFunction(name, args, choices)
+	
+	elif deftype == 'graph':
+		newobj =  structs.Graph2D(name, typ)
 				
 	else: # If deftype is hist
 		if not matchtok('lbrace'):
@@ -612,7 +637,8 @@ def evaluateAssignment(prim, sec, assg, key):
 	#sec = '', params[]
 	#key = dict key if prim==ints,floats,strs and sec=='' - .value
 	   #or dict key if prim==xact and sec==params - []directly
-	#print prim, sec, assg, key
+	if config.log_assignments:	
+		print prim, sec, assg, key
 	
 	if assg in assgs:
 		attr = getattr(interpreter, prim)
@@ -1216,11 +1242,9 @@ def consume(toktype, toktext=''):
 	if peek(0)[0] != toktype:
 		if toktext != '':
 			if peek(0)[1] != toktext:
-				#raise ValueError()
 				errors.print_error(21, lineindex, 
 				       [[toktype, toktext], peek(0)], 'A')
 		else:
-			#raise ValueError()
 			errors.print_error(21, lineindex, 
 				       [toktype, peek(0)], 'A')
 	pos += 1

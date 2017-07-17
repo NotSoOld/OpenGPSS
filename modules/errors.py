@@ -66,7 +66,9 @@ errors = {
           56:'Array index "{}" is out of range "({}, {})"',
           57:'Cannot find attachable module "{}" (it must be in the same '\
              'folder where .ogps file is)',
-          58:'Attachable module "{}" does not have function "{}"'
+          58:'Attachable module "{}" does not have function "{}"',
+          59:'No such graph: "{}"',
+          60:'Unknown configuration parameter: "{}"'
          }
 
 warnings = {

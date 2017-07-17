@@ -38,7 +38,9 @@ class Facility:
 		self.irruptch = []
 		# For stats
 		self.busyxacts = {}
-		self.busyticks = 0
+		self.busyticks = 0 # divided by curticks in the end; 
+		                   # this is busyness from 0 to 1 (weighted stat)
+		self.unweightedbusyticks = 0 # busyness from 0 to maxplaces
 		self.enters_f = 0
 		self.processedxactsticks = 0
 		
@@ -91,7 +93,7 @@ class Histogram:
 		self.enters_h = 0
 		self.average = 0
 		
-	def add(self, value, weight):
+	def sample(self, value, weight):
 		if value < self.startval:
 			self.intervals[0] += weight
 		elif value > self.startval + self.interval * self.count:
@@ -106,6 +108,18 @@ class Histogram:
 		self.sum += value * weight
 		self.enters_h += weight
 		self.average = self.sum / float(self.enters_h)
+		
+class Graph2D:
+	def __init__(self, name, parameters):
+		self.paramX = parameters[0]
+		self.paramY = parameters[1]
+		self.values = {}
+		
+	def sample(self, x, y):
+		if x in self.values.keys():
+			self.values[x] = (self.values[x] + y) / 2.0
+		else:
+			self.values[x] = y
 
 class ConditionalFunction:
 	def __init__(self, name, args, choices):
