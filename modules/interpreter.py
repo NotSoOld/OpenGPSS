@@ -37,6 +37,12 @@ original_stdout = None
 logfile = None
 results_file = None
 file_path = ''
+
+BOLD = '\033[1m'
+NORM = '\033[0m'
+if not config.enable_nice_vt100_codes:
+	BOLD = ''
+	NORM = ''
 		
 class Xact:
 	def __init__(self, group, index, curblk, params={}):
@@ -70,13 +76,17 @@ def queue_enter(qid):
 	global queues
 	if qid not in queues.keys():
 		errors.print_error(44, xact.curblk+1, [qid])
-	if xact.index in queues[qid].queuedxacts:
+	queued = [q[0] for q in queues[qid].queuedxacts]
+	if xact.index in queued:
 		errors.print_error(39, xact.curblk+1)
+	
+	if queues[qid].curxacts == 0:
+		queues[qid].zero_entries += 1	
 	queues[qid].enters_q += 1
 	queues[qid].curxacts += 1
 	if queues[qid].curxacts > queues[qid].maxxacts:
 		queues[qid].maxxacts = queues[qid].curxacts
-	queues[qid].queuedxacts.append(xact.index)
+	queues[qid].queuedxacts.append([xact.index, ints['curticks'].value])
 	xact.curblk += 1
 	xact.cond = 'canmove'
 	toklines[xact.curblk][-1][2] += 1
@@ -85,10 +95,24 @@ def queue_leave(qid):
 	global toklines
 	if qid not in queues.keys():
 		errors.print_error(44, xact.curblk+1, [qid])
-	if xact.index not in queues[qid].queuedxacts:
+	queued = [q[0] for q in queues[qid].queuedxacts]
+	if xact.index not in queued:
 		errors.print_error(40, xact.curblk+1)
+		
 	queues[qid].curxacts -= 1
-	queues[qid].queuedxacts.remove(xact.index)
+	index = 0
+	enter_time = 0
+	for queued_xact in queues[qid].queuedxacts:
+		if queued_xact[0] == xact.index:
+			enter_time = queued_xact[1]
+			break
+		index += 1
+	print index
+	del queues[qid].queuedxacts[index]
+	time_in_queue = ints['curticks'].value - enter_time
+	queues[qid].sum_for_avg_time_in_queue += time_in_queue
+	if time_in_queue > queues[qid].max_time_in_queue:
+		queues[qid].max_time_in_queue = time_in_queue
 	xact.curblk += 1
 	xact.cond = 'canmove'
 	toklines[xact.curblk][-1][2] += 1
@@ -97,12 +121,13 @@ def fac_enter(fid, v=1):
 	if fid not in facilities.keys():
 		errors.print_error(43, xact.curblk+1, [fid])
 	if facilities[fid].isQueued:
-		if xact.index not in queues[fid].queuedxacts:
+		queued = [q[0] for q in queues[fid].queuedxacts]
+		if xact.index not in queued:
 			queue_enter(fid)
 			toklines[xact.curblk][-1][2] -= 1
 			xact.curblk -= 1
 		
-	if facilities[fid].curplaces - v >= 0:
+	if facilities[fid].curplaces - v >= 0 and facilities[fid].isAvail:
 		facilities[fid].curplaces -= v
 		facilities[fid].enters_f += 1
 		if xact.index in facilities[fid].busyxacts:
@@ -151,7 +176,7 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 		if marks[mark].block == -1:
 			errors.print_error(30, xact.curblk+1, [mark])
 	
-	if facilities[fid].maxplaces < vol:
+	if facilities[fid].maxplaces < vol or not facilities[fid].isAvail:
 		move()
 		return
 	if facilities[fid].curplaces == facilities[fid].maxplaces:
@@ -299,6 +324,18 @@ def fac_goaway(fid):
 		facilities[fid].irruptch[i] = []
 	facilities[fid].irruptch = [el for el in facilities[fid].irruptch if el != []]
 	
+def fac_avail(fid):
+	if fid not in facilities.keys():
+		errors.print_error(43, xact.curblk+1, [fid])
+	facilities[fid].isAvail = True
+	move()
+	
+def fac_unavail(fid):
+	if fid not in facilities.keys():
+		errors.print_error(43, xact.curblk+1, [fid])
+	facilities[fid].isAvail = False
+	move()
+	
 def wait(time, tdelta=0):
 	global futureChain
 	global ints
@@ -359,7 +396,7 @@ def chain_purge(chid, toblk=''):
 	
 def chain_pick(chid, cond, cnt, toblk=''):
 	# chain_pick(buf, chxact.p1 == 10, 5) => will pick all xacts from buf 
-	#                                        according to condition (5 or less)
+	# according to condition (5 or less)
 	if toblk != '':
 		if toblk not in marks.keys():
 			errors.print_error(29, xact.curblk+1, [toblk])
@@ -391,7 +428,8 @@ def chain_pick(chid, cond, cnt, toblk=''):
 	chxact = None		
 			
 def chain_find(chid, index_expr, cnt, toblk):
-	# chain_find(buf, find(buf.xacts.pr < 10), 5) => will evaluate condition 5 times
+	# chain_find(buf, find(buf.xacts.pr < 10), 5) =>
+	# will evaluate condition 5 times
 	if toblk != '':
 		if toblk not in marks.keys():
 			errors.print_error(29, xact.curblk+1, [toblk])
@@ -647,9 +685,11 @@ def start_interpreter(filepath):
 	
 	logfile = None
 	if config.log_to_file:
-		print 'All logs will be saved in "log.txt" file (they can be very big!).'
+		name = filepath[:-5]
+		print 'All logs will be saved in "' + name + \
+		      '_log.txt" file (log file can become very large!).'
 		original_stdout = sys.stdout
-		logfile = open('log.txt', 'a')
+		logfile = open(name+'_log.txt', 'w')
 		sys.stdout = logfile
 	
 	now = datetime.datetime.now()
@@ -796,6 +836,12 @@ def start_interpreter(filepath):
 		for fac in facilities.values():
 			fac.busyticks += len(fac.busyxacts)/float(fac.maxplaces)
 			fac.unweightedbusyticks += len(fac.busyxacts)
+			if fac.isAvail:
+				fac.avail_time += 1
+			else:
+				fac.unavail_time += 1
+			if fac.maxplaces - fac.curplaces > fac.maxxacts:
+				fac.maxxacts = fac.maxplaces - fac.curplaces
 		for qu in queues.values():
 			qu.sumforavg += qu.curxacts
 				
@@ -812,12 +858,13 @@ def start_interpreter(filepath):
 	if config.results_to_file:
 		if not original_stdout:
 			original_stdout = sys.stdout
-		results_file = open('results.txt', 'a')
+		results_file = open(filepath[:-5]+'results.txt', 'a')
 		sys.stdout = results_file
 	print_results()
 	if results_file:
 		sys.stdout = original_stdout
-		print 'Simulation finished, results are saved in "results.txt".'
+		print 'Simulation finished, results are saved in "' + \
+		      filepath[:-5] + '_results.txt".'
 
 def attachFileWithFunctions(line):
 	global attachables
@@ -956,31 +1003,31 @@ def print_program():
 def print_results():
 	now = datetime.datetime.now()
 
-	print '\n\nSIMULATION RESULTS OF SYSTEM '+file_path
+	print '\n\n'+BOLD+'SIMULATION RESULTS OF SYSTEM '+file_path+NORM
 	print 'Simulation finished at',
 	print now.strftime("%Y-%m-%d %H:%M")
 	
-	print '\n\n---- Generated program: ----\n' \
+	print '\n\n'+BOLD+'---- Generated program: ----\n'+NORM+ \
 	      '(line index, current xacts, total executions, line of code)\n'
 	print_program()
 	print '\nSimulation time: '+str(ints['curticks'].value)+' beats'
 	
 	if ints.keys():
-		print '\n\n---- Integer variables: ----'
+		print '\n\n'+BOLD+'---- Integer variables: ----'+NORM
 		for intt in ints.keys():
 			print str(intt)+' = '+str(ints[intt].value)
 	
 	if floats.keys():
-		print '\n\n---- Float variables: ----'
+		print '\n\n'+BOLD+'---- Float variables: ----'+NORM
 		for floatt in floats.keys():
 			print str(floatt)+' = '+str(floats[floatt].value)
 			
 	if strs.keys():
-		print '\n\n---- String variables: ----'
+		print '\n\n'+BOLD+'---- String variables: ----'+NORM
 		for s in strs.keys():
 			print s+' = '+repr(strs[s].value)
 	
-	print '\n\n---- Facilities: ----'
+	print '\n\n'+BOLD+'---- Facilities: ----'+NORM
 	if not facilities.keys():
 		print '<<NO FACILITIES>>'
 	else:
@@ -988,34 +1035,56 @@ def print_results():
 		for fac in facilities.values():
 			if len(fac.name) > lname:
 				lname = len(fac.name)
-		print ''.ljust(lname+5+13+16+11) + \
+		print ''.ljust(lname+5+10+13+14+11) + \
 		      'Busyness'.ljust(15) + \
 		      'Busyness'.ljust(15) + \
-		      'Average'.ljust(19) + \
 		      'Current xacts'
 		print 'Name'.ljust(lname+5) + \
+		      'Places'.ljust(10) + \
 		      'Max xacts'.ljust(13) + \
-		      'Auto queued'.ljust(16) + \
+		      'Auto queued'.ljust(14) + \
 		      'Enters'.ljust(11) + \
 		      '(weighted)'.ljust(15) + \
 		      '(unweighted)'.ljust(15) + \
-		      'processing time'.ljust(19) + \
 		      '(index: [vol, enter time])'
 		print '- '*55
 		for fac in facilities.values():
 			print str(fac.name).ljust(lname+5) + \
-			      str(fac.maxplaces).ljust(13) + \
-			      str(fac.isQueued).ljust(16) + \
+			      str(fac.maxplaces).ljust(10) + \
+			      str(fac.maxxacts).ljust(13) + \
+			      str(fac.isQueued).ljust(14) + \
 			      str(fac.enters_f).ljust(11) + \
 			      ('{:.3f}'.format(fac.busyticks/float(ints['curticks']
 			      .value)).ljust(15)) + \
 			      ('{:.3f}'.format(fac.unweightedbusyticks/float(ints['curticks']
 			      .value)).ljust(15)) + \
-			      ('{:.2f}'.format(fac.processedxactsticks/float(
-			      fac.enters_f - (fac.maxplaces - fac.curplaces)))).ljust(19) + \
 			      str(fac.busyxacts)
+		#print '- '*55
+		print '\n'
+		print 'Average'.ljust(19) + \
+		      ''.ljust(14+14+16) + \
+		      'Availa-'.ljust(13) + \
+		      'Irrupted'.ljust(12)
+		print 'processing time'.ljust(19) + \
+		      'Is available'.ljust(14) + \
+		      'Avail. time'.ljust(14) + \
+		      'Unavail. time'.ljust(16) + \
+		      'bility (%)'.ljust(13) + \
+		      'xacts'.ljust(12) + \
+		      'Irrupt chain'
+		print '- '*55
+		for fac in facilities.values():
+			print ('{:.2f}'.format(fac.processedxactsticks/float(
+			      fac.enters_f - (fac.maxplaces - fac.curplaces)))).ljust(19) + \
+			      str(fac.isAvail).ljust(14) + \
+			      str(fac.avail_time).ljust(14) + \
+			      str(fac.unavail_time).ljust(16) + \
+			      ('{:.2f}'.format(fac.avail_time / float(fac.avail_time + \
+			      fac.unavail_time) * 100)).ljust(13) + \
+			      str(len(fac.irruptch)).ljust(12) + \
+			      str(fac.irruptch)
 
-	print '\n\n---- Queues: ----'
+	print '\n\n'+BOLD+'---- Queues: ----'+NORM
 	if not queues.keys():
 		print '<<NO QUEUES>>'
 	else:
@@ -1024,22 +1093,48 @@ def print_results():
 			if len(qu.name) > lname:
 				lname = len(qu.name)
 		print 'Name'.ljust(lname+5) + \
-		      'Enters'.ljust(11) + \
-		      'Max length'.ljust(15) + \
-		      'Avg length'.ljust(15) + \
-		      'Current length'.ljust(19) + \
-		      'Current xacts (indexes)'
-		print '- '*40
+		      'Enters'.ljust(10) + \
+		      'Zero entries'.ljust(15) + \
+		      'Zero entries (%)'.ljust(18) + \
+		      'Max length'.ljust(13) + \
+		      'Avg length'.ljust(13) + \
+		      'Current length'
+		print '- '*55
 		for qu in queues.values():
 			print str(qu.name).ljust(lname+5) + \
-			      str(qu.enters_q).ljust(11) + \
-			      str(qu.maxxacts).ljust(15) + \
+			      str(qu.enters_q).ljust(10) + \
+			      str(qu.zero_entries).ljust(15) + \
+			      ('{:.2f}'.format(qu.zero_entries / 
+			      float(qu.enters_q) * 100)).ljust(18) + \
+			      str(qu.maxxacts).ljust(13) + \
 			      ('{:.2f}'.format(qu.sumforavg/float(ints['curticks']
-			      .value)).ljust(15)) + \
-			      str(qu.curxacts).ljust(19) + \
+			      .value)).ljust(13)) + \
+			      str(qu.curxacts).ljust(19)
+		#print '- '*55
+		print '\n'
+		print 'Avg xact'.ljust(12) + \
+		      'Avg xact wait time'.ljust(24) + \
+		      'Max xact'.ljust(12) + \
+		      'Current queue contents'
+		print 'wait time'.ljust(12) + \
+		      '(w/o zero entries)'.ljust(24) + \
+		      'wait time'.ljust(12) + \
+		      '[index, enter time]'
+		print '- '*55
+		for qu in queues.values():
+			avg_wo_zero = ''
+			if qu.enters_q - qu.curxacts - qu.zero_entries == 0:
+				avg_wo_zero = '(no data)'
+			else:
+				avg_wo_zero = '{:.2f}'.format(qu.sum_for_avg_time_in_queue / 
+					  float(qu.enters_q - qu.curxacts - qu.zero_entries))
+			print ('{:.2f}'.format(qu.sum_for_avg_time_in_queue / 
+			      float(qu.enters_q - qu.curxacts))).ljust(12) + \
+			      avg_wo_zero.ljust(24) + \
+			      str(qu.max_time_in_queue).ljust(12) + \
 			      str(qu.queuedxacts)
 				  
-	print '\n\n---- User chains: ----'
+	print '\n\n'+BOLD+'---- User chains: ----'+NORM
 	if not chains.keys():
 		print '<<NO USER CHAINS>>'
 	else:
@@ -1059,7 +1154,7 @@ def print_results():
 	global marks
 	marks = {k:v for k,v in marks.items() if not k.startswith('&')}
 	if marks.keys():
-		print '\n\n---- Marks: ----'
+		print '\n\n'+BOLD+'---- Marks: ----'+NORM
 		lname = 0
 		for mark in marks.keys():
 			if len(mark) > lname:
@@ -1071,10 +1166,8 @@ def print_results():
 			print str(marks[mark].name).ljust(lname+5) + \
 			      str(marks[mark].block)
 	
-	print '\n\n---- Histograms: ----\n'
-	if not hists.keys():
-		print '<<NO HISTOGRAMS>>'
-	else:
+	if hists.keys():
+		print '\n\n'+BOLD+'---- Histograms: ----\n'+NORM
 		for hist in hists.values():
 			totalcnt = 0
 			for i in hist.intervals:
@@ -1129,8 +1222,15 @@ def print_results():
 			      '*'*int(hist.intervals[-1]/float(totalcnt) * 50)
 		print
 		print
+		
+	if graphs.keys():
+		print BOLD+'\n\n---- 2D Graphs\' (value tables): ----'
+		for gr in graphs.values():
+			print '-Graph "'+gr.name+'":'
+			print 'X'.ljust(20) + 'Y'
+			# sort values dictionary and print
 			      		
-	print '\n\n---- Future events chain: ----'
+	print '\n\n'+BOLD+'---- Future events chain: ----'+NORM
 	if not futureChain:
 		print '<<EMPTY>>'
 	else:
@@ -1153,7 +1253,7 @@ def print_results():
 			      str(xact[1].curblk).ljust(17) + \
 			      str(xact[1].cond)
 				
-	print '\n\n---- Current events chain: ----'
+	print '\n\n+'BOLD+'---- Current events chain: ----'+NORM
 	if not currentChain+tempCurrentChain:
 		print '<<EMPTY>>'
 	else:

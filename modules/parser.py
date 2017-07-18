@@ -28,7 +28,8 @@ assgs = [
 fac_params = [
               'curplaces',
               'maxplaces',
-              'enters_f'
+              'enters_f',
+              'isAvail'
              ]
 queue_params = [
                 'curxacts',

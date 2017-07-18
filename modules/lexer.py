@@ -72,6 +72,8 @@ blocks = [
           'fac_leave',    # tested
           'fac_irrupt',   # implemented
           'fac_goaway',   # implemented
+          'fac_avail',    # implemented
+          'fac_unavail',  # implemented
           'queue_enter',  # tested
           'queue_leave',  # tested
           'wait',         # tested

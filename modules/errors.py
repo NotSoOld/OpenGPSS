@@ -1,4 +1,5 @@
 import sys
+import interpreter
 
 errors = {
           1:'No such file: "{}"',
@@ -89,14 +90,22 @@ warnings = {
            }
 
 def print_error(error_code, line, args=[], add=''):
+	
 	print '\n\n'+'/'*30
 	print 'ERROR {!s}{!s} in line {!s}:'.format(error_code, add, line)
 	print errors[error_code].format(*args)
 	print '\n'
+	if interpreter.original_stdout:
+		sys.stdout = interpreter.original_stdout
+		print 'An error occured, see logs for futher information.\n'
 	sys.exit()
 	
 def print_warning(warn_code, line, args=[]):
+	if interpreter.original_stdout:
+		sys.stdout = interpreter.original_stdout
 	print '\n\n'+'/'*30
 	print 'WARNING {!s} in line {!s}:'.format(warn_code, line)
 	print warnings[warn_code].format(*args)
 	print '\n'
+	if interpreter.logfile:
+		sys.stdout = interpreter.logfile

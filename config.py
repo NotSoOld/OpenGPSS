@@ -1,5 +1,6 @@
 from modules import lexer, errors
 
+enable_nice_vt100_codes = True
 results_to_file = False
 log_to_file = False
 print_program_in_tokens = True
@@ -14,6 +15,7 @@ block_by_block_simulation = False
 
 def load_config_file():
 	
+	global enable_nice_vt100_codes
 	global results_to_file
 	global log_to_file
 	global print_program_in_tokens
@@ -50,7 +52,8 @@ def load_config_file():
 	
 def write_config_file():
 	conf = open('opengpss_config.cfg', 'w')
-	conf.write('results_to_file = ' + str(results_to_file))
+	conf.write('enable_nice_vt100_codes = ' + str(enable_nice_vt100_codes))
+	conf.write('\nresults_to_file = ' + str(results_to_file))
 	conf.write('\nlog_to_file = ' + str(log_to_file))
 	conf.write('\nprint_program_in_tokens = ' + str(print_program_in_tokens))
 	conf.write('\nlog_xact_trace = ' + str(log_xact_trace))

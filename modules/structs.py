@@ -36,6 +36,7 @@ class Facility:
 		self.isQueued = isQueued
 		self.curplaces = places
 		self.irruptch = []
+		self.isAvail = True
 		# For stats
 		self.busyxacts = {}
 		self.busyticks = 0 # divided by curticks in the end; 
@@ -43,6 +44,9 @@ class Facility:
 		self.unweightedbusyticks = 0 # busyness from 0 to maxplaces
 		self.enters_f = 0
 		self.processedxactsticks = 0
+		self.avail_time = 0
+		self.unavail_time = 0
+		self.maxxacts = 0
 		
 class Queue:
 	def __init__(self, name):
@@ -51,8 +55,14 @@ class Queue:
 		self.queuedxacts = []
 		self.enters_q = 0
 		self.curxacts = 0
+		# Max length
 		self.maxxacts = 0
+		# Average length of queue (if divided by curticks):
 		self.sumforavg = 0 # in the end this will be divided by curticks
+		self.zero_entries = 0
+		self.sum_for_avg_time_in_queue = 0 # divided by enters or 
+		                                   # enters minus zero entries
+		self.max_time_in_queue = 0
 		
 class Mark:
 	def __init__(self, name, block):
