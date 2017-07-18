@@ -9,6 +9,10 @@
 
 - [Structure types](#structure-types)
 
+- [Arrays and matrices](#arrays-and-matrices)
+
+- [Conditional functions](#conditional-functions)
+
 [About name ambiguity](#about-name-ambiguity)
 
 [Executive blocks:](#executive-blocks) 
@@ -20,6 +24,8 @@
 \-- [fac_leave](#fac_leave---free-a-place-in-previously-occupied-facility)
 \-- [fac_irrupt](#fac_irrupt---force-into-occupied-facility)
 \-- [fac_goaway](#fac_goaway---go-away-from-previously-interrupted-facility)
+\-- [fac_avail](#fac_avail---make-facility-available-for-xacts)
+\-- [fac_unavail](#fac_unavail---make-facility-closed-for-everyone)
 \-- [reject](#reject---delete-xact-entirely-from-system)
 \-- [wait](#wait---move-xact-to-fec-for-some-amount-of-time)
 \-- [transport/transport_prob/transport_if](#transport-family-blocks---------transport-xact-or-fork-the-path-of-xact)
@@ -30,7 +36,8 @@
 \-- [chain_purge](#chain_purge---take-all-xacts-from-the-user-chain)
 \-- [chain_pick](#chain_pick---take-xacts-which-satisfy-a-condition)
 \-- [chain_find](#chain_find---take-xacts-from-user-chain-by-index)
-\-- [hist_add](#hist_add---add-a-sample-to-the-histogram)
+\-- [hist_sample](#hist_sample---add-a-sample-to-the-histogram)
+\-- [graph_sample](#graph_sample---add-a-sample-x-y-pair-to-the-2d-graph)
 \-- [while](#while---do-i-really-need-to-describe-what-it-does-d)
 \-- [loop_times](#loop_times---do-something-as-much-times-as-you-need)
 \-- [copy](#copy---make-a-full-copy-of-a-xact)
@@ -48,9 +55,9 @@
 
 - [Type converters](#type-converters)
 
-- [find](#find-----find-name-of-struct-by-condition-connected-to-struct-s-parameter)
+- [find](#find---find-name-of-struct-by-condition-connected-to-structs-parameter)
 
-- [find_minmax](#find_minmax-----similar-to-find----but-finds-struct-with-min-max-value-of-its-parameter)
+- [find_minmax](#find_minmax---similar-to-find-but-finds-struct-with-minmax-value-of-its-parameter)
 
 - [Math functions](#math-functions)
 
@@ -136,6 +143,7 @@ There is a special situation called *CEC review*. When interpreter receives a si
 
 ## Definition types
 
+
 **For all types:** 
 
 Name of the variable (as string) can be accessed through dot: *variable.name*.
@@ -148,6 +156,7 @@ int buffered = 5;
 ~var1++; <== will increment variable "buffered".
 ```
 
+
 **Also:**
 
 Current xact (which executes block, assignment, etc.) has some accessible parameters along with its own parameters. They are accessed through dot operator:
@@ -156,118 +165,187 @@ xact.index
 xact.group
 ```
 
+
 ### Simple variables:
+
 - int
 
-Just a variable which can hold an integer value and be accessed by its name. Range is the same as range of integer in Python.
+	Just a variable which can hold an integer value and be accessed by its name. Range is the same as range of integer in Python.
 
-Notes:
+	Notes:
 
-\- If a float value is assigned to int variable, it is implicitly converted to int.
+	\- If a float value is assigned to int variable, it is implicitly converted to int.
 
-\- There are three read-only default integer variables which are used by interpreter and can be accessed by user:
+	\- There are three read-only default integer variables which are used by interpreter and can be accessed by user:
 
-**injected** - count of xacts injected by injectors of the system;
+	**injected** - count of xacts injected by injectors of the system;
 
-**rejected** - count of xacts rejected from the system through *reject* blocks;
+	**rejected** - count of xacts rejected from the system through *reject* blocks;
 
-**curticks** - how long simulation is going.
+	**curticks** - how long simulation is going.
 
 - float
 
-Just a variable which can hold a floating point value and be accessed by its name. Range is the same as range of float in Python.
+	Just a variable which can hold a floating point value and be accessed by its name. Range is the same as range of float in Python.
 
 - str
 
-Just a variable which can hold a string value and be accessed by its name. Strings can be accessed, assigned and concatenated only.
+	Just a variable which can hold a string value and be accessed by its name. Strings can be accessed, assigned and concatenated only.
 
 - bool
 
-Just a variable which can hold a boolean value (true/false) and be accessed by its name. Boolean variables can be only assigned or accessed.
+	Just a variable which can hold a boolean value (true/false) and be accessed by its name. Boolean variables can be only assigned or accessed.
+
 
 ### Structure types:
+
 - fac (facility)
 
-This is a device which can be occupied by xacts. Usual practice is to use facility to simulate something that can be occupied by somebody for some amount of time and therefore make other transacts wait until it'll be freed. So, when facility is free (has spare places), xacts can occupy it and move further, but facility is fully busy, xacts will wait until it'll have free places.
+	This is a device which can be occupied by xacts. Usual practice is to use facility to simulate something that can be occupied by somebody for some amount of time and therefore make other transacts wait until it'll be freed. So, when facility is free (has spare places), xacts can occupy it and move further, but facility is fully busy, xacts will wait until it'll have free places.
 
-Initial parameters (can be set in curly braces):
+	Initial parameters (can be set in curly braces):
 
-\- isQueued = bool *(default == true)* - if true, this facility will be automatically queued as if there are *queue\_enter* and *queue\_leave* blocks around *fac\_enter* block. Queue will be named with this facility's name.
+	\- isQueued = bool *(default == true)* - if true, this facility will be automatically queued as if there are *queue\_enter* and *queue\_leave* blocks around *fac\_enter* block. Queue will be named with this facility's name.
 
-\- places = int *(default == 1)* - how many xacts can occupy this facility until it becomes busy.
+	\- places = int *(default == 1)* - how many xacts can occupy this facility until it becomes busy.
 
-Accessible parameters (through dot operator):
+	Accessible parameters (through dot operator):
 
-\- curplaces - how many free places are currently available
+	\- curplaces - how many free places are currently available
 
-\- maxplaces - how many places facility has at all
+	\- maxplaces - how many places facility has at all
 
-\- enters_f - how many xacts entered the facility at this time
+	\- enters_f - how many xacts entered the facility at this time
+
+	\- isAvail - current availability status of facility
 
 - queue
 
-This is a device which is generally used for gathering statistics about the flow of transacts near facilities. But queueing can be used not only around *fac\_enter* blocks. Statistics include number of entered xacts, current xacts in the queue, etc. It is important to mention that queues doesn't really sort or queue xacts, it's only gather statistics.
+	This is a device which is generally used for gathering statistics about the flow of transacts near facilities. But queueing can be used not only around *fac\_enter* blocks. Statistics include number of entered xacts, current xacts in the queue, etc. It is important to mention that queues doesn't really sort or queue xacts, it's only gather statistics.
 
-Initial parameters: none.
+	Initial parameters: none.
 
-Accessible parameters (through dot operator):
+	Accessible parameters (through dot operator):
 
-\- curxacts - how many xacts are currently queued
+	\- curxacts - how many xacts are currently queued
 
-\- enters_q - how many xacts entered the queue at this time
+	\- enters_q - how many xacts entered the queue at this time
+
 
 - mark
 
-This is a definition of a transporting mark which can be used in the executive area of a program. When mark is at the left of ':' in the line, it is called a *transporting label*. When mark is present as argument of transport operator (or somewhere else where xacts can be moved around the model), it declares where xact should go, which line it should follow after execution.
+	This is a definition of a transporting mark which can be used in the executive area of a program. When mark is at the left of ':' in the line, it is called a *transporting label*. When mark is present as argument of transport operator (or somewhere else where xacts can be moved around the model), it declares where xact should go, which line it should follow after execution.
 
-Initial parameters: none.
+	Initial parameters: none.
 
-Accessible parameters: none.
+	Accessible parameters: none.
 
-Additional notes:
+	Additional notes:
 
-\- You will always see messages about undefined or unused marks.
+	\- You will always see messages about undefined or unused marks.
 
 - chain
 
-User chains are used to store transacts here when you need to control their flow through the model. User chains enable user to buffer xacts (and to simulate buffering devices), to release xacts one by one at some point in the model, etc.
+	User chains are used to store transacts here when you need to control their flow through the model. User chains enable user to buffer xacts (and to simulate buffering devices), to release xacts one by one at some point in the model, etc.
 
-Initial parameters: none.
+	Initial parameters: none.
 
-Accesible parameters (through dot operator):
+	Accesible parameters (through dot operator):
 
-\- length - how many xacts are currently in this user chain
+	\- length - how many xacts are currently in this user chain
 
-\- xacts (only available inside find/find\_minmax functions!) - list of current xacts in the chain
+	\- xacts (only available inside find/find\_minmax functions!) - list of current xacts in the chain
 
-- hist (histogram)
+- hist<variable_name> (histogram)
 
-Histograms are one of the ways to gather statistics. Histogram can collect value of a one parameter during simulating. Parameter name is specified in <> brackets after *hist* keyword. Value of this parameter is added to the histogram by calling *hist\_add* block. After simulating, histogram will be printed in both text and pseudo-graphical representations.
+	Histograms are one of the ways to gather statistics. Histogram can collect value of a one parameter during simulating. Parameter name is specified in <> brackets after *hist* keyword. Value of this parameter is added to the histogram by calling *hist\_add* block. After simulating, histogram will be printed in both text and pseudo-graphical representations.
 
-Initial parameters (all of them **must** be set in curly braces):
+	Initial parameters (all of them **must** be set in curly braces):
 
-\- start - it is first bounding value of histogram
+	\- start - it is first bounding value of histogram
 
-\- interval - it is a constant interval between histogram marks
+	\- interval - it is a constant interval between histogram marks
 
-\- count - total number of intervals (excluding interval from -infinity to start and from last mark to +infinity).
+	\- count - total number of intervals (excluding interval from -infinity to start and from last mark to +infinity).
 
-Here is graphical representation of these parameters:
+	Here is graphical representation of these parameters:
 
-![alt text](./histillustr.jpg)
+	![alt text](./histillustr.jpg)
 
-When parameter value is about to be added to histogram, according interval will be chosen. Each interval contains not value of the parameter, but a number of parameter value additions of this interval.
+	When parameter value is about to be added to histogram, according interval will be chosen. Each interval contains not value of the parameter, but a number of parameter value additions of this interval.
 
-Accessible parameters (can be accessed thorugh dot operator):
+	Accessible parameters (can be accessed thorugh dot operator):
 
-\- enters_h - how many samples have been added to histogram (weighted)
+	\- enters_h - how many samples have been added to histogram (weighted)
 
-\- average - average value of observing parameter
+	\- average - average value of observing parameter
+
+
+- graph<x_var, y_var> (2D graph)
+
+	Graps are another way of gathering statistics about changes of variables' values. This type allows to gather information in the form of two-dimensional graph (i.e. one value is X, and another is Y on the plot, and they are stored as pairs). According to math laws, every X value can be associated only with one Y value; so, when sampled (X, Y) pair already exists, it will be saved as (X, (oldY + Y) / 2).
+
+	Since plot building is not possible using pseudographics, output of a graph in simulation results will look like table of X-Y pairs, so you can copy them and build plot in Excel, etc.
+
+	Initial parameters: none.
+
+	Accessible parameters: none.
+
+
+### Arrays and matrices:
+
+
+Variable of **every** type (simple or structural, except *mark*!) can be defined not as a single variable, but as array:
+
+```
+int arr[10] = 0;
+queue CPUs[4];
+fac CPUs[4] { isQueued = false, places = 1 };
+```
+
+or as matrix:
+
+```
+float my_matrix[[5, 6]];
+bool adjacent[[7, 7]] = false;
+```
+
+Initial values specified after "=" or in "{}" will be applied for every array/matrix element. Arrays' length and matrices' width and height are constant (defined only once). Three- and more dimensional arrays are not supported.
+
+Inside, arrays' and matrices' elements are defined as separate objects *(with names like "array_name&&index" and "matrix_name&&(index, index)")* but at the end of simulation they will be printed either with proper names ("array[index]", "matrix[[index, index]]") (for structure types) or definitely as arrays and matrices (for simple types).
+
+
+### Conditional functions:
+
+
+These functions which can be defined by user are a feature to replace GPSS's FUNCTION block. There is a word "conditional" in the name, because this function consists of pairs *"condition, result"* and, from first to last, condition of every pair will be evaluated. First condition which occurs to be true will command the interpreter to return result which was in the pair with this condition. 
+
+So, here is a prototype:
+```
+function function_name(parameters, if any) {
+                                            condition1, result1 |
+                                            condition2, result2 |
+                                            ...
+                                            conditionN, resultN
+                                           };
+```
+
+Every condition is an expression with boolean (or something which can be converted to boolean) result; every result can be an expression. Condition and result are separated by comma, pairs are separated by "|". If no condition succeeds, function will return 0 (if you need to override default behaviour, it's recommended to leave final pair as *"1, value_to_return_if_every_condition_fails"*, so it will be always returned if every other condition failed).
+
+Function also can have some parameters which values will be put to condition and result expression when function will be called. Please **do not** name parameters as your system variables, etc., because then they will be overwritten by function parameters. (But names like "p1" are allowed, even if function uses expressions like "xact.p1".)
+
+Simpliest example of "abs" implementation:
+```
+function my_abs(value) {
+                        value >= 0, value |
+                        value < 0, -value     // or "1, -value", because it will always succeed
+                       };
+```
 
 
 ## About name ambiguity
 
-OpenGPSS is a case-sensitive language. Names can consist of upper and lower register letters, digits (but they cannot start with digit) and underscores.
+OpenGPSS is a case-sensitive language. Names can consist of upper and lower register letters, digits (but these names cannot **start** with digit) and underscores.
 
 In some cases identical names are allowed:
 
@@ -279,9 +357,13 @@ But:
 
 \- **do not** name variables with identical words, they'll be messed up (little explanation: structures are either used as blocks' arguments (in this case, their names are parsed as strings, so, there's no big difference what type this structure was of, if name is correct for block) or their accessible parameters are accessed by dot operator (and different parameters have different names for each structure type, as you can mention). And variables can be accessed just like "my\_variable\_name = ...", and you cannot say, what variable is accessed here if you have multiple of them with different types)
 
-\- **never** name any variables/structures as keywords (including "xact", "chxact", etc.)
+\- **never** name any variables/functions/structures as keywords (including "xact", "chxact", "curticks", "injected", "rejected", etc.)
 
-Remember, this project is still in beta, so rules are a subject to change.
+\- Always check that names of your own functions/variables/structures do not match with names of built-in functions and functions from attached modules!
+
+\- Also check that names of modules do not match with keywords or any variables/structures in the system.
+
+Remember, these rules are always a subject to change.
 
 
 ## Executive blocks
@@ -447,6 +529,48 @@ After you interrupt facility, you need to go away from it (especially when you p
 ```
 fac_goaway(CPU);
 ```
+
+### fac_avail - make facility available for xacts
+- Prototype:
+```
+fac_avail(
+          word fac_name
+         );
+```
+- Usage:
+
+This block has an ability to turn availability status of facility back to "available".
+
+- Example:
+```
+fac_avail(CPU);
+```
+
+- Advanced info:
+
+\- Every facility is available by default.
+
+\- When facility is available, it means in can be entered (if is has free places) and interrupted.
+
+### fac_unavail - make facility closed for everyone
+- Prototype:
+```
+fac_unavail(
+            word fac_name
+           );
+```
+- Usage:
+
+Sometimes you need to simulate unavailability of a facility, so that's why this block is implemented.
+
+- Example:
+```
+fac_unavail(CPU);
+```
+
+- Advanced info:
+
+\- When facility is unavailable, it means in **cannot** be entered or interrupted. When facility status turns to "unavailable", it's like facility will be fully busy for incoming xacts (i.e. they will be blocked); xacts processing in this facility will leave it when processing finishes. 
 
 ### reject - delete xact entirely from system
 - Prototype:
@@ -677,13 +801,13 @@ Sometimes this block can be replaced with *chain\_pick* block (and vise versa).
 chain_find(buf, find(buf.xacts.pr < 10), 5);
 ```
 
-### hist_add - add a sample to the histogram
+### hist_sample - add a sample to the histogram
 - Prototype:
 ```
-hist_add(
-         word histogram_name,
-	     int weight (default == 1)
-        );
+hist_sample(
+            word histogram_name,
+	    int weight (default == 1)
+           );
 ```
 - Usage:
 
@@ -691,7 +815,23 @@ This block, when executed, adds a sample (i.e. a value of parameter which is tra
 
 - Example:
 ```
-hist_add(buffer_hist);
+hist_sample(buffer_hist);
+```
+
+### graph_sample - add a sample (X-Y pair) to the 2D graph
+- Prototype:
+```
+graph_sample(
+             word graph_name
+            );
+```
+- Usage:
+
+This block, when executed, adds a sample to the specified 2D graph (i.e. it evaluates graph X and Y parameters and adds a pair of these values to the graph's values' table).
+
+- Example:
+```
+graph_sample(time_queuelength_dependency);
 ```
 
 ### while - do I really need to describe what it does..? :D
@@ -906,5 +1046,6 @@ find_minmax(max, chains.xacts.pr) ==> returns index of xact
 ```
 
 ### Math functions:
-- abs_value(number) - returns an absolute value of int/float number.
+- abs\_value(number) - returns an absolute value of int/float number.
 - exp\_distr(x, lambda) - returns value of a cumulative exponential distribution function with given x and lambda (more on [Wikipedia](https://en.wikipedia.org/wiki/Exponential_distribution#Cumulative_distribution_function)). Is useful when setting processing times, etc.
+- round\_to(value, digits) - returns *value* rounded to floating number with *digits* digits after point (*digits* default value = 0).
