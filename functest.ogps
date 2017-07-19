@@ -6,7 +6,10 @@ function my_func(value) {
 						};
 
 int massiv[10];
+int arr[7] = 5;
 int i = 0;
+int my_matrix[[4, 6]];
+int my_new[[5, 5]] = 50;
  
 exitwhen(rejected >= 1);
 {{

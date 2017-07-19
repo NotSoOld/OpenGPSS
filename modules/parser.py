@@ -218,24 +218,26 @@ def parseDefinition(line):
 	nexttok()
 	indexes = []
 	if matchtok('lbracket'):
+		if name in arrays_info:
+			errors.print_error(61, lineindex, [name])
 		indexes.append(parseExpression())
 		consume('rbracket')
-		if name in arrays_info:
-			errors.print_error(22, lineindex, [name, 'array of "'+deftype+'"'])
 		arrays_info[name] = [0, indexes[0] - 1]
 	elif matchtok('lmatrix'):
+		if name in matrices_info:
+			errors.print_error(61, lineindex, [name])
 		indexes.append(parseExpression())
 		consume('comma')
 		indexes.append(parseExpression())
 		consume('rmatrix')
-		if name in arrays_info:
-			errors.print_error(22, lineindex, [name, 'matrix of "'+deftype+'"'])
 		matrices_info[name] = [[0, indexes[0] - 1], [0, indexes[1] - 1]]
+	if indexes and deftype in ['mark', 'function']:
+		errors.print_error(62, lineindex, [deftype])
 	
 	tok = peek(0)
 	if deftype == 'int':
 		if name in defined_var_names:
-			errors.print_error(22, lineindex, [name, deftype])
+			errors.print_error(61, lineindex, [name])
 		defined_var_names.append(name)
 		if tok[0] == 'eocl':
 			newobj = structs.IntVar(name, 0)
@@ -247,7 +249,7 @@ def parseDefinition(line):
 		
 	elif deftype == 'float':
 		if name in defined_var_names:
-			errors.print_error(22, lineindex, [name, deftype])
+			errors.print_error(61, lineindex, [name])
 		defined_var_names.append(name)
 		if tok[0] == 'eocl':
 			newobj = structs.FloatVar(name, 0)
@@ -259,7 +261,7 @@ def parseDefinition(line):
 			
 	elif deftype == 'bool':
 		if name in defined_var_names:
-			errors.print_error(22, lineindex, [name, deftype])
+			errors.print_error(61, lineindex, [name])
 		defined_var_names.append(name)
 		if tok[0] == 'eocl':
 			newobj = structs.BoolVar(name, 0)
@@ -328,7 +330,7 @@ def parseDefinition(line):
 			
 	elif deftype == 'str':
 		if name in defined_var_names:
-			errors.print_error(22, lineindex, [name, deftype])
+			errors.print_error(61, lineindex, [name])
 		defined_var_names.append(name)
 		if tok[0] == 'eocl':
 			newobj = structs.StrVar(name, '')

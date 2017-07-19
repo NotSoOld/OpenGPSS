@@ -40,7 +40,7 @@ file_path = ''
 
 BOLD = '\033[1m'
 NORM = '\033[0m'
-if not config.enable_nice_vt100_codes:
+if not config.enable_nice_vt100_codes or config.results_to_file:
 	BOLD = ''
 	NORM = ''
 		
@@ -1004,35 +1004,49 @@ def print_results():
 	now = datetime.datetime.now()
 
 	print '\n\n'+BOLD+'SIMULATION RESULTS OF SYSTEM '+file_path+NORM
-	print 'Simulation finished at',
+	print '\nSimulation finished at',
 	print now.strftime("%Y-%m-%d %H:%M")
 	
-	print '\n\n'+BOLD+'---- Generated program: ----\n'+NORM+ \
+	print '\n\n\n'+BOLD+'-------- Generated program: --------\n'+NORM+ \
 	      '(line index, current xacts, total executions, line of code)\n'
 	print_program()
-	print '\nSimulation time: '+str(ints['curticks'].value)+' beats'
+	print BOLD+'\nSimulation time: '+NORM+str(ints['curticks'].value)+' beats'
+	
+	if attachables.keys():
+		print BOLD+'\nAttached modules:'+NORM,
+		print attachables.keys()[0],
+		for att in attachables.keys()[1:]:
+			print ', '+att,
 	
 	if ints.keys():
-		print '\n\n'+BOLD+'---- Integer variables: ----'+NORM
-		for intt in ints.keys():
-			print str(intt)+' = '+str(ints[intt].value)
+		print '\n\n'+BOLD+'-------- Integer variables: --------\n'+NORM
+		print_vars_arrays_and_matrices(ints)				
 	
 	if floats.keys():
-		print '\n\n'+BOLD+'---- Float variables: ----'+NORM
-		for floatt in floats.keys():
-			print str(floatt)+' = '+str(floats[floatt].value)
+		print '\n\n\n'+BOLD+'-------- Float variables: --------\n'+NORM
+		print_vars_arrays_and_matrices(floats, 'f')
 			
 	if strs.keys():
-		print '\n\n'+BOLD+'---- String variables: ----'+NORM
-		for s in strs.keys():
-			print s+' = '+repr(strs[s].value)
+		print '\n\n\n'+BOLD+'-------- String variables: --------\n'+NORM
+		print_vars_arrays_and_matrices(strs)
+		
+	if bools.keys():
+		print '\n\n\n'+BOLD+'-------- Boolean variables: --------\n'+NORM
+		print_vars_arrays_and_matrices(bools)
 	
-	print '\n\n'+BOLD+'---- Facilities: ----'+NORM
+	global facilities
+	print '\n\n\n'+BOLD+'-------- Facilities: --------'+NORM
 	if not facilities.keys():
-		print '<<NO FACILITIES>>'
+		print '\n<<NO FACILITIES>>'
 	else:
-		lname = 0
 		for fac in facilities.values():
+			if '&&(' in fac.name:
+				fac.name = fac.name[:-1].replace('&&(', '[[') + ']]'
+			elif '&&' in fac.name:
+				fac.name = fac.name.replace('&&', '[') + ']'
+		facilities = sorted(facilities.values(), key=lambda x: x.name)
+		lname = 0
+		for fac in facilities:
 			if len(fac.name) > lname:
 				lname = len(fac.name)
 		print ''.ljust(lname+5+10+13+14+11) + \
@@ -1048,7 +1062,7 @@ def print_results():
 		      '(unweighted)'.ljust(15) + \
 		      '(index: [vol, enter time])'
 		print '- '*55
-		for fac in facilities.values():
+		for fac in facilities:
 			print str(fac.name).ljust(lname+5) + \
 			      str(fac.maxplaces).ljust(10) + \
 			      str(fac.maxxacts).ljust(13) + \
@@ -1073,7 +1087,7 @@ def print_results():
 		      'xacts'.ljust(12) + \
 		      'Irrupt chain'
 		print '- '*55
-		for fac in facilities.values():
+		for fac in facilities:
 			print ('{:.2f}'.format(fac.processedxactsticks/float(
 			      fac.enters_f - (fac.maxplaces - fac.curplaces)))).ljust(19) + \
 			      str(fac.isAvail).ljust(14) + \
@@ -1083,13 +1097,20 @@ def print_results():
 			      fac.unavail_time) * 100)).ljust(13) + \
 			      str(len(fac.irruptch)).ljust(12) + \
 			      str(fac.irruptch)
-
-	print '\n\n'+BOLD+'---- Queues: ----'+NORM
+	
+	global queues
+	print '\n\n\n'+BOLD+'-------- Queues: --------\n'+NORM
 	if not queues.keys():
 		print '<<NO QUEUES>>'
 	else:
-		lname = 0
 		for qu in queues.values():
+			if '&&(' in qu.name:
+				qu.name = qu.name[:-1].replace('&&(', '[[') + ']]'
+			elif '&&' in qu.name:
+				qu.name = qu.name.replace('&&', '[') + ']'
+		lname = 0
+		queues = sorted(queues.values(), key=lambda x: x.name)
+		for qu in queues:
 			if len(qu.name) > lname:
 				lname = len(qu.name)
 		print 'Name'.ljust(lname+5) + \
@@ -1100,7 +1121,7 @@ def print_results():
 		      'Avg length'.ljust(13) + \
 		      'Current length'
 		print '- '*55
-		for qu in queues.values():
+		for qu in queues:
 			print str(qu.name).ljust(lname+5) + \
 			      str(qu.enters_q).ljust(10) + \
 			      str(qu.zero_entries).ljust(15) + \
@@ -1121,7 +1142,7 @@ def print_results():
 		      'wait time'.ljust(12) + \
 		      '[index, enter time]'
 		print '- '*55
-		for qu in queues.values():
+		for qu in queues:
 			avg_wo_zero = ''
 			if qu.enters_q - qu.curxacts - qu.zero_entries == 0:
 				avg_wo_zero = '(no data)'
@@ -1133,20 +1154,27 @@ def print_results():
 			      avg_wo_zero.ljust(24) + \
 			      str(qu.max_time_in_queue).ljust(12) + \
 			      str(qu.queuedxacts)
-				  
-	print '\n\n'+BOLD+'---- User chains: ----'+NORM
+	
+	global chains			  
+	print '\n\n\n'+BOLD+'-------- User chains: --------\n'+NORM
 	if not chains.keys():
 		print '<<NO USER CHAINS>>'
 	else:
-		lname = 0
 		for ch in chains.values():
+			if '&&(' in ch.name:
+				ch.name = ch.name[:-1].replace('&&(', '[[') + ']]'
+			elif '&&' in ch.name:
+				ch.name = ch.name.replace('&&', '[') + ']'
+		chains = sorted(chains.values(), key=lambda x: x.name)
+		lname = 0
+		for ch in chains:
 			if len(ch.name) > lname:
 				lname = len(ch.name)
 		print 'Name'.ljust(lname+5) + \
 		      'Current length'.ljust(19) + \
 		      'Current xacts (indexes)'
 		print '- '*40
-		for ch in chains.values():
+		for ch in chains:
 			print str(ch.name).ljust(lname+5) + \
 			      str(ch.length).ljust(19) + \
 			      str([xa.index for xa in ch.xacts])
@@ -1154,21 +1182,29 @@ def print_results():
 	global marks
 	marks = {k:v for k,v in marks.items() if not k.startswith('&')}
 	if marks.keys():
-		print '\n\n'+BOLD+'---- Marks: ----'+NORM
+		print '\n\n\n'+BOLD+'-------- Marks: --------\n'+NORM
 		lname = 0
-		for mark in marks.keys():
-			if len(mark) > lname:
-				lname = len(mark)
+		marks = sorted(marks.values(), key=lambda x: x.name)
+		for mark in marks:
+			if len(mark.name) > lname:
+				lname = len(mark.name)
 		print 'Name'.ljust(lname+5) + \
 		      'Corresponding line'
 		print '- '*40
-		for mark in marks.keys():
-			print str(marks[mark].name).ljust(lname+5) + \
-			      str(marks[mark].block)
+		for mark in marks:
+			print str(mark.name).ljust(lname+5) + \
+			      str(mark.block)
 	
+	global hists
 	if hists.keys():
-		print '\n\n'+BOLD+'---- Histograms: ----\n'+NORM
+		print '\n\n\n'+BOLD+'-------- Histograms: --------\n'+NORM
 		for hist in hists.values():
+			if '&&(' in hist.name:
+				hist.name = hist.name[:-1].replace('&&(', '[[') + ']]'
+			elif '&&' in hist.name:
+				hist.name = hist.name.replace('&&', '[') + ']'
+		hists = sorted(hists.values(), key=lambda x: x.name)
+		for hist in hists:
 			totalcnt = 0
 			for i in hist.intervals:
 				totalcnt += i
@@ -1223,14 +1259,26 @@ def print_results():
 		print
 		print
 		
+	global graphs	
 	if graphs.keys():
-		print BOLD+'\n\n---- 2D Graphs\' (value tables): ----'
+		print BOLD+'\n\n\n-------- 2D Graphs\' (value tables): --------\n'
 		for gr in graphs.values():
+			if '&&(' in gr.name:
+				gr.name = gr.name[:-1].replace('&&(', '[[') + ']]'
+			elif '&&' in gr.name:
+				gr.name = gr.name.replace('&&', '[') + ']'
+		graphs = sorted(graphs.values(), key=lambda x: x.name)
+		for gr in graphs:
 			print '-Graph "'+gr.name+'":'
 			print 'X'.ljust(20) + 'Y'
 			# sort values dictionary and print
+			sorted_values = sorted(gr.values.items(), key=lambda x: x[0])
+			print '- '*20
+			for v in sorted_values:
+				print ('{:.4f}'.format(v[0])).ljust(20) + '{:.4f}'.format(v[1])
+			print '\n'
 			      		
-	print '\n\n'+BOLD+'---- Future events chain: ----'+NORM
+	print '\n\n\n'+BOLD+'-------- Future events chain: --------\n'+NORM
 	if not futureChain:
 		print '<<EMPTY>>'
 	else:
@@ -1253,7 +1301,7 @@ def print_results():
 			      str(xact[1].curblk).ljust(17) + \
 			      str(xact[1].cond)
 				
-	print '\n\n+'BOLD+'---- Current events chain: ----'+NORM
+	print '\n\n\n'+BOLD+'-------- Current events chain: --------\n'+NORM
 	if not currentChain+tempCurrentChain:
 		print '<<EMPTY>>'
 	else:
@@ -1276,5 +1324,80 @@ def print_results():
 			      str(xact.curblk).ljust(17) + \
 			      str(xact.cond)	  
 	print
-	print '\n'*5
+	print '\n'*2
 	print '='*80
+	
+def print_vars_arrays_and_matrices(dic, flag=''):
+	onlyvars = [var for var in dic.values() 
+		            if '&&' not in var.name]
+
+	matrices = [matrix for matrix in dic.values()
+	            if '&&(' in matrix.name]
+	            
+	arrays = [array for array in ints.values() 
+	            if '&&' in array.name and '&&(' not in array.name]
+
+	onlyvars = sorted(onlyvars, key=lambda x: x.name)
+	for var in arrays:
+		var.name = var.name.replace('&&', '[') + ']'
+	arrays = sorted(arrays, key=lambda x: x.name)
+	
+	for var in matrices:
+		var.name = var.name[:-1].replace('&&(', '[[') + ']]'
+	matrices = sorted(matrices, key=lambda x: x.name)
+		
+	lname = 0
+	lvalue = 0
+	for var in onlyvars+arrays+matrices:
+		if flag == 'f':
+			var.value = round(var.value, 3)
+		if len(var.name) > lname:
+			lname = len(var.name)
+		if len(str(var.value)) > lvalue:
+			lvalue = len(str(var.value))
+	print 'Name'.ljust(lname+1) + 'Value'
+	print '- '*30
+	for var in onlyvars:
+		print var.name.ljust(lname+1) + str(var.value)
+	
+	print
+	if arrays:
+		prevname = ''
+		for arr in arrays:
+			trunc_name = arr.name.partition('[')[0]
+			if prevname != trunc_name:
+				if prevname != '':
+					print ' ]'
+				sys.stdout.write(trunc_name.ljust(lname) + '[ ' + str(arr.value))
+				sys.stdout.flush()
+			else:
+				sys.stdout.write(', ' + str(arr.value))
+				sys.stdout.flush()
+			prevname = trunc_name
+		print ' ]'
+		print
+	
+	if matrices:
+		prevname = ''
+		prevline = -1
+		for mx in matrices:
+			trunc = mx.name.partition('[[')[0]
+			line = int(mx.name.partition('[[')[2].partition(',')[0])
+		
+			if prevname != trunc or prevname == '':
+				if prevname != '':
+					# It's not the first matrix.
+					print '] ]\n'
+				# New matrix started.
+				print trunc.ljust(lname) + '[ [ ' + str(mx.value).ljust(lvalue),
+				prevline = line
+				prevname = trunc
+			else:
+				if prevline != line:
+					# New line started.
+					print ']'
+					print ''.ljust(lname+2) + '[ ' + str(mx.value).ljust(lvalue),
+					prevline = line
+				else:
+					print '   '+str(mx.value).ljust(lvalue),
+		print '] ]'

@@ -69,7 +69,9 @@ errors = {
              'folder where .ogps file is)',
           58:'Attachable module "{}" does not have function "{}"',
           59:'No such graph: "{}"',
-          60:'Unknown configuration parameter: "{}"'
+          60:'Unknown configuration parameter: "{}"',
+          61:'Multiple variable/array definition with the same name "{}"',
+          62:'Arrays/matrices of type "{}" are not allowed'
          }
 
 warnings = {
