@@ -10,7 +10,7 @@ fac RAM { places = 1 };
 fac CPUs{ isQueued = true, places = 3 };
 mark RAMCycle;
 mark CPUCycle;
-//graph<curticks> bufhist { start = 0, interval = 10, count = 15 };
+hist<curticks> bufhist { start = 0, interval = 10, count = 15 };
 
 exitwhen(completedCommands > 10);
 {{
@@ -27,7 +27,7 @@ buffer++;
 inject("CPUs cycling Xact", 0, 0, 0, 3);
 CPUCycle: wait_until(buffer > 0);
 fac_enter(CPUs);
-//hist_add(bufhist);
+hist_sample(bufhist);
 buffer--;
 wait(30, 6);
 fac_leave(CPUs);

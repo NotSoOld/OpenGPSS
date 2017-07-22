@@ -1,3 +1,19 @@
+##################################################
+#    ____                ________  ________      #
+#   / __ \___  ___ ___  / ___/ _ \/ __/ __/      #
+#  / /_/ / _ \/ -_) _ \/ (_ / ___/\ \_\ \        #
+#  \____/ .__/\__/_//_/\___/_/  /___/___/        #
+#      /_/           by NotSoOld, 2017 (c)       #
+#                                                #
+#         route|process|gather stats             #
+#                                                #
+# config.py - interpreter configuration          #
+# management at runtime                          #
+#                                                #
+##################################################
+
+
+
 from modules import lexer, errors
 
 enable_nice_vt100_codes = True

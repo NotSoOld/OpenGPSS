@@ -1,3 +1,20 @@
+##################################################
+#    ____                ________  ________      #
+#   / __ \___  ___ ___  / ___/ _ \/ __/ __/      #
+#  / /_/ / _ \/ -_) _ \/ (_ / ___/\ \_\ \        #
+#  \____/ .__/\__/_//_/\___/_/  /___/___/        #
+#      /_/           by NotSoOld, 2017 (c)       #
+#                                                #
+#         route|process|gather stats             #
+#                                                #
+# interpreter.py - manages program line-by-line  #
+# interpreting and xact moving and processing.   #
+# All executive blocks are defined here.         #
+#                                                #
+##################################################
+
+
+
 import sys
 import os
 import random
@@ -328,7 +345,7 @@ def fac_avail(fid):
 	if fid not in facilities.keys():
 		errors.print_error(43, xact.curblk+1, [fid])
 	facilities[fid].isAvail = True
-	move()
+	review_cec()
 	
 def fac_unavail(fid):
 	if fid not in facilities.keys():
@@ -366,6 +383,9 @@ def reject(decr):
 	toklines[xact.curblk][-1][2] += 1
 	
 def chain_enter(chid):
+	if chid not in chains.keys():
+		errors.print_error(48, xact.curblk+1, [chid])
+
 	global toklines
 	chains[chid].xacts.append(xact)
 	chains[chid].length = len(chains[chid].xacts)
@@ -373,6 +393,9 @@ def chain_enter(chid):
 	toklines[xact.curblk+1][-1][2] += 1
 	
 def chain_leave(chid, cnt, toblk=''):
+	if chid not in chains.keys():
+		errors.print_error(48, xact.curblk+1, [chid])
+
 	if toblk != '':
 		if toblk not in marks.keys():
 			errors.print_error(29, xact.curblk+1, [toblk])
@@ -397,6 +420,9 @@ def chain_purge(chid, toblk=''):
 def chain_pick(chid, cond, cnt, toblk=''):
 	# chain_pick(buf, chxact.p1 == 10, 5) => will pick all xacts from buf 
 	# according to condition (5 or less)
+	if chid not in chains.keys():
+		errors.print_error(48, xact.curblk+1, [chid])
+
 	if toblk != '':
 		if toblk not in marks.keys():
 			errors.print_error(29, xact.curblk+1, [toblk])
@@ -430,6 +456,9 @@ def chain_pick(chid, cond, cnt, toblk=''):
 def chain_find(chid, index_expr, cnt, toblk):
 	# chain_find(buf, find(buf.xacts.pr < 10), 5) =>
 	# will evaluate condition 5 times
+	if chid not in chains.keys():
+		errors.print_error(48, xact.curblk+1, [chid])
+
 	if toblk != '':
 		if toblk not in marks.keys():
 			errors.print_error(29, xact.curblk+1, [toblk])
@@ -1401,3 +1430,17 @@ def print_vars_arrays_and_matrices(dic, flag=''):
 				else:
 					print '   '+str(mx.value).ljust(lvalue),
 		print '] ]'
+		
+def print_logo():
+	print """
+	 ____                ________  ________
+    / __ \___  ___ ___  / ___/ _ \/ __/ __/
+   / /_/ / _ \/ -_) _ \/ (_ / ___/\ \_\ \  
+   \____/ .__/\__/_//_/\___/_/  /___/___/  
+       /_/           by NotSoOld, 2017 (c)                      
+   
+          route|process|gather stats
+
+===============================================
+
+"""

@@ -1,3 +1,20 @@
+##################################################
+#    ____                ________  ________      #
+#   / __ \___  ___ ___  / ___/ _ \/ __/ __/      #
+#  / /_/ / _ \/ -_) _ \/ (_ / ___/\ \_\ \        #
+#  \____/ .__/\__/_//_/\___/_/  /___/___/        #
+#      /_/           by NotSoOld, 2017 (c)       #
+#                                                #
+#         route|process|gather stats             #
+#                                                #
+# parser.py - processes every token line of      #
+# a program, creating variables and executing    #
+# blocks and functions. Parsers expressions.     #
+#                                                #
+##################################################
+
+
+
 import sys
 import os
 import structs
@@ -238,7 +255,8 @@ def parseDefinition(line):
 	if deftype == 'int':
 		if name in defined_var_names:
 			errors.print_error(61, lineindex, [name])
-		defined_var_names.append(name)
+		if not indexes:
+			defined_var_names.append(name)
 		if tok[0] == 'eocl':
 			newobj = structs.IntVar(name, 0)
 		elif tok[0] == 'eq':
@@ -250,7 +268,8 @@ def parseDefinition(line):
 	elif deftype == 'float':
 		if name in defined_var_names:
 			errors.print_error(61, lineindex, [name])
-		defined_var_names.append(name)
+		if not indexes:
+			defined_var_names.append(name)
 		if tok[0] == 'eocl':
 			newobj = structs.FloatVar(name, 0)
 		elif tok[0] == 'eq':
@@ -262,7 +281,8 @@ def parseDefinition(line):
 	elif deftype == 'bool':
 		if name in defined_var_names:
 			errors.print_error(61, lineindex, [name])
-		defined_var_names.append(name)
+		if not indexes:
+			defined_var_names.append(name)
 		if tok[0] == 'eocl':
 			newobj = structs.BoolVar(name, 0)
 		elif tok[0] == 'eq':
@@ -331,7 +351,8 @@ def parseDefinition(line):
 	elif deftype == 'str':
 		if name in defined_var_names:
 			errors.print_error(61, lineindex, [name])
-		defined_var_names.append(name)
+		if not indexes:
+			defined_var_names.append(name)
 		if tok[0] == 'eocl':
 			newobj = structs.StrVar(name, '')
 		elif tok[0] == 'eq':
@@ -783,33 +804,25 @@ def parseInjector(line):
 			if tok2[0] != 'number':
 				errors.print_error(19, lineindex, ['number', tok1[1], tok2])
 			params[tok1[1]] = float(tok2[1])
-			
-		elif tok1[1].startswith('p'):
-			if tok2[0] != 'number' or '.' in tok2[1]:
-				errors.print_error(19, lineindex, ['integer', tok1[1], tok2])
-			params[tok1[1]] = int(tok2[1])
-			
-		elif tok1[1].startswith('b'):
-			if tok2[0] != 'word' or tok2[1] != 'true' and tok2[1] != 'false':
-				errors.print_error(19, lineindex, ['boolean', tok1[1], tok2])
-			if tok2[1] == 'true':
-				params[tok1[1]] = True
-			else:
-				params[tok1[1]] = False
-			
-		elif tok1[1].startswith('f'):
-			if tok2[0] != 'number':
-				errors.print_error(19, lineindex, ['number', tok1[1], tok2])
-			params[tok1[1]] = float(tok2[1])
-			
-		elif tok1[1].startswith('str'):
-			if tok2[0] != 'string':
-				errors.print_error(19, lineindex, ['string', tok1[1], tok2])
-			params[tok1[1]] = tok2[1]
-			
 		else:
-			errors.print_warning(2, lineindex, [tok1[1]])
-			params[tok1[1]] = tok2[1]
+			if tok2[0] == 'number':
+				if '.' in tok1[1]:
+					params[tok1[1]] = float(tok2[1])
+				else:
+					params[tok1[1]] = int(tok2[1])
+			elif tok2[0] == 'string':
+				params[tok1[1]] = tok2[1]
+			elif tok2[0] == 'word':
+				if tok2[1] == 'true':
+					params[tok1[1]] = True
+				elif tok2[1] == 'false':
+					params[tok1[1]] = False
+				else:
+					errors.print_error(21, lineindex, 
+					          ['true/false word', tok2[1]], 'P')
+			else:
+				errors.print_error(21, lineindex, 
+				              ['number/boolean/string', tok2], 'P')
 		nexttok()
 		
 	newinj = structs.Injector(group, args[0], args[1], args[2], args[3], 

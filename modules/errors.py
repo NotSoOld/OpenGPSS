@@ -1,3 +1,19 @@
+##################################################
+#    ____                ________  ________      #
+#   / __ \___  ___ ___  / ___/ _ \/ __/ __/      #
+#  / /_/ / _ \/ -_) _ \/ (_ / ___/\ \_\ \        #
+#  \____/ .__/\__/_//_/\___/_/  /___/___/        #
+#      /_/           by NotSoOld, 2017 (c)       #
+#                                                #
+#         route|process|gather stats             #
+#                                                #
+# errors.py - error and warning handler, prints  #
+# messages to console                            #
+#                                                #
+##################################################
+
+
+
 import sys
 import interpreter
 
@@ -15,7 +31,7 @@ errors = {
           10:'Initial value for integer variable "{}" must be of type "int"',
           11:'Initial value for float variable "{}" must be a number',
           12:'Nothing or "{}" expected; got "{}"',
-          13:'Mark "{}" found more than one time as transporting label ' \
+          13:'Mark "{}" found more than once as transporting label ' \
              '(at the left of ":")',
           14:'Xact is trying to leave executive area',
           15:'Unknown word "{}" used as mark name',
@@ -54,7 +70,7 @@ errors = {
           45:'Expected ","; got end of line during parsing "loop_times" block',
           46:'Cannot do assignment; "{}" is a read-only value',
           47:'Xact is trying to interrupt facility which it already occupies',
-         #48:'Xact is trying to go away from facility which it did not interrupt',
+          48:'No such chain: "{}"',
           49:'Unknown search criteria for "find/find_minmax" function: "{}"',
           50:'Unknown parameter "{}", cannot execute search for it',
           51:'Expected parameters for histogram initialization',
@@ -78,10 +94,10 @@ warnings = {
             1:'Everything except definitions in non-executive area will be '\
               'totally IGNORED.\nIf you see this, double-check definition '\
               'area of your program.',
-            2:'Xact parameters\' custom names (like "{}") are acceptible but '\
-              'HIGHLY undesirable because they can lead to "parameter not found"'\
-              ' errors very easily (for example, for xacts from other group). '\
-              'They also got type "string" by default which you may not want.',
+       #     2:'Xact parameters\' custom names (like "{}") are acceptible but '\
+       #      'HIGHLY undesirable because they can lead to "parameter not found"'\
+       #     ' errors very easily (for example, for xacts from other group). '\
+       #    'They also got type "string" by default which you may not want.',
             3:'Mark "{}" cannot be found as transporting label (at the left of '\
               '":"). Is it needed at all?',
             4:'Duplicate xact parameter "{}"; previous value of "{}" '\
