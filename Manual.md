@@ -1,17 +1,17 @@
-
+```
      ____                ________  ________
-**    / __ \___  ___ ___  / ___/ _ \/ __/ __/
+    / __ \___  ___ ___  / ___/ _ \/ __/ __/
    / /_/ / _ \/ -_) _ \/ (_ / ___/\ \_\ \
    \____/ .__/\__/_//_/\___/_/  /___/___/
-       /_/      **     by NotSoOld, 2017 (c)
+       /_/           by NotSoOld, 2017 (c)
    
-          *route|process|gather stats*
+           route|process|gather stats
+```
 
-===
+---
 
 # OpenGPSS Manual (beta v0.3)
 
-===
 
 ## Navigation
 [General](#general)
@@ -148,11 +148,11 @@ If xact reaches some executive line, it tries to execute it (except single curly
 
 Nearly every parameter - queue/facility name, *wait*/*travel*/*if* parameters - can be not just words, but complex expressions. They will be parsed to a string/number before block execution. (Except parameters in definitions and *inject* block, because these are parsed before any execution of blocks starts. But initial values for variables and array/matrix size can be expressions.)
 
-Model while simulating has two very important lists: *future events chain*, FEC, and *current events chain*, CEC. Time in model is measured in beats (so, it's discrete). Every beat FEC is watched if there are xacts that need to move in the current beat. If they do, they are moved from FEC to CEC. Then, every xact in CEC is moving through executive blocks until it will be a) rejected from the model b) blocked c) moved to a user chain d) executing *wait* block. 
+Model while simulating has two very important lists: *future events chain*, FEC, and *current events chain*, CEC. Time in model is measured in beats (so, it's discrete). Every beat FEC is watched if there are xacts that need to move in the current beat. If they do, they are moved from FEC to CEC. Then, CEC is sorted according to xacts' priority, and every xact in CEC is moving through executive blocks until it will be a) rejected from the model b) blocked c) moved to a user chain d) executing *wait* block. 
 
 In case a) xact will be deleted from CEC. 
 
-In case b), which can be caused by trying to enter busy facility or *try* block with failed condition, xact will remain in CEC up to the next beat, in which it tries to move again. 
+In case b), which can be caused by trying to enter busy facility or *wait\_until* block with failed condition, xact will remain in CEC up to the next beat, in which it tries to move again. 
 
 In case c) xact will be removed from CEC and added to one of user chains.
 
@@ -160,7 +160,7 @@ In case d) xact will be moved to FEC with exit time (time when it needs to move 
 
 New xacts can be added to the model through *inject* and *copy* blocks. Inject block presents an *injector* - it adds one xact to FEC with exit time set according to injector's parameters, and when this xact leaves FEC, it sends a signal to injector that it's time to inject one more xact into FEC. *Copy* block creates copies of xacts which are added into CEC.
 
-There is a special situation called *CEC review*. When interpreter receives a signal "review CEC", it interrupts movement of current xact and starts to go through CEC from its beginning. Blocks like *fac\_leave*, *refresh* and changing xact's *priority* can trigger CEC review (because these actions can affect simulation process. For example, if some xact leaves facility, it becomes available for xacts which wait at *fac\_enter* block but cannot proceed. And when CEC will be reviewed, xacts will be able to move to unlocked facility. Changing of priority may affect the order of xacts' processing.)
+There is a special situation called *CEC review*. When interpreter receives a signal "review CEC", it interrupts movement of current xact and starts to go through CEC from its beginning. Blocks like *fac\_leave*, *review\_cec* and changing xact's *priority* can trigger CEC review (because these actions can affect simulation process. For example, if some xact leaves facility, it becomes available for xacts which wait at *fac\_enter* block but cannot proceed. And when CEC will be reviewed, xacts will be able to move to unlocked facility. Changing of priority may affect the order of xacts' processing.)
 
 
 ## Definition types
@@ -178,7 +178,6 @@ int buffered = 5;
 ~var1++; <== will increment variable "buffered".
 ```
 
-
 **Also:**
 
 Current xact (which executes block, assignment, etc.) has some accessible parameters along with its own parameters. They are accessed through dot operator:
@@ -186,7 +185,6 @@ Current xact (which executes block, assignment, etc.) has some accessible parame
 xact.index
 xact.group
 ```
-
 
 ### Simple variables:
 
@@ -216,7 +214,7 @@ xact.group
 
 - bool
 
-	Just a variable which can hold a boolean value (true/false) and be accessed by its name. Boolean variables can be only assigned or accessed.
+	Just a variable which can hold a boolean value (true/false) and be accessed by its name. Boolean variables can be only assigned or accessed and can be used in logic expressions.
 
 
 ### Structure types:

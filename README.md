@@ -1,3 +1,16 @@
+```
+     ____                ________  ________
+    / __ \___  ___ ___  / ___/ _ \/ __/ __/
+   / /_/ / _ \/ -_) _ \/ (_ / ___/\ \_\ \
+   \____/ .__/\__/_//_/\___/_/  /___/___/
+       /_/           by NotSoOld, 2017 (c)
+   
+          route|process|gather stats
+          
+```
+
+---
+
 # OpenGPSS Interpreter (beta v0.3)
 
 *([README на русском](./README_RU.md))*
@@ -31,16 +44,22 @@ Feel free to contribute your ideas, I'll go through all of them - we can make Op
 	
 	\- common branching and cycling operators
 	
+	\- define exit condition exactly as you need (no more START/END blocks and TERMINATE with counter)
+	
+	\- variables instead of savevalues and logic gates, one undestandable block instead of TEST and GATE
+	
+	\- PRIORITY and ASSIGN and group names (which were the fist thing you will always forget about) are replaced by common "." operator
+	
 	\- lots of debugging possibilities, understandable error messages
 
-- brand new possibilities (find them all by yourselves) and improved old possibilites
+- brand new possibilities (find them all by yourselves) and improved old possibilites for modelling
 
 - open-source interpreter, creator support and comprehensive manual in two languages
 
 
 ## Usage:
 
-1. Install Python 2.7 (or newer version of Python 2.x)
+1. Install Python 2.7 (or newer version of Python 2.x) package or IDE or interpreter
 
 2. Run in terminal from root folder:
 
