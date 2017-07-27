@@ -1,0 +1,139 @@
+
+
+SIMULATION RESULTS OF SYSTEM /media/notsoold/Shared/coding/python/opengpss/lab5.ogps
+
+Simulation finished at 2017-07-27 13:38
+
+
+
+-------- Generated program: --------
+(line index, current xacts, total executions, line of code)
+
+01          fac CPUs[3];
+02          fac RAM;
+03          int cur_p1 = 1;
+04          mark ALLCPUS;
+05          function CPUs_wait(cpuid) {3 == 1 -> cpu1_distr() | 3 == 2 -> 8 + random_int(-3, 3) | 3 == 3 -> cpu3_xactid_distr()};
+06          function cpu1_distr() {random01() < 0.3 -> 5 | random01() < 0.5 -> 2 | 1 -> 7};
+07          function cpu3_xactid_distr() {xact.p1 == 1 -> 5 | xact.p1 == 2 -> 10 | xact.p1 == 3 -> 15};
+08          function ram_distr(cpuid) {1 == 1 -> ram1_distr(random01()) | 1 == 2 -> ram2_distr(random01()) | 1 == 3 -> 3};
+09          function ram1_distr(prob) {0.336112300941 < 0.3 -> 3 | 1 -> 6};
+10          function ram2_distr(prob) {0.506256592094 < 0.2 -> 2 | 1 -> 4};
+11          exitwhen(curticks == 1000);
+12          {{
+13     005  inject("CPU1", 0, 0, 0, 5) {priority = 10, id = 1};
+14          ->> ALLCPUS;
+15     006  inject("CPU2", 0, 0, 0, 6) {priority = 20, id = 2};
+16          ->> ALLCPUS;
+17     003  inject("CPU3", 0, 0, 0, 3) {priority = 30, id = 3, p1 = 0};
+18     003  xact.p1 = cur_p1;
+19  7  286  cur_p1++;
+20     279  ALLCPUS: fac_enter(CPUs[xact.id-1]);
+21  3  279  wait(CPUs_wait(xact.id));
+22  3  276  fac_leave(CPUs[xact.id-1]);
+23     273  fac_enter(RAM);
+24  1  273  wait(ram_distr(xact.id));
+25     272  fac_leave(RAM);
+26          ->> ALLCPUS;
+27          }}
+
+
+Simulation time: 1000 beats
+
+
+-------- Integer variables: --------
+
+Name       Value
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+cur_p1   4
+curticks 1000
+injected 14
+rejected 0
+
+
+
+
+-------- Facilities: --------
+                                                            Busyness       Busyness       Current xacts
+Name        Places    Max xacts    Auto queued   Enters     (weighted)     (unweighted)   (index: [vol, enter time])
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+CPUs[0]     1         1            True          55         0.242          0.242          {9: [1, 998]}
+CPUs[1]     1         1            True          121        1.000          1.000          {12: [1, 991]}
+CPUs[2]     1         1            True          103        1.000          1.000          {2: [1, 985]}
+RAM         1         1            True          273        0.998          0.998          {6: [1, 998]}
+
+
+Average                                                        Availa-      Irrupted    
+processing time    Is available  Avail. time   Unavail. time   bility (%)   xacts       Irrupt chain
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+4.44               True          1000          0               100.00       0           []
+8.26               True          1000          0               100.00       0           []
+9.66               True          1000          0               100.00       0           []
+3.66               True          1000          0               100.00       0           []
+
+
+
+-------- Queues: --------
+
+Name        Enters    Zero entries   Zero entries (%)  Max length   Avg length   Current length
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+CPUs[0]     55        51             92.73             4            0.05         0                  
+CPUs[1]     126       2              1.59              5            4.06         5                  
+CPUs[2]     105       12             11.43             2            1.53         2                  
+RAM         276       2              0.72              8            5.12         3                  
+
+
+Avg xact    Avg xact wait time      Max xact    Current queue contents
+wait time   (w/o zero entries)      wait time   [index, enter time]
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+0.84        11.50                   16          []
+30.88       31.40                   233         [[1, 857], [7, 917], [10, 927], [13, 977], [4, 995]]
+14.61       16.54                   59          [[5, 986], [8, 989]]
+17.88       18.01                   529         [[11, 807], [0, 963], [3, 990]]
+
+
+
+-------- User chains: --------
+
+<<NO USER CHAINS>>
+
+
+
+-------- Marks: --------
+
+Name        Corresponding line
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+ALLCPUS     20
+
+
+
+-------- Future events chain: --------
+
+Move time   Xact group        Xact ID    Xact curblock    Xact status
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+1000        CPU3              2          21               waiting
+1002        CPU2              12         21               waiting
+1004        CPU1              6          24               waiting
+1000        CPU1              9          21               waiting
+
+
+
+-------- Current events chain: --------
+
+Xact group    Xact ID    Xact curblock    Xact status
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+CPU3          8          19               blocked
+CPU3          5          19               blocked
+CPU2          4          19               blocked
+CPU2          13         19               blocked
+CPU2          10         19               blocked
+CPU2          7          19               blocked
+CPU2          1          19               blocked
+CPU1          3          22               blocked
+CPU1          0          22               blocked
+CPU1          11         22               blocked
+
+
+
+
+================================================================================

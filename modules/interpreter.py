@@ -57,7 +57,7 @@ file_path = ''
 
 BOLD = '\033[1m'
 NORM = '\033[0m'
-if not config.enable_nice_vt100_codes or config.results_to_file:
+if (not config.enable_nice_vt100_codes) or config.results_to_file:
 	BOLD = ''
 	NORM = ''
 		
@@ -124,7 +124,7 @@ def queue_leave(qid):
 			enter_time = queued_xact[1]
 			break
 		index += 1
-	print index
+
 	del queues[qid].queuedxacts[index]
 	time_in_queue = ints['curticks'].value - enter_time
 	queues[qid].sum_for_avg_time_in_queue += time_in_queue
@@ -887,7 +887,7 @@ def start_interpreter(filepath):
 	if config.results_to_file:
 		if not original_stdout:
 			original_stdout = sys.stdout
-		results_file = open(filepath[:-5]+'results.txt', 'a')
+		results_file = open(filepath[:-5]+'_results.txt', 'w')
 		sys.stdout = results_file
 	print_results()
 	if results_file:
@@ -1006,6 +1006,8 @@ def print_program():
 				     ['typedef', 'hist'] in line or 
 				     ['typedef', 'graph'] in line):
 					t += ' '
+				elif t == '->' and ['typedef', 'function'] in line:
+					t = ' '+t+' ' 
 				elif t == '-' and (
 				prevtoken[0] == 'word' or prevtoken[0] == 'comma' or
 				prevtoken[0] == 'lparen' or prevtoken[0] == 'lbracket' or
@@ -1030,6 +1032,11 @@ def print_program():
 	print prog
 
 def print_results():
+	BOLD = '\033[1m'
+	NORM = '\033[0m'
+	if (not config.enable_nice_vt100_codes) or config.results_to_file:
+		BOLD = ''
+		NORM = ''
 	now = datetime.datetime.now()
 
 	print '\n\n'+BOLD+'SIMULATION RESULTS OF SYSTEM '+file_path+NORM
@@ -1384,7 +1391,7 @@ def print_vars_arrays_and_matrices(dic, flag=''):
 			lname = len(var.name)
 		if len(str(var.value)) > lvalue:
 			lvalue = len(str(var.value))
-	print 'Name'.ljust(lname+1) + 'Value'
+	print 'Name'.ljust(lname+3) + 'Value'
 	print '- '*30
 	for var in onlyvars:
 		print var.name.ljust(lname+1) + str(var.value)
@@ -1433,7 +1440,7 @@ def print_vars_arrays_and_matrices(dic, flag=''):
 		
 def print_logo():
 	print """
-	 ____                ________  ________
+     ____                ________  ________
     / __ \___  ___ ___  / ___/ _ \/ __/ __/
    / /_/ / _ \/ -_) _ \/ (_ / ___/\ \_\ \  
    \____/ .__/\__/_//_/\___/_/  /___/___/  

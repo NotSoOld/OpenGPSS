@@ -392,7 +392,7 @@ def parseDefinition(line):
 				choices.append(choice)
 				choice = []
 				continue
-			if matchtok('comma'):
+			if matchtok('transport'):
 				choice.append(toks)
 				toks = []
 				if len(choice) != 1:
@@ -964,7 +964,7 @@ def parseDot():
 	
 def getAttrsForDotOperator(lh, rh):
 	val = None
-	print lh, rh
+	print 'Dot attrs:', lh, rh
 	if rh in fac_params and lh in interpreter.facilities:
 		val = getattr(interpreter.facilities[lh], rh)
 		
@@ -1013,14 +1013,14 @@ def getAttrsForDotOperator(lh, rh):
 def parseArray():
 	arrayname = parsePrimary()
 	if matchtok('lbracket'):
-		arrname = getArrayElementName(arrayname, parsePrimary())
+		arrname = getArrayElementName(arrayname, parseExpression())
 		consume('rbracket')
 		val = parsePrimaryWord(arrname)
 		return val
 	elif matchtok('lmatrix'):
-		index1 = parsePrimary()
+		index1 = parseExpression()
 		consume('comma')
-		index2 = parsePrimary()
+		index2 = parseExpression()
 		consume('rmatrix')
 		mxname = getMatrixElementName(arrayname, index1, index2)
 		val = parsePrimaryWord(mxname)
@@ -1112,10 +1112,12 @@ def parsePrimaryWord(word):
 		val = interpreter.hists[word].name
 	elif word in fac_params+queue_params+xact_params+ \
 	               chain_params+hist_params+['xact', 'chxact']+ \
-	               arrays_info.keys()+matrices_info.keys():
+	               arrays_info.keys()+matrices_info.keys()+ \
+	               interpreter.xact.params.keys():
 		val = word
 	else:
 		errors.print_error(6, lineindex, [word])
+		#val = word
 
 	return val
 
