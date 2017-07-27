@@ -1394,7 +1394,7 @@ def print_vars_arrays_and_matrices(dic, flag=''):
 	print 'Name'.ljust(lname+3) + 'Value'
 	print '- '*30
 	for var in onlyvars:
-		print var.name.ljust(lname+1) + str(var.value)
+		print var.name.ljust(lname+3) + str(var.value)
 	
 	print
 	if arrays:

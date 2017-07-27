@@ -25,6 +25,7 @@ log_xact_blocking = True
 log_facility_entering = True
 log_FEC_entering = True
 log_assignments = False
+log_dot_operator = False
 tick_by_tick_simulation = False
 block_by_block_simulation = False
 
@@ -40,6 +41,7 @@ def load_config_file():
 	global log_facility_entering
 	global log_FEC_entering
 	global log_assignments
+	global log_dot_operator
 	global tick_by_tick_simulation
 	global block_by_block_simulation
 	
@@ -77,6 +79,7 @@ def write_config_file():
 	conf.write('\nlog_facility_entering = ' + str(log_facility_entering))
 	conf.write('\nlog_FEC_entering = ' + str(log_FEC_entering))
 	conf.write('\nlog_assignments = ' + str(log_assignments))
+	conf.write('\nlog_dot_operator = ' + str(log_dot_operator))
 	conf.write('\ntick_by_tick_simulation = ' + str(tick_by_tick_simulation))
 	conf.write('\nblock_by_block_simulation = ' + str(block_by_block_simulation))
 	conf.write('\n')

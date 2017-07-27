@@ -377,7 +377,12 @@ def parseDefinition(line):
 		choices = []
 		choice = []
 		toks = []
+		depth = 0
 		while True:
+			if peek(0)[0] == 'lparen':
+				depth += 1
+			if peek(0)[0] == 'rparen':
+				depth -= 1
 			if matchtok('rbrace'):
 				choice.append(toks)
 				if len(choice) != 2:
@@ -392,16 +397,21 @@ def parseDefinition(line):
 				choices.append(choice)
 				choice = []
 				continue
-			if matchtok('transport'):
-				choice.append(toks)
-				toks = []
-				if len(choice) != 1:
-					errors.print_error(54, lineindex, [len(choices), 1])
-				continue
+			if matchtok('comma'):
+				if depth == 0:
+					choice.append(toks)
+					toks = []
+					if len(choice) != 1:
+						errors.print_error(54, lineindex, [len(choices), 1])
+					continue
+				else:
+					pos -= 1
 			toks.append(peek(0))
 			nexttok()
 		
 		newobj = structs.ConditionalFunction(name, args, choices)
+		print choices
+		print
 	
 	elif deftype == 'graph':
 		newobj =  structs.Graph2D(name, typ)
@@ -964,7 +974,8 @@ def parseDot():
 	
 def getAttrsForDotOperator(lh, rh):
 	val = None
-	print 'Dot attrs:', lh, rh
+	if config.log_dot_operator:
+		print 'Dot attrs:', lh, rh
 	if rh in fac_params and lh in interpreter.facilities:
 		val = getattr(interpreter.facilities[lh], rh)
 		
@@ -1117,7 +1128,6 @@ def parsePrimaryWord(word):
 		val = word
 	else:
 		errors.print_error(6, lineindex, [word])
-		#val = word
 
 	return val
 
@@ -1130,6 +1140,7 @@ def parseConditionalFunction(functionName):
 		if matchtok('rparen'):
 			break
 		argvalues.append(parseExpression())
+		print argvalues, functionName, peek(0)
 		if peek(0)[0] == 'comma':
 			consume('comma')
 			continue
@@ -1235,6 +1246,7 @@ def parseBuiltin():
 		if matchtok('rparen'):
 			break
 		args.append(parseExpression())
+		print 'In builtin:', args, peek(0)
 		if peek(0)[0] == 'comma':
 			consume('comma')
 			continue

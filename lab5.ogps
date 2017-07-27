@@ -6,32 +6,32 @@ int cur_p1 = 1;
 mark ALLCPUS;
 
 function CPUs_wait(cpuid) {
-                           cpuid == 1 -> cpu1_distr() |
-                           cpuid == 2 -> 8 + random_int(-3, 3) |
-                           cpuid == 3 -> cpu3_xactid_distr()
+                           cpuid == 1, cpu1_distr() |
+                           cpuid == 2, 8 + random_int(-3, 3) |
+                           cpuid == 3, cpu3_xactid_distr()
                           };
 
 function cpu1_distr() {
-                       random01() < 0.3 -> 5 |
-                       random01() < 0.5 -> 2 |
-                       1 -> 7
+                       random01() < 0.3, 5 |
+                       random01() < 0.5, 2 |
+                       1, 7
                       };
                       
 function cpu3_xactid_distr() {
-                         xact.p1 == 1 -> 5 |
-                         xact.p1 == 2 -> 10 |
-                         xact.p1 == 3 -> 15
+                         xact.p1 == 1, 5 |
+                         xact.p1 == 2, 10 |
+                         xact.p1 == 3, 15
                         };
                         
 function ram_distr(cpuid) {
-                           cpuid == 1 -> ram1_distr(random01()) |
-                           cpuid == 2 -> ram2_distr(random01()) |
-                           cpuid == 3 -> 3
+                           cpuid == 1, ram1_distr(random01()) |
+                           cpuid == 2, ram2_distr(random01()) |
+                           cpuid == 3, 3
                           };
                         
-function ram1_distr(prob) { prob < 0.3 -> 3 | 1 -> 6 };
+function ram1_distr(prob) { prob < 0.3, 3 | 1, 6 };
                           
-function ram2_distr(prob) { prob < 0.2 -> 2 | 1 -> 4 };
+function ram2_distr(prob) { prob < 0.2, 2 | 1, 4 };
 
 exitwhen(curticks == 1000);
 {{
@@ -44,7 +44,8 @@ xact.p1 = cur_p1;
 cur_p1++;
 
 // CPUs parametric modelling
-ALLCPUS: fac_enter(CPUs[xact.id - 1]);
+ALLCPUS: output(xact.id);
+fac_enter(CPUs[xact.id - 1]);
 wait(CPUs_wait(xact.id));
 fac_leave(CPUs[xact.id - 1]);
 
