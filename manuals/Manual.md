@@ -254,7 +254,7 @@ xact.group
 
 - mark
 
-	This is a definition of a transporting mark which can be used in the executive area of a program. When mark is at the left of ':' in the line, it is called a *transporting label*. When mark is present as argument of transport operator (or somewhere else where xacts can be moved around the model), it declares where xact should go, which line it should follow after execution.
+	This is a definition of a transporting mark which can be used in the executive area of a program. When mark is at the left of ':' in the line, it defines a line where xacts should be transporting when this mark is mentioned. When mark is present as argument of transport operator (or somewhere else where xacts can be moved around the model), it declares where xact should go, which line it should follow after execution.
 
 	Initial parameters: none.
 
@@ -300,7 +300,6 @@ xact.group
 
 	\- average - average value of observing parameter
 
-
 - graph<x_var, y_var> (2D graph)
 
 	Graps are another way of gathering statistics about changes of variables' values. This type allows to gather information in the form of two-dimensional graph (i.e. one value is X, and another is Y on the plot, and they are stored as pairs). According to math laws, every X value can be associated only with one Y value; so, when sampled (X, Y) pair already exists, it will be saved as (X, (oldY + Y) / 2).
@@ -315,7 +314,7 @@ xact.group
 ### Arrays and matrices:
 
 
-Variable of **every** type (simple or structural, except *mark*!) can be defined not as a single variable, but as array:
+Variable of **every** type (simple or structural, except *mark* and *function*!) can be defined not as a single variable, but as array:
 
 ```
 int arr[10] = 0;
@@ -425,6 +424,8 @@ List of available features (with defaults in parens):
 - log\_FEC\_entering (True) - if true, every time xact executes wait() block, a message will be printed (with time when xact will leave FEC).
 
 - log\_assignments (False) - if true, every assignment parsing result will be printed. Use it when you're not sure if assignment is interpreted correctly.
+
+- log\_dot\_operator (False) - if true, you'll see what left-side and right-side values of each dot operation are.
 
 - tick\_by\_tick\_simulation (False) - if true, in the begginning of every time beat the simulation will wait user's input (so you can read logs of previous beat simulation); if false, simualtion will go from beginning to end.
 

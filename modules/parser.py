@@ -410,8 +410,6 @@ def parseDefinition(line):
 			nexttok()
 		
 		newobj = structs.ConditionalFunction(name, args, choices)
-		print choices
-		print
 	
 	elif deftype == 'graph':
 		newobj =  structs.Graph2D(name, typ)
@@ -1140,7 +1138,6 @@ def parseConditionalFunction(functionName):
 		if matchtok('rparen'):
 			break
 		argvalues.append(parseExpression())
-		print argvalues, functionName, peek(0)
 		if peek(0)[0] == 'comma':
 			consume('comma')
 			continue
@@ -1246,7 +1243,6 @@ def parseBuiltin():
 		if matchtok('rparen'):
 			break
 		args.append(parseExpression())
-		print 'In builtin:', args, peek(0)
 		if peek(0)[0] == 'comma':
 			consume('comma')
 			continue

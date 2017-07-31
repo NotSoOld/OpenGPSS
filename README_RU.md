@@ -67,5 +67,5 @@ GPSS (General Purpose Simulаtion System, система моделирован�
 
 ## Инструкции:
 
-- [EN](./Manual.md) 
-- [RU](./Manual_RU.md)
+- [EN](./manuals/Manual.md) 
+- [RU](./manuals/Manual_RU.md)

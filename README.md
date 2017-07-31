@@ -68,5 +68,5 @@ Feel free to contribute your ideas, I'll go through all of them - we can make Op
 or start Python IDE/interpreter/etc. and run *OpenGPSS Interpreter.py*
 
 ## Manuals:
-- [EN](./Manual.md) 
-- [RU](./Manual_RU.md)
+- [EN](./manuals/Manual.md) 
+- [RU](./manuals/Manual_RU.md)
