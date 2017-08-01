@@ -82,6 +82,7 @@
 
 [Errors and warnings](#errors-and-warnings)
 
+
 ## General
 Program in OpenGPSS language looks like following:
 
@@ -313,7 +314,6 @@ xact.group
 
 ### Arrays and matrices:
 
-
 Variable of **every** type (simple or structural, except *mark* and *function*!) can be defined not as a single variable, but as array:
 
 ```
@@ -336,12 +336,11 @@ Inside, arrays' and matrices' elements are defined as separate objects *(with na
 
 ### Conditional functions:
 
-
 These functions which can be defined by user are a feature to replace GPSS's FUNCTION block. There is a word "conditional" in the name, because this function consists of pairs *"condition, result"* and, from first to last, condition of every pair will be evaluated. First condition which occurs to be true will command the interpreter to return result which was in the pair with this condition. 
 
 So, here is a prototype:
 ```
-function function_name(parameters, if any) {
+function function_name(arguments, if any) {
                                             condition1, result1 |
                                             condition2, result2 |
                                             ...
@@ -351,7 +350,7 @@ function function_name(parameters, if any) {
 
 Every condition is an expression with boolean (or something which can be converted to boolean) result; every result can be an expression. Condition and result are separated by comma, pairs are separated by "|". If no condition succeeds, function will return 0 (if you need to override default behaviour, it's recommended to leave final pair as *"1, value_to_return_if_every_condition_fails"*, so it will be always returned if every other condition failed).
 
-Function also can have some parameters which values will be put to condition and result expression when function will be called. Please **do not** name parameters as your system variables, etc., because then they will be overwritten by function parameters. (But names like "p1" are allowed, even if function uses expressions like "xact.p1".)
+Function also can have some arguments which values will be put to condition expressions and result expressions when function is called. Please **do not** name parameters as your system variables, etc., because then they will be overwritten by function parameters. (But names like "p1" are allowed, even if function uses expressions like "xact.p1".)
 
 Simpliest example of "abs" implementation:
 ```
@@ -373,7 +372,7 @@ xact.str1 = calculus.derivative("x^2");
 // etc.
 ```
 
-It means that in the folder where *OpenGPSS Interpreter.py* is there is "calculus.py" file and inside "calculus.py" file there is Python function "def derivative(function_string):" or something like that. There can be as many functions as you want, just be aware their names are unique. You also can attach as many modules as you want. Important: attachable modules **should** be in the same folder where interpreter is (i.e. in root folder of this project). Relative and absolute paths are not supported, only one-word names of modules.
+It means that in the folder where *OpenGPSS Interpreter.py* is there is "calculus.py" file and inside "calculus.py" file there is Python function "def derivative(function\_string):" or something like that. There can be as many functions as you want, just be aware their names are unique. You also can attach as many modules as you want. Important: attachable modules **should** be in the same folder where interpreter is (i.e. in root folder of this project). Relative and absolute paths are not supported, only one-word names of modules.
 
 This feature is especially useful when these functions cannot be described using built-in OpenGPSS features.
 
@@ -403,15 +402,15 @@ Remember, these rules are always a subject to change.
 
 ## Interpreter configuration file
 
-There is special file called *opengpss_config.cfg* in the root folder (if there is no config file, start and close interpreter, file will appear with default values in it). This file allows to control aspects of logging - printing debug information while simulating - and some other cool features. Value after "=" shows if feature is enabled or disabled; so, you can enable and disable them.
+There is special file called *opengpss\_config.cfg* in the root folder (if there is no config file, start and close interpreter, file will appear with default values in it). This file allows to control aspects of logging - printing debug information while simulating - and some other cool features. Value after "=" shows if feature is enabled or disabled; so, you can enable and disable them.
 
 List of available features (with defaults in parens):
 
 - enable\_nice\_vt100\_codes (True) - enables using of VT100 formatting tags (they allow to print bold/italic/coloured text). Disable it if you aren't working in Linux terminal (Windows doesn't know what these tags mean).
 
-- results\_to\_file (False) - if true, results of simulation will be printed to file named "name\_of\_model-results.txt"; otherwise all output goes into console. If file with results already exists, new file will be created (without removing old file).
+- results\_to\_file (False) - if true, results of simulation will be printed to file named "name\_of\_model\_results\_date\_of\_simulation.txt"; otherwise all output goes into console. If file with results already exists, new file will be created (without removing old file).
 
-- log\_to\_file (False) - if true, all output connected with debugging during simulation will be printed to file "name\_of\_model-log.txt"; otherwise all debug output goes to console. If log file already exists, new file will be created (without removing old file).
+- log\_to\_file (False) - if true, all output connected with debugging during simulation will be printed to file "name\_of\_model\_log\_simulation\_date.txt"; otherwise all debug output goes to console. If log file already exists, new file will be created (without removing old file).
 
 - print\_program\_in\_tokens (True) - if true, before simulation your program will be printed as interpreter sees it, i.e. in tokenized form (tokens are separate numbers, words, operators, blocks, etc.). Sometimes useful for debugging misspellings.
 
@@ -429,7 +428,7 @@ List of available features (with defaults in parens):
 
 - tick\_by\_tick\_simulation (False) - if true, in the begginning of every time beat the simulation will wait user's input (so you can read logs of previous beat simulation); if false, simualtion will go from beginning to end.
 
-- block\_by\_block\_simulation (False) - similar to parameter above, but simualtion will stop before each block execution (so it will be very slow).
+- block\_by\_block\_simulation (False) - similar to parameter above, but simulation will stop before each block execution (so it will be very slow).
 
 
 ## Executive blocks

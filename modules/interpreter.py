@@ -715,10 +715,12 @@ def start_interpreter(filepath):
 	logfile = None
 	if config.log_to_file:
 		name = filepath[:-5]
+		now = datetime.dateime.now()
 		print 'All logs will be saved in "' + name + \
-		      '_log.txt" file (log file can become very large!).'
+		      '_log_'+now.strftime("%Y-%m-%d %H:%M")+ \
+		      '.txt" file (log file can become very large!).'
 		original_stdout = sys.stdout
-		logfile = open(name+'_log.txt', 'w')
+		logfile = open(name+'_log_'+now.strftime("%Y-%m-%d %H:%M")+'.txt', 'w')
 		sys.stdout = logfile
 	
 	now = datetime.datetime.now()
@@ -882,18 +884,21 @@ def start_interpreter(filepath):
 	
 	print '\n'*5
 	print '='*80
+	now = datetime.datetime.now()
 	if original_stdout:
 		sys.stdout = original_stdout
 	if config.results_to_file:
 		if not original_stdout:
 			original_stdout = sys.stdout
-		results_file = open(filepath[:-5]+'_results.txt', 'w')
+		results_file = open(filepath[:-5]+'_results_'+ \
+		                    now.strftime("%Y-%m-%d %H:%M")+'.txt', 'w')
 		sys.stdout = results_file
 	print_results()
 	if results_file:
 		sys.stdout = original_stdout
 		print 'Simulation finished, results are saved in "' + \
-		      filepath[:-5] + '_results.txt".'
+		      filepath[:-5] + '_results_'+now.strftime("%Y-%m-%d %H:%M")+ \
+		      '.txt".'
 
 def attachFileWithFunctions(line):
 	global attachables
