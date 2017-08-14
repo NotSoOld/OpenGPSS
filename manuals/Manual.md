@@ -465,7 +465,7 @@ inject("main", 10, 4, 0, 250) {p1 = 0, one_more_param = 'go', priority = 10};
 
 	\- *timedelta* and *timedelay* also can be zeros.
 
-	\- If *inject\_limit* is positive, but other parameters are zeros, *inject\_limit* xacts will be added simultaneously.
+	\- If *inject\_limit* is positive, but parameters *time* and *timedelta* are zeros, *inject\_limit* xacts will be added simultaneously. (It is not a special work mode of *inject* block but a feature which works because of block's code structure; so, you might be careful - if *inject\_limit* is also zero in this situation, the system will hang.)
 	
 	\- Parameters with matching names will be overwritten (the latest parameter will be saved only).
 
@@ -679,7 +679,7 @@ reject(
 ```
 - Usage:
 
-	This block is used to delete xacts from system. It means that xact will not move through model anymore and will be erased from CEC. *reject\_counter\_inc* defines how much should be added to reject counter default variable.
+	This block is used to delete xacts from system. It means that xact will not move through model anymore and will be erased from CEC. *reject\_counter\_inc* defines how much should be added to reject counter default variable (*rejected*).
 
 - Example:
 ```
@@ -737,13 +737,13 @@ wait(8, 3);
 - Prototypes:
 ```
 if(
-   bool condition
+   expression condition
   )
 {
 	blocks which will be executed in condition == true
 }
 else_if(
-        bool another_condition
+        expression another_condition
        )
 {
 	blocks which will be executed if another_condition == true
@@ -757,7 +757,9 @@ else
 ```
 - Usage:
 
-	These blocks are used to execute different parts of a program. Choice is made according to conditions in parens - group of blocks in curly braces with a first true condition will be chosen to execute. **Curly braces cannot be omitted!** There can be many *else\_if()* blocks or no of them; also, *else* block can be omitted. Conditional blocks are considered chained and are tested as a whole thing if they are written as in the example, one right after another.
+	These blocks are used to execute different parts of a program. Choice is made according to conditions in parens - group of blocks in curly braces with a first true condition will be chosen to execute. **Curly braces cannot be omitted!** 
+	
+	There can be many *else\_if()* blocks or no of them; also, *else* block can be omitted. Conditional blocks are considered chained and are tested as a whole thing if they are written as in the example, one right after another.
 
 - Examples:
 ```
@@ -789,11 +791,11 @@ etc.
 
 	\- These conditional blocks can be nested. Use them as you'll use them in C or any other similar language.
 
-### wait\_until - block xact movement until condition becomes true
+### wait_until - block xact movement until condition becomes true
 - Prototype:
 ```
 wait_until(
-           bool condition
+           expression condition
           );
 ```
 - Usage:
