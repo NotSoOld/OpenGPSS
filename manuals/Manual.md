@@ -379,7 +379,7 @@ This feature is especially useful when these functions cannot be described using
 
 ## About name ambiguity
 
-OpenGPSS is a case-sensitive language. Names can consist of upper and lower register letters, digits (but these names cannot **start** with digit) and underscores.
+OpenGPSS is a case-sensitive language. Names can consist of upper and lower register letters, digits (but these names cannot **start** with digit) and underscores. Exceptions are strings ("like this") and comments - they both can contain any ASCII symbols. Escape characters in strings are supported.
 
 In some cases identical names are allowed:
 
@@ -951,7 +951,7 @@ graph_sample(time_queuelength_dependency);
 - Prototype:
 ```
 while(
-      bool condition
+      expression condition
      )
 {
 	blocks which will be executed while condition is true
@@ -963,7 +963,7 @@ while(
 
 - Example:
 ```
-while(count > 0)
+while(count < 10)
 {
 	wait(4);
 	count += 1;
@@ -1031,7 +1031,7 @@ copy(4, tobuf);
 - Prototype:
 ```
 output(
-       int/float/bool/string output
+       int/float/bool/string/expression output
       );
 ```
 - Usage:
@@ -1106,7 +1106,7 @@ pause_by_user(
 ```
 - Usage:
 
-	After executing this block, interpreter will wait until user presses any key to continue. If *message* is present, it will be printed. You can use this block among with *output* and *xact\_report* blocks while debugging.
+	When executing this block, interpreter will wait until user presses any key to continue. If *message* is present, it will be printed. You can use this block among with *output* and *xact\_report* blocks while debugging.
 	
 - Additional hacks:
 

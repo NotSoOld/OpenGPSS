@@ -597,9 +597,9 @@ def transport_if(block, cond, addblock=''):
 
 def output(outstr):
 	outstr = str(outstr)
-	print '(T={!s}'.format(ints['curticks'].value).ljust(9) + \
-	       'L={!s}'.format(xact.curblk+1).ljust(8) + \
-	      'X={!s})'.format(xact.index).ljust(8) + \
+	print '({!s}'.format(ints['curticks'].value).ljust(9) + \
+	       '{!s}'.format(xact.curblk+1).ljust(8) + \
+	      '{!s})'.format(xact.index).ljust(8) + \
 	      '{!s}'.format(outstr.decode('string_escape'))
 	move()
 	

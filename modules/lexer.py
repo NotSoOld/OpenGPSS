@@ -237,7 +237,10 @@ def tokenizeString():
 			addToken('string', buf)
 			nextchar()
 			return
-		buf += cur
+		if cur == '\\' and peek(1) == '"':
+			pass
+		else:
+			buf += cur
 		cur = nextchar()
 
 def peek(relpos):
