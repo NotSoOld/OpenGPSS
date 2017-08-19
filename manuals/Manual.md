@@ -1129,14 +1129,14 @@ pause_by_user(
 - Prototype:
 ```
 find(
-     condition (looks like "structure.parameter ? expression")
+     condition (looks like "structure.parameter ==/>/<... expression")
     );
 ```
 - Usage:
 
 	In situations where you need to know name of free facility, chain with known length, etc., *find()* can help you.
 
-	First word at the left of conditional expression is "facilities"/"queues"/"chains"/"chains.xacts"; second word after dot can be any available parameter name for according structure. According to first word, return value will differ: if you search for a facility/queue/chain, it will be a structure name (and "", if nothing was found); if you search for xact in chain, it will be xact index (and -1, if nothing was found).
+	First word at the left of conditional expression is "facilities"/"queues"/"chains"/"chains.xacts"; second word after dot can be any available parameter name for according structure. According to first word, return value will differ: if you search for a facility/queue/chain, it will be first suitable structure's name (and "", if nothing was found); if you search for xact in chain, it will be first suitable xact's index (and -1, if nothing was found).
 
 - Examples:
 ```
@@ -1181,8 +1181,6 @@ Statistics is a very important aspect in languages like GPSS and OpenGPSS (that'
 	If you will take a look at listing, you'll see three numbers at the left of each line (where there's no number it means that this number equals zero). First is line index, second - how much xacts are currently on this line (for example, blocked before facility), third - how much times this line was executed (how many xacts passed this line).
 	
 - Variable values
-
-	There is nothing surprising - just all variables are printed with their current values.
 	
 - Listing of facilities
 
@@ -1277,7 +1275,7 @@ Along with error index and message, line index (if any can be specified) is prin
 	
 - **6**: Expected name of defined variable/structure/array or value; got "token"
 
-	Unknown word in the program (mostly possible - a misspell).
+	Unknown word in the program (mostly possible - a typo).
 	
 - **7**: Cannot "inc/dec"rement string or boolean
 
@@ -1373,7 +1371,7 @@ Along with error index and message, line index (if any can be specified) is prin
 	
 - **30**: Mark "name" is not present anywhere as transporting label
 
-	This mark is defined, but it doesn't point to any line of a program.
+	This mark is defined, but it doesn't point to any line of a program. (You will also see warning about this mark; but warning is printed before simulation starts, and error is printed when you actually try to use this mark as label.)
 	
 - **31**: Cannot convert "var" to "type"
 
