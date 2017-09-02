@@ -1,0 +1,174 @@
+
+
+SIMULATION RESULTS OF SYSTEM /media/notsoold/Shared/coding/python/opengpss/systems/lab5/lab5.ogps
+
+Simulation finished at 2017-09-03 00:45
+
+
+
+-------- Generated program: --------
+(line index, current xacts, total executions, line of code)
+
+01           fac RAM;
+02           fac CPU1;
+03           fac CPU2;
+04           fac CPU3;
+05           fac CPU4;
+06           mark TORAM;
+07           mark TOCPU1;
+08           mark TOCPU2;
+09           mark TOCPU3;
+10           mark TOCPU4;
+11           int id_counter = 1;
+12           function RAM_time() {xact.group == "CPU1", prob1(random01()) | xact.group == "CPU2", prob2(xact.id) | xact.group == "CPU3", prob3(random01()) | xact.group == "CPU4", 3};
+13           function prob1(prob) {0.559281634156 < 0.1, 6 | 0.559281634156 < 0.4, 5 | 1, 4};
+14           function prob2(id) {id = 1, 6 | id = 2, 4};
+15           function prob3(prob) {prob < 0.3, 5 | prob < 0.6, 4 | 1, 3};
+16           exitwhen(curticks == 2500);
+17           {{
+18      559  inject("CPU1", 0, 0, 0, 6) {priority = 100};
+19      559  TOCPU1: fac_enter(CPU1);
+20  01  559  wait(3);
+21      558  fac_leave(CPU1);
+22           ->> TORAM;
+23      002  inject("CPU2", 0, 0, 0, 2) {priority = 30, id = 0};
+24      002  xact.id = id_counter;
+25      002  id_counter++;
+26      002  TOCPU2: fac_enter(CPU2);
+27      002  wait(8);
+28      002  fac_leave(CPU2);
+29           ->> TORAM;
+30  01  011  inject("CPU3", 250, 0, 0, 0) {priority = 50};
+31      010  TOCPU3: fac_enter(CPU3);
+32      010  wait(6);
+33      010  fac_leave(CPU3);
+34           ->> TORAM;
+35      006  inject("CPU4", 400, 0, 0, 6) {priority = 60};
+36      006  TOCPU4: fac_enter(CPU4);
+37      006  wait(10, 2);
+38  22  576  fac_leave(CPU4);
+39      554  TORAM: fac_enter(RAM);
+40  01  554  wait(RAM_time());
+41      553  fac_leave(RAM);
+42           ->> "TO" + xact.group;
+43           }}
+
+
+Simulation time: 2500 beats
+
+
+-------- Integer variables: --------
+
+Name         Value
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+curticks     2500
+id_counter   3
+injected     25
+rejected     0
+
+
+
+
+-------- Facilities: --------
+                                                         Busyness       Busyness       Current xacts
+Name     Places    Max xacts    Auto queued   Enters     (weighted)     (unweighted)   (index: [vol, enter time])
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+CPU1     1         1            True          559        0.670          0.670          {0: [1, 2498]}
+CPU2     1         1            True          2          0.006          0.006          {}
+CPU3     1         1            True          10         0.024          0.024          {}
+CPU4     1         1            True          6          0.024          0.024          {}
+RAM      1         1            True          554        0.999          0.999          {11: [1, 2498]}
+
+
+Average                                                        Availa-      Irrupted    
+processing time    Is available  Avail. time   Unavail. time   bility (%)   xacts       Irrupt chain
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+3.00               True          2500          0               100.00       0           []
+8.00               True          2500          0               100.00       0           []
+6.00               True          2500          0               100.00       0           []
+10.17              True          2500          0               100.00       0           []
+4.51               True          2500          0               100.00       0           []
+
+
+
+-------- Queues: --------
+
+Name     Enters    Zero entries   Zero entries (%)  Max length   Avg length   Current length
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+CPU1     559       549            98.21             5            0.04         0                  
+CPU2     2         2              100.00            1            0.00         0                  
+CPU3     10        10             100.00            1            0.00         0                  
+CPU4     6         6              100.00            1            0.00         0                  
+RAM      576       2              0.35              23           15.34        22                 
+
+
+Avg xact    Avg xact wait time      Max xact    Current queue contents
+wait time   (w/o zero entries)      wait time   [index, enter time]
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+0.17        9.30                    24          []
+4.00        (no data)               8           []
+0.00        (no data)               0           []
+0.00        (no data)               0           []
+19.06       19.13                   133         [[2, 6], [5, 8], [3, 11], [1, 16], [6, 256], [7, 410], [12, 506], [14, 756], [13, 811], [15, 1006], [16, 1210], [17, 1256], [19, 1506], [18, 1610], [20, 1756], [22, 2006], [21, 2009], [23, 2256], [9, 2438], [10, 2459], [4, 2463], [8, 2467]]
+
+
+
+-------- User chains: --------
+
+<<NO USER CHAINS>>
+
+
+
+-------- Marks: --------
+
+Name       Corresponding line
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+TOCPU1     19
+TOCPU2     26
+TOCPU3     31
+TOCPU4     36
+TORAM      39
+
+
+
+-------- Future events chain: --------
+
+Move time   Xact group        Xact ID    Xact curblock    Xact status
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+2500        CPU3              24         30               injected
+2502        CPU1              11         40               waiting
+2501        CPU1              0          20               waiting
+
+
+
+-------- Current events chain: --------
+
+Xact group    Xact ID    Xact curblock    Xact status
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+CPU1          8          38               blocked
+CPU1          4          38               blocked
+CPU1          10         38               blocked
+CPU1          9          38               blocked
+CPU4          13         38               blocked
+CPU4          7          38               blocked
+CPU4          3          38               blocked
+CPU4          16         38               blocked
+CPU4          18         38               blocked
+CPU4          21         38               blocked
+CPU3          22         38               blocked
+CPU3          19         38               blocked
+CPU3          15         38               blocked
+CPU3          14         38               blocked
+CPU3          2          38               blocked
+CPU3          6          38               blocked
+CPU3          12         38               blocked
+CPU3          17         38               blocked
+CPU3          20         38               blocked
+CPU3          23         38               blocked
+CPU2          1          38               blocked
+CPU2          5          38               blocked
+
+
+
+
+================================================================================

@@ -1,0 +1,205 @@
+
+
+SIMULATION RESULTS OF SYSTEM /media/notsoold/Shared/coding/python/opengpss/systems/lab2/lab2.ogps
+
+Simulation finished at 2017-09-03 00:44
+
+
+
+-------- Generated program: --------
+(line index, current xacts, total executions, line of code)
+
+01          fac facs[8];
+02          mark mk4;
+03          mark mk5;
+04          mark mk6;
+05          mark mk7;
+06          mark mk8;
+07          exitwhen(curticks == 250);
+08          {{
+09  01  14  inject("fac1", 20, 0, 0, 0);
+10      13  fac_enter(facs[0]);
+11  01  13  wait(10);
+12      12  fac_leave(facs[0]);
+13          ->| mk4, 0.7, mk5;
+14  01  26  inject("fac2", 10, 0, 0, 0);
+15      25  fac_enter(facs[1]);
+16  01  25  wait(10);
+17      24  fac_leave(facs[1]);
+18          ->| mk4, 0.5, mk6;
+19  01  26  inject("fac3", 10, 0, 0, 0);
+20      25  fac_enter(facs[2]);
+21  01  25  wait(10);
+22      24  fac_leave(facs[2]);
+23  15  38  ->| mk4, 0.6, mk5;
+24      23  mk4: fac_enter(facs[3]);
+25  01  23  wait(10);
+26      22  fac_leave(facs[3]);
+27      14  ->| mk7, 0.5, mk6;
+28      14  mk5: fac_enter(facs[4]);
+29      14  wait(10);
+30      14  fac_leave(facs[4]);
+31  07  30  ->| mk6, 0.7, mk8;
+32      23  mk6: fac_enter(facs[5]);
+33  01  23  wait(10);
+34      22  fac_leave(facs[5]);
+35  04  27  ->| mk7, 0.9, mk8;
+36      23  mk7: fac_enter(facs[6]);
+37  01  23  wait(10);
+38  09  31  fac_leave(facs[6]);
+39      22  mk8: fac_enter(facs[7]);
+40  01  22  wait(10);
+41      21  fac_leave(facs[7]);
+42      21  reject(1);
+43          }}
+
+
+Simulation time: 250 beats
+
+
+-------- Integer variables: --------
+
+Name       Value
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+curticks   250
+injected   66
+rejected   21
+
+
+
+
+-------- Facilities: --------
+                                                            Busyness       Busyness       Current xacts
+Name        Places    Max xacts    Auto queued   Enters     (weighted)     (unweighted)   (index: [vol, enter time])
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+facs[0]     1         1            True          13         0.520          0.520          {58: [1, 240]}
+facs[1]     1         1            True          25         1.000          1.000          {61: [1, 240]}
+facs[2]     1         1            True          25         1.000          1.000          {62: [1, 240]}
+facs[3]     1         1            True          23         0.920          0.920          {54: [1, 240]}
+facs[4]     1         1            True          14         0.560          0.560          {}
+facs[5]     1         1            True          23         0.920          0.920          {40: [1, 240]}
+facs[6]     1         1            True          23         0.920          0.920          {16: [1, 240]}
+facs[7]     1         1            True          22         0.880          0.880          {53: [1, 240]}
+
+
+Average                                                        Availa-      Irrupted    
+processing time    Is available  Avail. time   Unavail. time   bility (%)   xacts       Irrupt chain
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+10.00              True          250           0               100.00       0           []
+10.00              True          250           0               100.00       0           []
+10.00              True          250           0               100.00       0           []
+10.00              True          250           0               100.00       0           []
+10.00              True          250           0               100.00       0           []
+10.00              True          250           0               100.00       0           []
+10.00              True          250           0               100.00       0           []
+10.00              True          250           0               100.00       0           []
+
+
+
+-------- Queues: --------
+
+Name        Enters    Zero entries   Zero entries (%)  Max length   Avg length   Current length
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+facs[0]     13        13             100.00            1            0.00         0                  
+facs[1]     25        25             100.00            1            0.00         0                  
+facs[2]     25        25             100.00            1            0.00         0                  
+facs[3]     38        5              13.16             16           5.16         15                 
+facs[4]     14        8              57.14             3            0.44         0                  
+facs[5]     30        6              20.00             10           4.64         7                  
+facs[6]     27        4              14.81             6            3.00         4                  
+facs[7]     31        2              6.45              9            3.56         9                  
+
+
+Avg xact    Avg xact wait time      Max xact    Current queue contents
+wait time   (w/o zero entries)      wait time   [index, enter time]
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+0.00        (no data)               0           []
+0.00        (no data)               0           []
+0.00        (no data)               0           []
+12.61       16.11                   40          [[30, 120], [28, 130], [31, 130], [36, 150], [33, 150], [37, 150], [42, 170], [43, 190], [49, 200], [48, 210], [52, 210], [57, 230], [56, 230], [59, 240], [60, 240]]
+7.86        18.33                   30          []
+22.17       30.00                   140         [[12, 80], [21, 90], [29, 120], [32, 170], [41, 170], [50, 230], [55, 240]]
+15.65       18.95                   110         [[9, 70], [18, 120], [47, 210], [44, 210]]
+18.18       20.00                   70          [[22, 130], [25, 170], [35, 180], [23, 180], [38, 180], [24, 210], [39, 230], [46, 240], [51, 240]]
+
+
+
+-------- User chains: --------
+
+<<NO USER CHAINS>>
+
+
+
+-------- Marks: --------
+
+Name    Corresponding line
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+mk4     24
+mk5     28
+mk6     32
+mk7     36
+mk8     39
+
+
+
+-------- Future events chain: --------
+
+Move time   Xact group        Xact ID    Xact curblock    Xact status
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+260         fac1              63         9                injected
+250         fac2              64         14               injected
+250         fac3              65         19               injected
+250         fac1              58         11               waiting
+250         fac2              61         16               waiting
+250         fac3              62         21               waiting
+250         fac1              53         40               waiting
+250         fac2              54         25               waiting
+250         fac3              40         33               waiting
+250         fac2              16         37               waiting
+
+
+
+-------- Current events chain: --------
+
+Xact group    Xact ID    Xact curblock    Xact status
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+fac2          24         38               blocked
+fac3          52         23               blocked
+fac2          44         35               blocked
+fac1          48         23               blocked
+fac3          47         35               blocked
+fac1          43         23               blocked
+fac1          23         38               blocked
+fac1          38         38               blocked
+fac3          35         38               blocked
+fac3          32         31               blocked
+fac2          41         31               blocked
+fac3          25         38               blocked
+fac3          42         23               blocked
+fac2          31         23               blocked
+fac3          22         38               blocked
+fac1          28         23               blocked
+fac2          29         31               blocked
+fac1          18         35               blocked
+fac3          30         23               blocked
+fac2          21         31               blocked
+fac3          12         31               blocked
+fac2          9          35               blocked
+fac1          33         23               blocked
+fac3          37         23               blocked
+fac2          36         23               blocked
+fac2          49         23               blocked
+fac2          56         23               blocked
+fac3          50         31               blocked
+fac2          39         38               blocked
+fac3          57         23               blocked
+fac3          60         23               blocked
+fac2          51         38               blocked
+fac2          46         38               blocked
+fac3          55         31               blocked
+fac2          59         23               blocked
+
+
+
+
+================================================================================

@@ -1,0 +1,55 @@
+/*
+Задание: Промоделировать систему массового обслуживания, представленную на рисунке. Использовать блоки TRANSFER в режиме статистической безусловной передачи управления. Время передачи от блока к блоку и время для обслуживания прибора студенты задают самостоятельно.
+*/
+
+fac facs[8];
+mark mk4;
+mark mk5;
+mark mk6;
+mark mk7;
+mark mk8;
+
+exitwhen(curticks == 250);
+{{
+inject("fac1", 20, 0, 0, 0);
+fac_enter(facs[0]);
+wait(10);
+fac_leave(facs[0]);
+->| mk4, 0.7, mk5;
+
+inject("fac2", 10, 0, 0, 0);
+fac_enter(facs[1]);
+wait(10);
+fac_leave(facs[1]);
+->| mk4, 0.5, mk6;
+
+inject("fac3", 10, 0, 0, 0);
+fac_enter(facs[2]);
+wait(10);
+fac_leave(facs[2]);
+->| mk4, 0.6, mk5;
+
+mk4: fac_enter(facs[3]);
+wait(10);
+fac_leave(facs[3]);
+->| mk7, 0.5, mk6;
+
+mk5: fac_enter(facs[4]);
+wait(10);
+fac_leave(facs[4]);
+->| mk6, 0.7, mk8;
+
+mk6: fac_enter(facs[5]);
+wait(10);
+fac_leave(facs[5]);
+->| mk7, 0.9, mk8;
+
+mk7: fac_enter(facs[6]);
+wait(10);
+fac_leave(facs[6]);
+
+mk8: fac_enter(facs[7]);
+wait(10);
+fac_leave(facs[7]);
+reject(1);
+}}

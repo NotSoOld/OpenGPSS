@@ -1,0 +1,119 @@
+fac KMM;
+fac CVK;
+fac ARM[3];
+fac T[3];
+mark T1;
+mark T2;
+mark T3;
+mark KMM;
+mark CVK;
+mark KILL;
+int xacts_at_terminals[3];
+
+function terminal_time(prob)
+{
+	prob < 0.6, 40 |
+	1, 35
+};
+
+function kmm_time(prob)
+{
+	xact.group == "T1", 1 |
+	xact.group == "T2" && prob < 0.1, 3 |
+	xact.group == "T2", 2 |
+	xact.group == "T3", 4
+};
+
+function cvk_time(prob)
+{
+	prob < 0.5, 45 |
+	1, 40
+};
+
+exitwhen(KMM.enters_f > 500);
+{{
+
+/* Terminal 1: */
+inject("T1", 120, 50, 0, 32) {priority = 50, type = "from_arm"};
+T1: fac_enter(T[0]);
+xact.priority = 50;		//equalize priority
+xact.type = "from_arm";
+wait(terminal_time(random01()));
+fac_leave(T[0]);
+if((T[0].enters_f - (1 - T[0].curplaces)) % 15 == 0)
+{
+	->> KILL;
+}
+
+/* ARM1: */
+fac_enter(ARM[0]);
+wait(22, 7);
+fac_leave(ARM[0]);
+->| T1, 0.7, KMM;
+
+/* Terminal 2: */
+inject("T2", 150, 0, 0, 23) {priority = 30, type = "from_arm"};
+T2: fac_enter(T[1]);
+xact.priority = 30;		//equalize priority
+xact.type = "from_arm";
+wait(terminal_time(random01()));
+fac_leave(T[1]);
+if((T[1].enters_f - (1 - T[1].curplaces)) % 15 == 0)
+{
+	->> KILL;
+}
+
+/* ARM2: */
+fac_enter(ARM[1]);
+wait(27, 5);
+fac_leave(ARM[1]);
+->| T2, 0.7, KMM;
+
+/* Terminal 3: */
+inject("T3", 100, 0, 140, 18) {priority = 10, type = "from_arm"};
+T3: fac_enter(T[2]);
+xact.priority = 10;		//equalize priority
+xact.type = "from_arm";
+wait(terminal_time(random01()));
+fac_leave(T[2]);
+// If it was 15th xact...
+if((T[2].enters_f - (1 - T[2].curplaces)) % 15 == 0)
+{
+	->> KILL;
+}
+
+/* ARM3: */
+fac_enter(ARM[2]);
+wait(20, 3);
+fac_leave(ARM[2]);
+->| T3, 0.7, KMM;
+
+/* KMM: */
+KMM: fac_enter(KMM);
+if(xact.type == "from_cvk")
+{
+	xact.priority = 60;
+}
+wait(kmm_time(random01()));
+fac_leave(KMM);
+->? CVK, xact.type == "from_arm", xact.group;
+
+/* CVK: */
+CVK: fac_enter(CVK);
+xact.priority -= 10;	//change priority for xacts from CVK
+xact.type = "from_cvk";
+wait(cvk_time(random01()));
+fac_leave(CVK);
+->> KMM;
+
+/* Junkyard: */
+KILL:
+if(rejected == 2)
+{
+	xacts_at_terminals[0] = T[0].enters_f - (1 - T[0].curplaces);
+	xacts_at_terminals[1] = T[1].enters_f - (1 - T[1].curplaces);
+	xacts_at_terminals[2] = T[2].enters_f - (1 - T[2].curplaces);
+}
+reject(1);
+
+}}

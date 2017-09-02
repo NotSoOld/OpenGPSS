@@ -1,0 +1,4969 @@
+
+
+Simulating system /media/notsoold/Shared/coding/python/opengpss/systems/lab1/lab1.ogps at 2017-09-03 00:43
+
+
+timestep = 0
+Future Events Chain:  [13]
+Current Events Chain: [0]
+xact 0 is about to enter block 5 ('fac_enter', ['RAM'])
+Added xact 0 to facility RAM
+xact 0 is about to enter block 6 ('wait', [18])
+Wait(): exit time = 18
+
+timestep = 1
+Future Events Chain:  [13, 18]
+Current Events Chain: []
+
+timestep = 2
+Future Events Chain:  [13, 18]
+Current Events Chain: []
+
+timestep = 3
+Future Events Chain:  [13, 18]
+Current Events Chain: []
+
+timestep = 4
+Future Events Chain:  [13, 18]
+Current Events Chain: []
+
+timestep = 5
+Future Events Chain:  [13, 18]
+Current Events Chain: []
+
+timestep = 6
+Future Events Chain:  [13, 18]
+Current Events Chain: []
+
+timestep = 7
+Future Events Chain:  [13, 18]
+Current Events Chain: []
+
+timestep = 8
+Future Events Chain:  [13, 18]
+Current Events Chain: []
+
+timestep = 9
+Future Events Chain:  [13, 18]
+Current Events Chain: []
+
+timestep = 10
+Future Events Chain:  [13, 18]
+Current Events Chain: []
+
+timestep = 11
+Future Events Chain:  [13, 18]
+Current Events Chain: []
+
+timestep = 12
+Future Events Chain:  [13, 18]
+Current Events Chain: []
+
+timestep = 13
+Future Events Chain:  [18, 23]
+Current Events Chain: [1]
+xact 1 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 1 was blocked
+
+timestep = 14
+Future Events Chain:  [18, 23]
+Current Events Chain: [1]
+xact 1 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 1 was blocked
+
+timestep = 15
+Future Events Chain:  [18, 23]
+Current Events Chain: [1]
+xact 1 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 1 was blocked
+
+timestep = 16
+Future Events Chain:  [18, 23]
+Current Events Chain: [1]
+xact 1 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 1 was blocked
+
+timestep = 17
+Future Events Chain:  [18, 23]
+Current Events Chain: [1]
+xact 1 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 1 was blocked
+
+timestep = 18
+Future Events Chain:  [23]
+Current Events Chain: [0, 1]
+xact 0 is about to enter block 7 ('fac_leave', ['RAM'])
+Current Events Chain: [1, 0]
+xact 1 is about to enter block 5 ('fac_enter', ['RAM'])
+Added xact 1 to facility RAM
+xact 1 is about to enter block 6 ('wait', [18])
+Wait(): exit time = 36
+xact 0 is about to enter block 8 ('reject', [1])
+Current Events Chain: []
+
+timestep = 19
+Future Events Chain:  [23, 36]
+Current Events Chain: []
+
+timestep = 20
+Future Events Chain:  [23, 36]
+Current Events Chain: []
+
+timestep = 21
+Future Events Chain:  [23, 36]
+Current Events Chain: []
+
+timestep = 22
+Future Events Chain:  [23, 36]
+Current Events Chain: []
+
+timestep = 23
+Future Events Chain:  [36, 39]
+Current Events Chain: [2]
+xact 2 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 2 was blocked
+
+timestep = 24
+Future Events Chain:  [36, 39]
+Current Events Chain: [2]
+xact 2 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 2 was blocked
+
+timestep = 25
+Future Events Chain:  [36, 39]
+Current Events Chain: [2]
+xact 2 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 2 was blocked
+
+timestep = 26
+Future Events Chain:  [36, 39]
+Current Events Chain: [2]
+xact 2 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 2 was blocked
+
+timestep = 27
+Future Events Chain:  [36, 39]
+Current Events Chain: [2]
+xact 2 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 2 was blocked
+
+timestep = 28
+Future Events Chain:  [36, 39]
+Current Events Chain: [2]
+xact 2 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 2 was blocked
+
+timestep = 29
+Future Events Chain:  [36, 39]
+Current Events Chain: [2]
+xact 2 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 2 was blocked
+
+timestep = 30
+Future Events Chain:  [36, 39]
+Current Events Chain: [2]
+xact 2 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 2 was blocked
+
+timestep = 31
+Future Events Chain:  [36, 39]
+Current Events Chain: [2]
+xact 2 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 2 was blocked
+
+timestep = 32
+Future Events Chain:  [36, 39]
+Current Events Chain: [2]
+xact 2 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 2 was blocked
+
+timestep = 33
+Future Events Chain:  [36, 39]
+Current Events Chain: [2]
+xact 2 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 2 was blocked
+
+timestep = 34
+Future Events Chain:  [36, 39]
+Current Events Chain: [2]
+xact 2 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 2 was blocked
+
+timestep = 35
+Future Events Chain:  [36, 39]
+Current Events Chain: [2]
+xact 2 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 2 was blocked
+
+timestep = 36
+Future Events Chain:  [39]
+Current Events Chain: [1, 2]
+xact 1 is about to enter block 7 ('fac_leave', ['RAM'])
+Current Events Chain: [2, 1]
+xact 2 is about to enter block 5 ('fac_enter', ['RAM'])
+Added xact 2 to facility RAM
+xact 2 is about to enter block 6 ('wait', [18])
+Wait(): exit time = 54
+xact 1 is about to enter block 8 ('reject', [1])
+Current Events Chain: []
+
+timestep = 37
+Future Events Chain:  [39, 54]
+Current Events Chain: []
+
+timestep = 38
+Future Events Chain:  [39, 54]
+Current Events Chain: []
+
+timestep = 39
+Future Events Chain:  [54, 52]
+Current Events Chain: [3]
+xact 3 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 3 was blocked
+
+timestep = 40
+Future Events Chain:  [54, 52]
+Current Events Chain: [3]
+xact 3 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 3 was blocked
+
+timestep = 41
+Future Events Chain:  [54, 52]
+Current Events Chain: [3]
+xact 3 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 3 was blocked
+
+timestep = 42
+Future Events Chain:  [54, 52]
+Current Events Chain: [3]
+xact 3 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 3 was blocked
+
+timestep = 43
+Future Events Chain:  [54, 52]
+Current Events Chain: [3]
+xact 3 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 3 was blocked
+
+timestep = 44
+Future Events Chain:  [54, 52]
+Current Events Chain: [3]
+xact 3 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 3 was blocked
+
+timestep = 45
+Future Events Chain:  [54, 52]
+Current Events Chain: [3]
+xact 3 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 3 was blocked
+
+timestep = 46
+Future Events Chain:  [54, 52]
+Current Events Chain: [3]
+xact 3 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 3 was blocked
+
+timestep = 47
+Future Events Chain:  [54, 52]
+Current Events Chain: [3]
+xact 3 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 3 was blocked
+
+timestep = 48
+Future Events Chain:  [54, 52]
+Current Events Chain: [3]
+xact 3 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 3 was blocked
+
+timestep = 49
+Future Events Chain:  [54, 52]
+Current Events Chain: [3]
+xact 3 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 3 was blocked
+
+timestep = 50
+Future Events Chain:  [54, 52]
+Current Events Chain: [3]
+xact 3 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 3 was blocked
+
+timestep = 51
+Future Events Chain:  [54, 52]
+Current Events Chain: [3]
+xact 3 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 3 was blocked
+
+timestep = 52
+Future Events Chain:  [54, 64]
+Current Events Chain: [4, 3]
+xact 4 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 4 was blocked
+xact 3 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 3 was blocked
+
+timestep = 53
+Future Events Chain:  [54, 64]
+Current Events Chain: [3, 4]
+xact 3 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 3 was blocked
+xact 4 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 4 was blocked
+
+timestep = 54
+Future Events Chain:  [64]
+Current Events Chain: [2, 4, 3]
+xact 2 is about to enter block 7 ('fac_leave', ['RAM'])
+Current Events Chain: [3, 4, 2]
+xact 3 is about to enter block 5 ('fac_enter', ['RAM'])
+Added xact 3 to facility RAM
+xact 3 is about to enter block 6 ('wait', [18])
+Wait(): exit time = 72
+xact 4 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 4 was blocked
+xact 2 is about to enter block 8 ('reject', [1])
+Current Events Chain: [4]
+xact 4 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 4 was blocked
+
+timestep = 55
+Future Events Chain:  [64, 72]
+Current Events Chain: [4]
+xact 4 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 4 was blocked
+
+timestep = 56
+Future Events Chain:  [64, 72]
+Current Events Chain: [4]
+xact 4 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 4 was blocked
+
+timestep = 57
+Future Events Chain:  [64, 72]
+Current Events Chain: [4]
+xact 4 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 4 was blocked
+
+timestep = 58
+Future Events Chain:  [64, 72]
+Current Events Chain: [4]
+xact 4 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 4 was blocked
+
+timestep = 59
+Future Events Chain:  [64, 72]
+Current Events Chain: [4]
+xact 4 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 4 was blocked
+
+timestep = 60
+Future Events Chain:  [64, 72]
+Current Events Chain: [4]
+xact 4 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 4 was blocked
+
+timestep = 61
+Future Events Chain:  [64, 72]
+Current Events Chain: [4]
+xact 4 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 4 was blocked
+
+timestep = 62
+Future Events Chain:  [64, 72]
+Current Events Chain: [4]
+xact 4 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 4 was blocked
+
+timestep = 63
+Future Events Chain:  [64, 72]
+Current Events Chain: [4]
+xact 4 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 4 was blocked
+
+timestep = 64
+Future Events Chain:  [72, 78]
+Current Events Chain: [5, 4]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+xact 4 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 4 was blocked
+
+timestep = 65
+Future Events Chain:  [72, 78]
+Current Events Chain: [4, 5]
+xact 4 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 4 was blocked
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 66
+Future Events Chain:  [72, 78]
+Current Events Chain: [5, 4]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+xact 4 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 4 was blocked
+
+timestep = 67
+Future Events Chain:  [72, 78]
+Current Events Chain: [4, 5]
+xact 4 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 4 was blocked
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 68
+Future Events Chain:  [72, 78]
+Current Events Chain: [5, 4]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+xact 4 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 4 was blocked
+
+timestep = 69
+Future Events Chain:  [72, 78]
+Current Events Chain: [4, 5]
+xact 4 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 4 was blocked
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 70
+Future Events Chain:  [72, 78]
+Current Events Chain: [5, 4]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+xact 4 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 4 was blocked
+
+timestep = 71
+Future Events Chain:  [72, 78]
+Current Events Chain: [4, 5]
+xact 4 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 4 was blocked
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 72
+Future Events Chain:  [78]
+Current Events Chain: [3, 5, 4]
+xact 3 is about to enter block 7 ('fac_leave', ['RAM'])
+Current Events Chain: [4, 5, 3]
+xact 4 is about to enter block 5 ('fac_enter', ['RAM'])
+Added xact 4 to facility RAM
+xact 4 is about to enter block 6 ('wait', [18])
+Wait(): exit time = 90
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+xact 3 is about to enter block 8 ('reject', [1])
+Current Events Chain: [5]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 73
+Future Events Chain:  [78, 90]
+Current Events Chain: [5]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 74
+Future Events Chain:  [78, 90]
+Current Events Chain: [5]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 75
+Future Events Chain:  [78, 90]
+Current Events Chain: [5]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 76
+Future Events Chain:  [78, 90]
+Current Events Chain: [5]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 77
+Future Events Chain:  [78, 90]
+Current Events Chain: [5]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 78
+Future Events Chain:  [90, 89]
+Current Events Chain: [6, 5]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 79
+Future Events Chain:  [90, 89]
+Current Events Chain: [5, 6]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 80
+Future Events Chain:  [90, 89]
+Current Events Chain: [6, 5]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 81
+Future Events Chain:  [90, 89]
+Current Events Chain: [5, 6]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 82
+Future Events Chain:  [90, 89]
+Current Events Chain: [6, 5]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 83
+Future Events Chain:  [90, 89]
+Current Events Chain: [5, 6]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 84
+Future Events Chain:  [90, 89]
+Current Events Chain: [6, 5]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 85
+Future Events Chain:  [90, 89]
+Current Events Chain: [5, 6]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 86
+Future Events Chain:  [90, 89]
+Current Events Chain: [6, 5]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 87
+Future Events Chain:  [90, 89]
+Current Events Chain: [5, 6]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 88
+Future Events Chain:  [90, 89]
+Current Events Chain: [6, 5]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 89
+Future Events Chain:  [90, 102]
+Current Events Chain: [7, 5, 6]
+xact 7 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 7 was blocked
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 90
+Future Events Chain:  [102]
+Current Events Chain: [4, 6, 5, 7]
+xact 4 is about to enter block 7 ('fac_leave', ['RAM'])
+Current Events Chain: [7, 5, 6, 4]
+xact 7 is about to enter block 5 ('fac_enter', ['RAM'])
+Added xact 7 to facility RAM
+xact 7 is about to enter block 6 ('wait', [18])
+Wait(): exit time = 108
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 4 is about to enter block 8 ('reject', [1])
+Current Events Chain: [6, 5]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 91
+Future Events Chain:  [102, 108]
+Current Events Chain: [5, 6]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 92
+Future Events Chain:  [102, 108]
+Current Events Chain: [6, 5]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 93
+Future Events Chain:  [102, 108]
+Current Events Chain: [5, 6]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 94
+Future Events Chain:  [102, 108]
+Current Events Chain: [6, 5]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 95
+Future Events Chain:  [102, 108]
+Current Events Chain: [5, 6]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 96
+Future Events Chain:  [102, 108]
+Current Events Chain: [6, 5]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 97
+Future Events Chain:  [102, 108]
+Current Events Chain: [5, 6]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 98
+Future Events Chain:  [102, 108]
+Current Events Chain: [6, 5]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 99
+Future Events Chain:  [102, 108]
+Current Events Chain: [5, 6]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 100
+Future Events Chain:  [102, 108]
+Current Events Chain: [6, 5]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 101
+Future Events Chain:  [102, 108]
+Current Events Chain: [5, 6]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 102
+Future Events Chain:  [108, 115]
+Current Events Chain: [8, 6, 5]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 103
+Future Events Chain:  [108, 115]
+Current Events Chain: [5, 6, 8]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 104
+Future Events Chain:  [108, 115]
+Current Events Chain: [8, 6, 5]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 105
+Future Events Chain:  [108, 115]
+Current Events Chain: [5, 6, 8]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 106
+Future Events Chain:  [108, 115]
+Current Events Chain: [8, 6, 5]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+
+timestep = 107
+Future Events Chain:  [108, 115]
+Current Events Chain: [5, 6, 8]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 5 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 108
+Future Events Chain:  [115]
+Current Events Chain: [7, 8, 6, 5]
+xact 7 is about to enter block 7 ('fac_leave', ['RAM'])
+Current Events Chain: [5, 6, 8, 7]
+xact 5 is about to enter block 5 ('fac_enter', ['RAM'])
+Added xact 5 to facility RAM
+xact 5 is about to enter block 6 ('wait', [18])
+Wait(): exit time = 126
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 7 is about to enter block 8 ('reject', [1])
+Current Events Chain: [8, 6]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 109
+Future Events Chain:  [115, 126]
+Current Events Chain: [6, 8]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 110
+Future Events Chain:  [115, 126]
+Current Events Chain: [8, 6]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 111
+Future Events Chain:  [115, 126]
+Current Events Chain: [6, 8]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 112
+Future Events Chain:  [115, 126]
+Current Events Chain: [8, 6]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 113
+Future Events Chain:  [115, 126]
+Current Events Chain: [6, 8]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 114
+Future Events Chain:  [115, 126]
+Current Events Chain: [8, 6]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 115
+Future Events Chain:  [126, 127]
+Current Events Chain: [9, 6, 8]
+xact 9 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 9 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 116
+Future Events Chain:  [126, 127]
+Current Events Chain: [8, 6, 9]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 9 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 9 was blocked
+
+timestep = 117
+Future Events Chain:  [126, 127]
+Current Events Chain: [9, 6, 8]
+xact 9 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 9 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 118
+Future Events Chain:  [126, 127]
+Current Events Chain: [8, 6, 9]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 9 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 9 was blocked
+
+timestep = 119
+Future Events Chain:  [126, 127]
+Current Events Chain: [9, 6, 8]
+xact 9 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 9 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 120
+Future Events Chain:  [126, 127]
+Current Events Chain: [8, 6, 9]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 9 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 9 was blocked
+
+timestep = 121
+Future Events Chain:  [126, 127]
+Current Events Chain: [9, 6, 8]
+xact 9 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 9 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 122
+Future Events Chain:  [126, 127]
+Current Events Chain: [8, 6, 9]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 9 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 9 was blocked
+
+timestep = 123
+Future Events Chain:  [126, 127]
+Current Events Chain: [9, 6, 8]
+xact 9 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 9 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 124
+Future Events Chain:  [126, 127]
+Current Events Chain: [8, 6, 9]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 9 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 9 was blocked
+
+timestep = 125
+Future Events Chain:  [126, 127]
+Current Events Chain: [9, 6, 8]
+xact 9 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 9 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 126
+Future Events Chain:  [127]
+Current Events Chain: [5, 8, 6, 9]
+xact 5 is about to enter block 7 ('fac_leave', ['RAM'])
+Current Events Chain: [9, 6, 8, 5]
+xact 9 is about to enter block 5 ('fac_enter', ['RAM'])
+Added xact 9 to facility RAM
+xact 9 is about to enter block 6 ('wait', [18])
+Wait(): exit time = 144
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 5 is about to enter block 8 ('reject', [1])
+Current Events Chain: [8, 6]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 127
+Future Events Chain:  [144, 142]
+Current Events Chain: [10, 6, 8]
+xact 10 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 10 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 128
+Future Events Chain:  [144, 142]
+Current Events Chain: [8, 6, 10]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 10 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 10 was blocked
+
+timestep = 129
+Future Events Chain:  [144, 142]
+Current Events Chain: [10, 6, 8]
+xact 10 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 10 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 130
+Future Events Chain:  [144, 142]
+Current Events Chain: [8, 6, 10]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 10 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 10 was blocked
+
+timestep = 131
+Future Events Chain:  [144, 142]
+Current Events Chain: [10, 6, 8]
+xact 10 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 10 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 132
+Future Events Chain:  [144, 142]
+Current Events Chain: [8, 6, 10]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 10 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 10 was blocked
+
+timestep = 133
+Future Events Chain:  [144, 142]
+Current Events Chain: [10, 6, 8]
+xact 10 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 10 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 134
+Future Events Chain:  [144, 142]
+Current Events Chain: [8, 6, 10]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 10 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 10 was blocked
+
+timestep = 135
+Future Events Chain:  [144, 142]
+Current Events Chain: [10, 6, 8]
+xact 10 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 10 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 136
+Future Events Chain:  [144, 142]
+Current Events Chain: [8, 6, 10]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 10 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 10 was blocked
+
+timestep = 137
+Future Events Chain:  [144, 142]
+Current Events Chain: [10, 6, 8]
+xact 10 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 10 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 138
+Future Events Chain:  [144, 142]
+Current Events Chain: [8, 6, 10]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 10 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 10 was blocked
+
+timestep = 139
+Future Events Chain:  [144, 142]
+Current Events Chain: [10, 6, 8]
+xact 10 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 10 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 140
+Future Events Chain:  [144, 142]
+Current Events Chain: [8, 6, 10]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 10 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 10 was blocked
+
+timestep = 141
+Future Events Chain:  [144, 142]
+Current Events Chain: [10, 6, 8]
+xact 10 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 10 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 142
+Future Events Chain:  [144, 153]
+Current Events Chain: [11, 8, 6, 10]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 10 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 10 was blocked
+
+timestep = 143
+Future Events Chain:  [144, 153]
+Current Events Chain: [10, 6, 8, 11]
+xact 10 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 10 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 144
+Future Events Chain:  [153]
+Current Events Chain: [9, 11, 8, 6, 10]
+xact 9 is about to enter block 7 ('fac_leave', ['RAM'])
+Current Events Chain: [10, 6, 8, 11, 9]
+xact 10 is about to enter block 5 ('fac_enter', ['RAM'])
+Added xact 10 to facility RAM
+xact 10 is about to enter block 6 ('wait', [18])
+Wait(): exit time = 162
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 9 is about to enter block 8 ('reject', [1])
+Current Events Chain: [11, 8, 6]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 145
+Future Events Chain:  [153, 162]
+Current Events Chain: [6, 8, 11]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 146
+Future Events Chain:  [153, 162]
+Current Events Chain: [11, 8, 6]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 147
+Future Events Chain:  [153, 162]
+Current Events Chain: [6, 8, 11]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 148
+Future Events Chain:  [153, 162]
+Current Events Chain: [11, 8, 6]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 149
+Future Events Chain:  [153, 162]
+Current Events Chain: [6, 8, 11]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 150
+Future Events Chain:  [153, 162]
+Current Events Chain: [11, 8, 6]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 151
+Future Events Chain:  [153, 162]
+Current Events Chain: [6, 8, 11]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 152
+Future Events Chain:  [153, 162]
+Current Events Chain: [11, 8, 6]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 153
+Future Events Chain:  [162, 163]
+Current Events Chain: [12, 6, 8, 11]
+xact 12 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 12 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 154
+Future Events Chain:  [162, 163]
+Current Events Chain: [11, 8, 6, 12]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 12 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 12 was blocked
+
+timestep = 155
+Future Events Chain:  [162, 163]
+Current Events Chain: [12, 6, 8, 11]
+xact 12 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 12 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 156
+Future Events Chain:  [162, 163]
+Current Events Chain: [11, 8, 6, 12]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 12 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 12 was blocked
+
+timestep = 157
+Future Events Chain:  [162, 163]
+Current Events Chain: [12, 6, 8, 11]
+xact 12 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 12 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 158
+Future Events Chain:  [162, 163]
+Current Events Chain: [11, 8, 6, 12]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 12 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 12 was blocked
+
+timestep = 159
+Future Events Chain:  [162, 163]
+Current Events Chain: [12, 6, 8, 11]
+xact 12 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 12 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 160
+Future Events Chain:  [162, 163]
+Current Events Chain: [11, 8, 6, 12]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 12 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 12 was blocked
+
+timestep = 161
+Future Events Chain:  [162, 163]
+Current Events Chain: [12, 6, 8, 11]
+xact 12 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 12 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 162
+Future Events Chain:  [163]
+Current Events Chain: [10, 11, 8, 6, 12]
+xact 10 is about to enter block 7 ('fac_leave', ['RAM'])
+Current Events Chain: [12, 6, 8, 11, 10]
+xact 12 is about to enter block 5 ('fac_enter', ['RAM'])
+Added xact 12 to facility RAM
+xact 12 is about to enter block 6 ('wait', [18])
+Wait(): exit time = 180
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 10 is about to enter block 8 ('reject', [1])
+Current Events Chain: [11, 8, 6]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 163
+Future Events Chain:  [180, 173]
+Current Events Chain: [13, 6, 8, 11]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 164
+Future Events Chain:  [180, 173]
+Current Events Chain: [11, 8, 6, 13]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 165
+Future Events Chain:  [180, 173]
+Current Events Chain: [13, 6, 8, 11]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 166
+Future Events Chain:  [180, 173]
+Current Events Chain: [11, 8, 6, 13]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 167
+Future Events Chain:  [180, 173]
+Current Events Chain: [13, 6, 8, 11]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 168
+Future Events Chain:  [180, 173]
+Current Events Chain: [11, 8, 6, 13]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 169
+Future Events Chain:  [180, 173]
+Current Events Chain: [13, 6, 8, 11]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 170
+Future Events Chain:  [180, 173]
+Current Events Chain: [11, 8, 6, 13]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 171
+Future Events Chain:  [180, 173]
+Current Events Chain: [13, 6, 8, 11]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 172
+Future Events Chain:  [180, 173]
+Current Events Chain: [11, 8, 6, 13]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 173
+Future Events Chain:  [180, 183]
+Current Events Chain: [14, 13, 6, 8, 11]
+xact 14 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 14 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 174
+Future Events Chain:  [180, 183]
+Current Events Chain: [11, 8, 6, 13, 14]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 14 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 14 was blocked
+
+timestep = 175
+Future Events Chain:  [180, 183]
+Current Events Chain: [14, 13, 6, 8, 11]
+xact 14 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 14 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 176
+Future Events Chain:  [180, 183]
+Current Events Chain: [11, 8, 6, 13, 14]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 14 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 14 was blocked
+
+timestep = 177
+Future Events Chain:  [180, 183]
+Current Events Chain: [14, 13, 6, 8, 11]
+xact 14 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 14 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 178
+Future Events Chain:  [180, 183]
+Current Events Chain: [11, 8, 6, 13, 14]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 14 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 14 was blocked
+
+timestep = 179
+Future Events Chain:  [180, 183]
+Current Events Chain: [14, 13, 6, 8, 11]
+xact 14 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 14 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 180
+Future Events Chain:  [183]
+Current Events Chain: [12, 11, 8, 6, 13, 14]
+xact 12 is about to enter block 7 ('fac_leave', ['RAM'])
+Current Events Chain: [14, 13, 6, 8, 11, 12]
+xact 14 is about to enter block 5 ('fac_enter', ['RAM'])
+Added xact 14 to facility RAM
+xact 14 is about to enter block 6 ('wait', [18])
+Wait(): exit time = 198
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 12 is about to enter block 8 ('reject', [1])
+Current Events Chain: [11, 8, 6, 13]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 181
+Future Events Chain:  [183, 198]
+Current Events Chain: [13, 6, 8, 11]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 182
+Future Events Chain:  [183, 198]
+Current Events Chain: [11, 8, 6, 13]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 183
+Future Events Chain:  [198, 196]
+Current Events Chain: [15, 13, 6, 8, 11]
+xact 15 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 15 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 184
+Future Events Chain:  [198, 196]
+Current Events Chain: [11, 8, 6, 13, 15]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 15 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 15 was blocked
+
+timestep = 185
+Future Events Chain:  [198, 196]
+Current Events Chain: [15, 13, 6, 8, 11]
+xact 15 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 15 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 186
+Future Events Chain:  [198, 196]
+Current Events Chain: [11, 8, 6, 13, 15]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 15 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 15 was blocked
+
+timestep = 187
+Future Events Chain:  [198, 196]
+Current Events Chain: [15, 13, 6, 8, 11]
+xact 15 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 15 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 188
+Future Events Chain:  [198, 196]
+Current Events Chain: [11, 8, 6, 13, 15]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 15 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 15 was blocked
+
+timestep = 189
+Future Events Chain:  [198, 196]
+Current Events Chain: [15, 13, 6, 8, 11]
+xact 15 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 15 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 190
+Future Events Chain:  [198, 196]
+Current Events Chain: [11, 8, 6, 13, 15]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 15 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 15 was blocked
+
+timestep = 191
+Future Events Chain:  [198, 196]
+Current Events Chain: [15, 13, 6, 8, 11]
+xact 15 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 15 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 192
+Future Events Chain:  [198, 196]
+Current Events Chain: [11, 8, 6, 13, 15]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 15 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 15 was blocked
+
+timestep = 193
+Future Events Chain:  [198, 196]
+Current Events Chain: [15, 13, 6, 8, 11]
+xact 15 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 15 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 194
+Future Events Chain:  [198, 196]
+Current Events Chain: [11, 8, 6, 13, 15]
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 15 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 15 was blocked
+
+timestep = 195
+Future Events Chain:  [198, 196]
+Current Events Chain: [15, 13, 6, 8, 11]
+xact 15 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 15 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+
+timestep = 196
+Future Events Chain:  [198, 207]
+Current Events Chain: [16, 11, 8, 6, 13, 15]
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 15 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 15 was blocked
+
+timestep = 197
+Future Events Chain:  [198, 207]
+Current Events Chain: [15, 13, 6, 8, 11, 16]
+xact 15 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 15 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+
+timestep = 198
+Future Events Chain:  [207]
+Current Events Chain: [14, 16, 11, 8, 6, 13, 15]
+xact 14 is about to enter block 7 ('fac_leave', ['RAM'])
+Current Events Chain: [15, 13, 6, 8, 11, 16, 14]
+xact 15 is about to enter block 5 ('fac_enter', ['RAM'])
+Added xact 15 to facility RAM
+xact 15 is about to enter block 6 ('wait', [18])
+Wait(): exit time = 216
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 14 is about to enter block 8 ('reject', [1])
+Current Events Chain: [16, 11, 8, 6, 13]
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 199
+Future Events Chain:  [207, 216]
+Current Events Chain: [13, 6, 8, 11, 16]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+
+timestep = 200
+Future Events Chain:  [207, 216]
+Current Events Chain: [16, 11, 8, 6, 13]
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 201
+Future Events Chain:  [207, 216]
+Current Events Chain: [13, 6, 8, 11, 16]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+
+timestep = 202
+Future Events Chain:  [207, 216]
+Current Events Chain: [16, 11, 8, 6, 13]
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 203
+Future Events Chain:  [207, 216]
+Current Events Chain: [13, 6, 8, 11, 16]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+
+timestep = 204
+Future Events Chain:  [207, 216]
+Current Events Chain: [16, 11, 8, 6, 13]
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 205
+Future Events Chain:  [207, 216]
+Current Events Chain: [13, 6, 8, 11, 16]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+
+timestep = 206
+Future Events Chain:  [207, 216]
+Current Events Chain: [16, 11, 8, 6, 13]
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 207
+Future Events Chain:  [216, 218]
+Current Events Chain: [17, 13, 6, 8, 11, 16]
+xact 17 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 17 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+
+timestep = 208
+Future Events Chain:  [216, 218]
+Current Events Chain: [16, 11, 8, 6, 13, 17]
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 17 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 17 was blocked
+
+timestep = 209
+Future Events Chain:  [216, 218]
+Current Events Chain: [17, 13, 6, 8, 11, 16]
+xact 17 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 17 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+
+timestep = 210
+Future Events Chain:  [216, 218]
+Current Events Chain: [16, 11, 8, 6, 13, 17]
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 17 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 17 was blocked
+
+timestep = 211
+Future Events Chain:  [216, 218]
+Current Events Chain: [17, 13, 6, 8, 11, 16]
+xact 17 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 17 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+
+timestep = 212
+Future Events Chain:  [216, 218]
+Current Events Chain: [16, 11, 8, 6, 13, 17]
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 17 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 17 was blocked
+
+timestep = 213
+Future Events Chain:  [216, 218]
+Current Events Chain: [17, 13, 6, 8, 11, 16]
+xact 17 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 17 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+
+timestep = 214
+Future Events Chain:  [216, 218]
+Current Events Chain: [16, 11, 8, 6, 13, 17]
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 17 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 17 was blocked
+
+timestep = 215
+Future Events Chain:  [216, 218]
+Current Events Chain: [17, 13, 6, 8, 11, 16]
+xact 17 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 17 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+
+timestep = 216
+Future Events Chain:  [218]
+Current Events Chain: [15, 16, 11, 8, 6, 13, 17]
+xact 15 is about to enter block 7 ('fac_leave', ['RAM'])
+Current Events Chain: [17, 13, 6, 8, 11, 16, 15]
+xact 17 is about to enter block 5 ('fac_enter', ['RAM'])
+Added xact 17 to facility RAM
+xact 17 is about to enter block 6 ('wait', [18])
+Wait(): exit time = 234
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 15 is about to enter block 8 ('reject', [1])
+Current Events Chain: [16, 11, 8, 6, 13]
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 217
+Future Events Chain:  [218, 234]
+Current Events Chain: [13, 6, 8, 11, 16]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+
+timestep = 218
+Future Events Chain:  [234, 231]
+Current Events Chain: [18, 16, 11, 8, 6, 13]
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 219
+Future Events Chain:  [234, 231]
+Current Events Chain: [13, 6, 8, 11, 16, 18]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+
+timestep = 220
+Future Events Chain:  [234, 231]
+Current Events Chain: [18, 16, 11, 8, 6, 13]
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 221
+Future Events Chain:  [234, 231]
+Current Events Chain: [13, 6, 8, 11, 16, 18]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+
+timestep = 222
+Future Events Chain:  [234, 231]
+Current Events Chain: [18, 16, 11, 8, 6, 13]
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 223
+Future Events Chain:  [234, 231]
+Current Events Chain: [13, 6, 8, 11, 16, 18]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+
+timestep = 224
+Future Events Chain:  [234, 231]
+Current Events Chain: [18, 16, 11, 8, 6, 13]
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 225
+Future Events Chain:  [234, 231]
+Current Events Chain: [13, 6, 8, 11, 16, 18]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+
+timestep = 226
+Future Events Chain:  [234, 231]
+Current Events Chain: [18, 16, 11, 8, 6, 13]
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 227
+Future Events Chain:  [234, 231]
+Current Events Chain: [13, 6, 8, 11, 16, 18]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+
+timestep = 228
+Future Events Chain:  [234, 231]
+Current Events Chain: [18, 16, 11, 8, 6, 13]
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 229
+Future Events Chain:  [234, 231]
+Current Events Chain: [13, 6, 8, 11, 16, 18]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+
+timestep = 230
+Future Events Chain:  [234, 231]
+Current Events Chain: [18, 16, 11, 8, 6, 13]
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 231
+Future Events Chain:  [234, 244]
+Current Events Chain: [19, 13, 6, 8, 11, 16, 18]
+xact 19 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 19 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+
+timestep = 232
+Future Events Chain:  [234, 244]
+Current Events Chain: [18, 16, 11, 8, 6, 13, 19]
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 19 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 19 was blocked
+
+timestep = 233
+Future Events Chain:  [234, 244]
+Current Events Chain: [19, 13, 6, 8, 11, 16, 18]
+xact 19 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 19 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+
+timestep = 234
+Future Events Chain:  [244]
+Current Events Chain: [17, 18, 16, 11, 8, 6, 13, 19]
+xact 17 is about to enter block 7 ('fac_leave', ['RAM'])
+Current Events Chain: [19, 13, 6, 8, 11, 16, 18, 17]
+xact 19 is about to enter block 5 ('fac_enter', ['RAM'])
+Added xact 19 to facility RAM
+xact 19 is about to enter block 6 ('wait', [18])
+Wait(): exit time = 252
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 17 is about to enter block 8 ('reject', [1])
+Current Events Chain: [18, 16, 11, 8, 6, 13]
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 235
+Future Events Chain:  [244, 252]
+Current Events Chain: [13, 6, 8, 11, 16, 18]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+
+timestep = 236
+Future Events Chain:  [244, 252]
+Current Events Chain: [18, 16, 11, 8, 6, 13]
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 237
+Future Events Chain:  [244, 252]
+Current Events Chain: [13, 6, 8, 11, 16, 18]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+
+timestep = 238
+Future Events Chain:  [244, 252]
+Current Events Chain: [18, 16, 11, 8, 6, 13]
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 239
+Future Events Chain:  [244, 252]
+Current Events Chain: [13, 6, 8, 11, 16, 18]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+
+timestep = 240
+Future Events Chain:  [244, 252]
+Current Events Chain: [18, 16, 11, 8, 6, 13]
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 241
+Future Events Chain:  [244, 252]
+Current Events Chain: [13, 6, 8, 11, 16, 18]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+
+timestep = 242
+Future Events Chain:  [244, 252]
+Current Events Chain: [18, 16, 11, 8, 6, 13]
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 243
+Future Events Chain:  [244, 252]
+Current Events Chain: [13, 6, 8, 11, 16, 18]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+
+timestep = 244
+Future Events Chain:  [252, 260]
+Current Events Chain: [20, 18, 16, 11, 8, 6, 13]
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 245
+Future Events Chain:  [252, 260]
+Current Events Chain: [13, 6, 8, 11, 16, 18, 20]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+
+timestep = 246
+Future Events Chain:  [252, 260]
+Current Events Chain: [20, 18, 16, 11, 8, 6, 13]
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 247
+Future Events Chain:  [252, 260]
+Current Events Chain: [13, 6, 8, 11, 16, 18, 20]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+
+timestep = 248
+Future Events Chain:  [252, 260]
+Current Events Chain: [20, 18, 16, 11, 8, 6, 13]
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 249
+Future Events Chain:  [252, 260]
+Current Events Chain: [13, 6, 8, 11, 16, 18, 20]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+
+timestep = 250
+Future Events Chain:  [252, 260]
+Current Events Chain: [20, 18, 16, 11, 8, 6, 13]
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+
+timestep = 251
+Future Events Chain:  [252, 260]
+Current Events Chain: [13, 6, 8, 11, 16, 18, 20]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 13 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+
+timestep = 252
+Future Events Chain:  [260]
+Current Events Chain: [19, 20, 18, 16, 11, 8, 6, 13]
+xact 19 is about to enter block 7 ('fac_leave', ['RAM'])
+Current Events Chain: [13, 6, 8, 11, 16, 18, 20, 19]
+xact 13 is about to enter block 5 ('fac_enter', ['RAM'])
+Added xact 13 to facility RAM
+xact 13 is about to enter block 6 ('wait', [18])
+Wait(): exit time = 270
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 19 is about to enter block 8 ('reject', [1])
+Current Events Chain: [20, 18, 16, 11, 8, 6]
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 253
+Future Events Chain:  [260, 270]
+Current Events Chain: [6, 8, 11, 16, 18, 20]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+
+timestep = 254
+Future Events Chain:  [260, 270]
+Current Events Chain: [20, 18, 16, 11, 8, 6]
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 255
+Future Events Chain:  [260, 270]
+Current Events Chain: [6, 8, 11, 16, 18, 20]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+
+timestep = 256
+Future Events Chain:  [260, 270]
+Current Events Chain: [20, 18, 16, 11, 8, 6]
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 257
+Future Events Chain:  [260, 270]
+Current Events Chain: [6, 8, 11, 16, 18, 20]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+
+timestep = 258
+Future Events Chain:  [260, 270]
+Current Events Chain: [20, 18, 16, 11, 8, 6]
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 259
+Future Events Chain:  [260, 270]
+Current Events Chain: [6, 8, 11, 16, 18, 20]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+
+timestep = 260
+Future Events Chain:  [270, 270]
+Current Events Chain: [21, 20, 18, 16, 11, 8, 6]
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 261
+Future Events Chain:  [270, 270]
+Current Events Chain: [6, 8, 11, 16, 18, 20, 21]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+
+timestep = 262
+Future Events Chain:  [270, 270]
+Current Events Chain: [21, 20, 18, 16, 11, 8, 6]
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 263
+Future Events Chain:  [270, 270]
+Current Events Chain: [6, 8, 11, 16, 18, 20, 21]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+
+timestep = 264
+Future Events Chain:  [270, 270]
+Current Events Chain: [21, 20, 18, 16, 11, 8, 6]
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 265
+Future Events Chain:  [270, 270]
+Current Events Chain: [6, 8, 11, 16, 18, 20, 21]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+
+timestep = 266
+Future Events Chain:  [270, 270]
+Current Events Chain: [21, 20, 18, 16, 11, 8, 6]
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 267
+Future Events Chain:  [270, 270]
+Current Events Chain: [6, 8, 11, 16, 18, 20, 21]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+
+timestep = 268
+Future Events Chain:  [270, 270]
+Current Events Chain: [21, 20, 18, 16, 11, 8, 6]
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+
+timestep = 269
+Future Events Chain:  [270, 270]
+Current Events Chain: [6, 8, 11, 16, 18, 20, 21]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 6 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+
+timestep = 270
+Future Events Chain:  [285]
+Current Events Chain: [22, 13, 21, 20, 18, 16, 11, 8, 6]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 13 is about to enter block 7 ('fac_leave', ['RAM'])
+Current Events Chain: [6, 8, 11, 16, 18, 20, 21, 13, 22]
+xact 6 is about to enter block 5 ('fac_enter', ['RAM'])
+Added xact 6 to facility RAM
+xact 6 is about to enter block 6 ('wait', [18])
+Wait(): exit time = 288
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 13 is about to enter block 8 ('reject', [1])
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 271
+Future Events Chain:  [285, 288]
+Current Events Chain: [8, 11, 16, 18, 20, 21, 22]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 272
+Future Events Chain:  [285, 288]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 273
+Future Events Chain:  [285, 288]
+Current Events Chain: [8, 11, 16, 18, 20, 21, 22]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 274
+Future Events Chain:  [285, 288]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 275
+Future Events Chain:  [285, 288]
+Current Events Chain: [8, 11, 16, 18, 20, 21, 22]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 276
+Future Events Chain:  [285, 288]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 277
+Future Events Chain:  [285, 288]
+Current Events Chain: [8, 11, 16, 18, 20, 21, 22]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 278
+Future Events Chain:  [285, 288]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 279
+Future Events Chain:  [285, 288]
+Current Events Chain: [8, 11, 16, 18, 20, 21, 22]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 280
+Future Events Chain:  [285, 288]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 281
+Future Events Chain:  [285, 288]
+Current Events Chain: [8, 11, 16, 18, 20, 21, 22]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 282
+Future Events Chain:  [285, 288]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 283
+Future Events Chain:  [285, 288]
+Current Events Chain: [8, 11, 16, 18, 20, 21, 22]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 284
+Future Events Chain:  [285, 288]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 285
+Future Events Chain:  [288, 301]
+Current Events Chain: [23, 8, 11, 16, 18, 20, 21, 22]
+xact 23 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 23 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 286
+Future Events Chain:  [288, 301]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8, 23]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 23 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 23 was blocked
+
+timestep = 287
+Future Events Chain:  [288, 301]
+Current Events Chain: [23, 8, 11, 16, 18, 20, 21, 22]
+xact 23 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 23 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 288
+Future Events Chain:  [301]
+Current Events Chain: [6, 22, 21, 20, 18, 16, 11, 8, 23]
+xact 6 is about to enter block 7 ('fac_leave', ['RAM'])
+Current Events Chain: [23, 8, 11, 16, 18, 20, 21, 22, 6]
+xact 23 is about to enter block 5 ('fac_enter', ['RAM'])
+Added xact 23 to facility RAM
+xact 23 is about to enter block 6 ('wait', [18])
+Wait(): exit time = 306
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 6 is about to enter block 8 ('reject', [1])
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 289
+Future Events Chain:  [301, 306]
+Current Events Chain: [8, 11, 16, 18, 20, 21, 22]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 290
+Future Events Chain:  [301, 306]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 291
+Future Events Chain:  [301, 306]
+Current Events Chain: [8, 11, 16, 18, 20, 21, 22]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 292
+Future Events Chain:  [301, 306]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 293
+Future Events Chain:  [301, 306]
+Current Events Chain: [8, 11, 16, 18, 20, 21, 22]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 294
+Future Events Chain:  [301, 306]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 295
+Future Events Chain:  [301, 306]
+Current Events Chain: [8, 11, 16, 18, 20, 21, 22]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 296
+Future Events Chain:  [301, 306]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 297
+Future Events Chain:  [301, 306]
+Current Events Chain: [8, 11, 16, 18, 20, 21, 22]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 298
+Future Events Chain:  [301, 306]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 299
+Future Events Chain:  [301, 306]
+Current Events Chain: [8, 11, 16, 18, 20, 21, 22]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 300
+Future Events Chain:  [301, 306]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 301
+Future Events Chain:  [306, 315]
+Current Events Chain: [24, 8, 11, 16, 18, 20, 21, 22]
+xact 24 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 24 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 302
+Future Events Chain:  [306, 315]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8, 24]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 24 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 24 was blocked
+
+timestep = 303
+Future Events Chain:  [306, 315]
+Current Events Chain: [24, 8, 11, 16, 18, 20, 21, 22]
+xact 24 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 24 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 304
+Future Events Chain:  [306, 315]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8, 24]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 24 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 24 was blocked
+
+timestep = 305
+Future Events Chain:  [306, 315]
+Current Events Chain: [24, 8, 11, 16, 18, 20, 21, 22]
+xact 24 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 24 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 306
+Future Events Chain:  [315]
+Current Events Chain: [23, 22, 21, 20, 18, 16, 11, 8, 24]
+xact 23 is about to enter block 7 ('fac_leave', ['RAM'])
+Current Events Chain: [24, 8, 11, 16, 18, 20, 21, 22, 23]
+xact 24 is about to enter block 5 ('fac_enter', ['RAM'])
+Added xact 24 to facility RAM
+xact 24 is about to enter block 6 ('wait', [18])
+Wait(): exit time = 324
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 23 is about to enter block 8 ('reject', [1])
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 307
+Future Events Chain:  [315, 324]
+Current Events Chain: [8, 11, 16, 18, 20, 21, 22]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 308
+Future Events Chain:  [315, 324]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 309
+Future Events Chain:  [315, 324]
+Current Events Chain: [8, 11, 16, 18, 20, 21, 22]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 310
+Future Events Chain:  [315, 324]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 311
+Future Events Chain:  [315, 324]
+Current Events Chain: [8, 11, 16, 18, 20, 21, 22]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 312
+Future Events Chain:  [315, 324]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 313
+Future Events Chain:  [315, 324]
+Current Events Chain: [8, 11, 16, 18, 20, 21, 22]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 314
+Future Events Chain:  [315, 324]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 315
+Future Events Chain:  [324, 331]
+Current Events Chain: [25, 8, 11, 16, 18, 20, 21, 22]
+xact 25 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 25 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 316
+Future Events Chain:  [324, 331]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8, 25]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 25 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 25 was blocked
+
+timestep = 317
+Future Events Chain:  [324, 331]
+Current Events Chain: [25, 8, 11, 16, 18, 20, 21, 22]
+xact 25 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 25 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 318
+Future Events Chain:  [324, 331]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8, 25]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 25 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 25 was blocked
+
+timestep = 319
+Future Events Chain:  [324, 331]
+Current Events Chain: [25, 8, 11, 16, 18, 20, 21, 22]
+xact 25 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 25 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 320
+Future Events Chain:  [324, 331]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8, 25]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 25 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 25 was blocked
+
+timestep = 321
+Future Events Chain:  [324, 331]
+Current Events Chain: [25, 8, 11, 16, 18, 20, 21, 22]
+xact 25 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 25 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 322
+Future Events Chain:  [324, 331]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8, 25]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 25 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 25 was blocked
+
+timestep = 323
+Future Events Chain:  [324, 331]
+Current Events Chain: [25, 8, 11, 16, 18, 20, 21, 22]
+xact 25 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 25 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 324
+Future Events Chain:  [331]
+Current Events Chain: [24, 22, 21, 20, 18, 16, 11, 8, 25]
+xact 24 is about to enter block 7 ('fac_leave', ['RAM'])
+Current Events Chain: [25, 8, 11, 16, 18, 20, 21, 22, 24]
+xact 25 is about to enter block 5 ('fac_enter', ['RAM'])
+Added xact 25 to facility RAM
+xact 25 is about to enter block 6 ('wait', [18])
+Wait(): exit time = 342
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 24 is about to enter block 8 ('reject', [1])
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 325
+Future Events Chain:  [331, 342]
+Current Events Chain: [8, 11, 16, 18, 20, 21, 22]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 326
+Future Events Chain:  [331, 342]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 327
+Future Events Chain:  [331, 342]
+Current Events Chain: [8, 11, 16, 18, 20, 21, 22]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 328
+Future Events Chain:  [331, 342]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 329
+Future Events Chain:  [331, 342]
+Current Events Chain: [8, 11, 16, 18, 20, 21, 22]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 330
+Future Events Chain:  [331, 342]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 331
+Future Events Chain:  [342, 345]
+Current Events Chain: [26, 8, 11, 16, 18, 20, 21, 22]
+xact 26 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 26 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 332
+Future Events Chain:  [342, 345]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8, 26]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 26 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 26 was blocked
+
+timestep = 333
+Future Events Chain:  [342, 345]
+Current Events Chain: [26, 8, 11, 16, 18, 20, 21, 22]
+xact 26 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 26 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 334
+Future Events Chain:  [342, 345]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8, 26]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 26 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 26 was blocked
+
+timestep = 335
+Future Events Chain:  [342, 345]
+Current Events Chain: [26, 8, 11, 16, 18, 20, 21, 22]
+xact 26 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 26 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 336
+Future Events Chain:  [342, 345]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8, 26]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 26 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 26 was blocked
+
+timestep = 337
+Future Events Chain:  [342, 345]
+Current Events Chain: [26, 8, 11, 16, 18, 20, 21, 22]
+xact 26 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 26 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 338
+Future Events Chain:  [342, 345]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8, 26]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 26 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 26 was blocked
+
+timestep = 339
+Future Events Chain:  [342, 345]
+Current Events Chain: [26, 8, 11, 16, 18, 20, 21, 22]
+xact 26 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 26 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 340
+Future Events Chain:  [342, 345]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8, 26]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 26 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 26 was blocked
+
+timestep = 341
+Future Events Chain:  [342, 345]
+Current Events Chain: [26, 8, 11, 16, 18, 20, 21, 22]
+xact 26 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 26 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 342
+Future Events Chain:  [345]
+Current Events Chain: [25, 22, 21, 20, 18, 16, 11, 8, 26]
+xact 25 is about to enter block 7 ('fac_leave', ['RAM'])
+Current Events Chain: [26, 8, 11, 16, 18, 20, 21, 22, 25]
+xact 26 is about to enter block 5 ('fac_enter', ['RAM'])
+Added xact 26 to facility RAM
+xact 26 is about to enter block 6 ('wait', [18])
+Wait(): exit time = 360
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 25 is about to enter block 8 ('reject', [1])
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 343
+Future Events Chain:  [345, 360]
+Current Events Chain: [8, 11, 16, 18, 20, 21, 22]
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 344
+Future Events Chain:  [345, 360]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+
+timestep = 345
+Future Events Chain:  [360, 357]
+Current Events Chain: [27, 8, 11, 16, 18, 20, 21, 22]
+xact 27 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 27 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 346
+Future Events Chain:  [360, 357]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8, 27]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 27 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 27 was blocked
+
+timestep = 347
+Future Events Chain:  [360, 357]
+Current Events Chain: [27, 8, 11, 16, 18, 20, 21, 22]
+xact 27 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 27 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 348
+Future Events Chain:  [360, 357]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8, 27]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 27 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 27 was blocked
+
+timestep = 349
+Future Events Chain:  [360, 357]
+Current Events Chain: [27, 8, 11, 16, 18, 20, 21, 22]
+xact 27 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 27 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 350
+Future Events Chain:  [360, 357]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8, 27]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 27 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 27 was blocked
+
+timestep = 351
+Future Events Chain:  [360, 357]
+Current Events Chain: [27, 8, 11, 16, 18, 20, 21, 22]
+xact 27 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 27 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 352
+Future Events Chain:  [360, 357]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8, 27]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 27 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 27 was blocked
+
+timestep = 353
+Future Events Chain:  [360, 357]
+Current Events Chain: [27, 8, 11, 16, 18, 20, 21, 22]
+xact 27 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 27 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 354
+Future Events Chain:  [360, 357]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8, 27]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 27 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 27 was blocked
+
+timestep = 355
+Future Events Chain:  [360, 357]
+Current Events Chain: [27, 8, 11, 16, 18, 20, 21, 22]
+xact 27 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 27 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 356
+Future Events Chain:  [360, 357]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8, 27]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 27 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 27 was blocked
+
+timestep = 357
+Future Events Chain:  [360, 372]
+Current Events Chain: [28, 27, 8, 11, 16, 18, 20, 21, 22]
+xact 28 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 28 was blocked
+xact 27 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 27 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 358
+Future Events Chain:  [360, 372]
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8, 27, 28]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 27 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 27 was blocked
+xact 28 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 28 was blocked
+
+timestep = 359
+Future Events Chain:  [360, 372]
+Current Events Chain: [28, 27, 8, 11, 16, 18, 20, 21, 22]
+xact 28 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 28 was blocked
+xact 27 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 27 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+
+timestep = 360
+Future Events Chain:  [372]
+Current Events Chain: [26, 22, 21, 20, 18, 16, 11, 8, 27, 28]
+xact 26 is about to enter block 7 ('fac_leave', ['RAM'])
+Current Events Chain: [28, 27, 8, 11, 16, 18, 20, 21, 22, 26]
+xact 28 is about to enter block 5 ('fac_enter', ['RAM'])
+Added xact 28 to facility RAM
+xact 28 is about to enter block 6 ('wait', [18])
+Wait(): exit time = 378
+xact 27 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 27 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 26 is about to enter block 8 ('reject', [1])
+Current Events Chain: [22, 21, 20, 18, 16, 11, 8, 27]
+xact 22 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 22 was blocked
+xact 21 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 21 was blocked
+xact 20 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 20 was blocked
+xact 18 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 18 was blocked
+xact 16 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 16 was blocked
+xact 11 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 11 was blocked
+xact 8 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 8 was blocked
+xact 27 is about to enter block 5 ('fac_enter', ['RAM'])
+xact 27 was blocked
+
+
+
+
+
+
+================================================================================

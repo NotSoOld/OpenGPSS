@@ -1121,9 +1121,12 @@ def parsePrimaryWord(word):
 		val = interpreter.hists[word].name
 	elif word in fac_params+queue_params+xact_params+ \
 	               chain_params+hist_params+['xact', 'chxact']+ \
-	               arrays_info.keys()+matrices_info.keys()+ \
-	               interpreter.xact.params.keys():
+	               arrays_info.keys()+matrices_info.keys():#+ \
+	               #interpreter.xact.params.keys():
 		val = word
+	elif type(interpreter.xact.params.keys()) is not None and \
+	     word in interpreter.xact.params.keys():
+	    val = word
 	else:
 		errors.print_error(6, lineindex, [word])
 

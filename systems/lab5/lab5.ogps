@@ -1,0 +1,82 @@
+/*
+Задание
+Промоделировать в течение времени TM многопроцессорную вычислительную систему (рис. 10), состоящую из n (заданного числа) процессоров, которые обращаются к одной оперативной памяти. После обработки команды (заявки) в i-ом процессоре он посылает запрос на выборку необходимых данных из ОП. Выбранная из ОП команда или данные возвращаются на тот процессор, от которого они пришли. Время обработки Ti заявки в ЦПi, количество заявок Ni (если Ni не указано, то заявки генерируются через время TNi) и приоритет PRi зависят от номера процессора.
+
+Tji – время обработки j-ой заявки на i-ом процессоре. 
+tji - время выборки информации из ОП j заявки, поступившей с i-го ЦП
+*/
+
+fac RAM;
+fac CPU1;
+fac CPU2;
+fac CPU3;
+fac CPU4;
+mark TORAM;
+mark TOCPU1;
+mark TOCPU2;
+mark TOCPU3;
+mark TOCPU4;
+int id_counter = 1;
+
+function RAM_time()
+{
+	xact.group == "CPU1", prob1(random01()) |
+	xact.group == "CPU2", prob2(xact.id) |
+	xact.group == "CPU3", prob3(random01()) |
+	xact.group == "CPU4", 3
+};
+
+function prob1(prob)
+{
+	prob < 0.1, 6 |
+	prob < 0.4, 5 |
+	1, 4
+};
+
+function prob2(id)
+{
+	id = 1, 6 |
+	id = 2, 4
+};
+
+function prob3(prob)
+{
+	prob < 0.3, 5 |
+	prob < 0.6, 4 |
+	1, 3
+};
+
+exitwhen(curticks == 2500);
+{{
+
+inject("CPU1", 0, 0, 0, 6) { priority = 100 };
+TOCPU1: fac_enter(CPU1);
+wait(3);
+fac_leave(CPU1);
+->> TORAM;
+
+inject("CPU2", 0, 0, 0, 2) { priority = 30, id = 0 };
+xact.id = id_counter;
+id_counter++;
+TOCPU2: fac_enter(CPU2);
+wait(8);
+fac_leave(CPU2);
+->> TORAM;
+
+inject("CPU3", 250, 0, 0, 0) { priority = 50 };
+TOCPU3: fac_enter(CPU3);
+wait(6);
+fac_leave(CPU3);
+->> TORAM;
+
+inject("CPU4", 400, 0, 0, 6) { priority = 60 };
+TOCPU4: fac_enter(CPU4);
+wait(10, 2);
+fac_leave(CPU4);
+
+TORAM: fac_enter(RAM);
+wait(RAM_time());
+fac_leave(RAM);
+->> "TO"+xact.group;
+
+}}

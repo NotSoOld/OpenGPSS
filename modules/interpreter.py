@@ -87,6 +87,21 @@ def inject(injector):
 		injector.tdelay = 0
 	futureChain.append([futime, xa])
 	toklines[xa.curblk][-1][2] += 1
+	
+def inject_immediately(injector):
+	global futureChain
+	global ints
+	global toklines
+	xa = Xact(injector.group, ints['injected'].value, injector.block, injector.params)
+	ints['injected'].value += 1
+	if injector.limit != -1:
+		injector.limit -= 1
+	futime = 0
+	if injector.tdelay != 0:
+		futime += injector.tdelay
+		injector.tdelay = 0
+	futureChain.append([futime, xa])
+	toklines[xa.curblk][-1][2] += 1
 
 def queue_enter(qid):
 	global toklines
@@ -715,7 +730,7 @@ def start_interpreter(filepath):
 	logfile = None
 	if config.log_to_file:
 		name = filepath[:-5]
-		now = datetime.dateime.now()
+		now = datetime.datetime.now()
 		print 'All logs will be saved in "' + name + \
 		      '_log_'+now.strftime("%Y-%m-%d %H:%M")+ \
 		      '.txt" file (log file can become very large!).'
@@ -791,7 +806,7 @@ def start_interpreter(filepath):
 		if ['block', 'inject'] in line:
 			newinj = parser.parseInjector(line)
 			injectors[newinj.group] = newinj
-			inject(newinj)
+			inject_immediately(newinj)
 			
 	while True:
 		tempCurrentChain = []
@@ -1129,8 +1144,13 @@ def print_results():
 		      'Irrupt chain'
 		print '- '*55
 		for fac in facilities:
-			print ('{:.2f}'.format(fac.processedxactsticks/float(
-			      fac.enters_f - (fac.maxplaces - fac.curplaces)))).ljust(19) + \
+			val = ''
+			if fac.enters_f == 0:
+				val = '(no enters)'
+			else:
+				val = ('{:.2f}'.format(fac.processedxactsticks/float(
+			      fac.enters_f - (fac.maxplaces - fac.curplaces))))
+			print val.ljust(19) + \
 			      str(fac.isAvail).ljust(14) + \
 			      str(fac.avail_time).ljust(14) + \
 			      str(fac.unavail_time).ljust(16) + \
@@ -1163,11 +1183,16 @@ def print_results():
 		      'Current length'
 		print '- '*55
 		for qu in queues:
+			val = ''
+			if qu.enters_q == 0:
+				val = '(no enters)'
+			else:
+				val = ('{:.2f}'.format(qu.zero_entries / 
+			      float(qu.enters_q) * 100))
 			print str(qu.name).ljust(lname+5) + \
 			      str(qu.enters_q).ljust(10) + \
 			      str(qu.zero_entries).ljust(15) + \
-			      ('{:.2f}'.format(qu.zero_entries / 
-			      float(qu.enters_q) * 100)).ljust(18) + \
+			      val.ljust(18) + \
 			      str(qu.maxxacts).ljust(13) + \
 			      ('{:.2f}'.format(qu.sumforavg/float(ints['curticks']
 			      .value)).ljust(13)) + \
@@ -1184,14 +1209,19 @@ def print_results():
 		      '[index, enter time]'
 		print '- '*55
 		for qu in queues:
+			avg = ''
 			avg_wo_zero = ''
 			if qu.enters_q - qu.curxacts - qu.zero_entries == 0:
 				avg_wo_zero = '(no data)'
 			else:
 				avg_wo_zero = '{:.2f}'.format(qu.sum_for_avg_time_in_queue / 
 					  float(qu.enters_q - qu.curxacts - qu.zero_entries))
-			print ('{:.2f}'.format(qu.sum_for_avg_time_in_queue / 
-			      float(qu.enters_q - qu.curxacts))).ljust(12) + \
+			if qu.enters_q - qu.curxacts == 0:
+				avg = '(no data)'
+			else:
+				avg = ('{:.2f}'.format(qu.sum_for_avg_time_in_queue / 
+			      float(qu.enters_q - qu.curxacts)))
+			print avg.ljust(12) + \
 			      avg_wo_zero.ljust(24) + \
 			      str(qu.max_time_in_queue).ljust(12) + \
 			      str(qu.queuedxacts)
