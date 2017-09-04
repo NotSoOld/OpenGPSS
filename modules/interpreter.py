@@ -37,7 +37,6 @@ chains = {}
 facilities = {}
 queues = {}
 marks = {}
-chains = {}
 injectors = {}
 hists = {}
 graphs = {}
@@ -54,6 +53,7 @@ original_stdout = None
 logfile = None
 results_file = None
 file_path = ''
+antihalt = 0
 
 BOLD = '\033[1m'
 NORM = '\033[0m'
@@ -722,6 +722,7 @@ def start_interpreter(filepath):
 	global logfile
 	global results_file
 	global file_path
+	global antihalt
 	file_path = filepath
 	
 	toklines = parser.tocodelines(tokens)
@@ -810,11 +811,13 @@ def start_interpreter(filepath):
 			
 	while True:
 		tempCurrentChain = []
-		print '\ntimestep =', ints['curticks'].value
+		if config.log_tick_start:
+			print '\ntimestep =', ints['curticks'].value
 		if config.tick_by_tick_simulation:
 			ttt = raw_input()
 		
 		for xa in futureChain:
+			antihalt = 0
 			if xa[0] == ints['curticks'].value:
 				currentChain.append(xa[1])
 				# Inject new xact if we move injected xact 
@@ -826,7 +829,8 @@ def start_interpreter(filepath):
 				# to modify collection we're iterating)
 				xa[0] = -1
 		futureChain = [xa for xa in futureChain if xa[0] != -1]
-		print 'Future Events Chain: ', list(xa[0] for xa in futureChain)
+		if config.log_CEC_and_FEC:
+			print 'Future Events Chain: ', list(xa[0] for xa in futureChain)
 		
 		restart = True
 		interrupt = False
@@ -835,9 +839,11 @@ def start_interpreter(filepath):
 			currentChain = sorted(currentChain, 
 			                      key=lambda xa: xa.params['priority'])
 			currentChain.reverse()
-			print 'Current Events Chain:', list(xa.index for xa in currentChain)
+			if config.log_CEC_and_FEC:
+				print 'Current Events Chain:', list(xa.index for xa in currentChain)
 			restart = False
 			for cxact in currentChain:
+				antihalt = 0
 				xact = copy.deepcopy(cxact)
 				if restart or interrupt:
 					tempCurrentChain.append(xact)
@@ -894,6 +900,22 @@ def start_interpreter(filepath):
 		# Stop modelling.
 		if checkExitCond():
 			break
+		if config.enable_antihalt:
+			antihalt += 1
+			if antihalt >= config.antihalt_threshold:
+				if original_stdout:
+					sys.stdout = original_stdout
+				print "FEC and CEC are empty for more than " + \
+				      str(config.antihalt_threshold) + \
+				      "ticks, system is halting.\nWould you like " + \
+				      "to finish simulation now? [y/n]"
+				inp = raw_input()
+				if inp.startswith('y'):
+					break
+				else:
+					if logfile:
+						sys.stdout = logfile
+					antihalt = 0
 	
 	count_xacts_on_blocks()
 	

@@ -414,6 +414,10 @@ List of available features (with defaults in parens):
 
 - print\_program\_in\_tokens (True) - if true, before simulation your program will be printed as interpreter sees it, i.e. in tokenized form (tokens are separate numbers, words, operators, blocks, etc.). Sometimes useful for debugging misspellings.
 
+- log\_tick\_start (True) - if true, at the beginning of every beat the message with the current tick index will be printed.
+
+- log\_CEC\_and\_FEC (True) - if true, in the beginning of every beat CEC and FEC contents will be printed. CEC is also printed every time CEC review is triggered.
+
 - log\_xact\_trace (True) - if true, every xact will print name and line of block which it currently tries to enter, so you can see trace of each xact.
 
 - log\_xact\_blocking (True) - if true, every time xact is blocked corresponding message will be printed.
@@ -425,6 +429,10 @@ List of available features (with defaults in parens):
 - log\_assignments (False) - if true, every assignment parsing result will be printed. Use it when you're not sure if assignment is interpreted correctly.
 
 - log\_dot\_operator (False) - if true, you'll see what left-side and right-side values of each dot operation are.
+
+- enable\_antihalt (True) - "antihalt" is a special "watchdog": if there is nothing happening in the system for a long time (no xact movement, no xacts in CEC and FEC), a dialog will appear which asks if the simulation should be finished now as it won't go any further. System can halt not only because of user's fault, system might be organized in a such way. So, in some cases you might want to disable antihalt.
+
+- antihalt\_threshold (1000) - threshold value for antihalt watchdog, measured in ticks. If CEC and FEC are empty for specified amount of ticks, a dialog will appear.
 
 - tick\_by\_tick\_simulation (False) - if true, in the begginning of every time beat the simulation will wait user's input (so you can read logs of previous beat simulation); if false, simualtion will go from beginning to end.
 
@@ -1460,6 +1468,10 @@ Along with error index and message, line index (if any can be specified) is prin
 - **62**: Arrays/matrices of type "type" are not allowed
 
 	You cannot create arrays of functions and marks (because you don't need to).
+	
+- **63**: Value of parameter "name" is of unknown type
+
+	You set a wrong value for the specified configuration parameter.
 	
 
 ### List of warnings:

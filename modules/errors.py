@@ -87,17 +87,14 @@ errors = {
           59:'No such graph: "{}"',
           60:'Unknown configuration parameter: "{}"',
           61:'Multiple variable/array definition with the same name "{}"',
-          62:'Arrays/matrices of type "{}" are not allowed'
+          62:'Arrays/matrices of type "{}" are not allowed',
+          63:'Value of parameter {} is of unknown type'
          }
 
 warnings = {
             1:'Everything except definitions in non-executive area will be '\
               'totally IGNORED.\nIf you see this, double-check definition '\
               'area of your program.',
-       #     2:'Xact parameters\' custom names (like "{}") are acceptible but '\
-       #      'HIGHLY undesirable because they can lead to "parameter not found"'\
-       #     ' errors very easily (for example, for xacts from other group). '\
-       #    'They also got type "string" by default which you may not want.',
             3:'Mark "{}" cannot be found as transporting label (at the left of '\
               '":"). Is it needed at all?',
             4:'Duplicate xact parameter "{}"; previous value of "{}" '\
@@ -108,6 +105,9 @@ warnings = {
            }
 
 def print_error(error_code, line, args=[], add=''):
+	
+	if interpreter.original_stdout:
+		sys.stdout = interpreter.original_stdout
 	
 	print '\n\n'+'/'*30
 	print 'ERROR {!s}{!s} in line {!s}:'.format(error_code, add, line)

@@ -9,7 +9,7 @@
 #                                                #
 # parser.py - processes every token line of      #
 # a program, creating variables and executing    #
-# blocks and functions. Parsers expressions.     #
+# blocks and functions. Parses expressions.      #
 #                                                #
 ##################################################
 
