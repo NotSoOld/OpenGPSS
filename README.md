@@ -11,7 +11,7 @@
 
 ---
 
-# OpenGPSS Interpreter (beta v0.4)
+# OpenGPSS Interpreter (release 1.0)
 
 *([README на русском](./README_RU.md))*
 

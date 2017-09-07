@@ -10,7 +10,7 @@
 
 ---
 
-# OpenGPSS Manual (beta v0.4)
+# OpenGPSS Manual (release 1.0)
 
 
 ## Navigation

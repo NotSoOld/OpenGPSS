@@ -9,6 +9,7 @@ mark KMM;
 mark CVK;
 mark KILL;
 int xacts_at_terminals[3];
+int i = 0;
 
 function terminal_time(prob)
 {
@@ -110,9 +111,12 @@ fac_leave(CVK);
 KILL:
 if(rejected == 2)
 {
-	xacts_at_terminals[0] = T[0].enters_f - (1 - T[0].curplaces);
-	xacts_at_terminals[1] = T[1].enters_f - (1 - T[1].curplaces);
-	xacts_at_terminals[2] = T[2].enters_f - (1 - T[2].curplaces);
+	i = 0;
+	loop_times(i, 3)
+	{
+		xacts_at_terminals[i] = T[i].enters_f - (1 - T[i].curplaces);
+	}
+	
 }
 reject(1);
 

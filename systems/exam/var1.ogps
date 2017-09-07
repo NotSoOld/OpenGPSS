@@ -1,0 +1,90 @@
+/*
+Написать в системе моделирования GPSS модель функционирования ВС:  Ко-
+манды считываются из секционированной памяти (СП) в буферную память, а
+далее  в  один из процессоров.  После выполнения в процессоре возможно
+уничтожение последующих за выполненной команд,  находящихся в  буфере,
+процессорах и считываемых из СП.    
+  Вариант задачи:
+1. Секционированная память:
+   1.1. С параллельным опросом секций.
+2. Буфер памяти конечной емкости:
+   2.1. Локальный ресурс для каждого процессора.
+3. Работа секций памяти при заполненной буферной памяти:
+   3.1. С блокировкой работы.
+4. Процессоры:
+   4.1. Специализированные.
+5. Время   выполнения  команд  в  СП  и  процессорах  задано  функцией
+   распределения:
+5.1.  Равновероятной.
+*/
+
+fac RAM;
+fac CPU[3];
+chain buf[3];
+int RAM_xact_index = 4;
+int CPU_xact_indexes[3] = 4;
+int buf_capacity = 20;
+int it = 0;
+mark RAM;
+mark Buffers;
+mark CPUs;
+mark FromBuffers;
+mark Cleaning;
+mark Trash;
+
+exitwhen(curticks >= 10000);
+{{
+
+/* RAM: */
+inject("RAM xact", 0, 0, 0, 1) {type = 0, priority = 1};
+RAM: wait_until(buf[0].length < buf_capacity && 
+                buf[1].length < buf_capacity && 
+                buf[2].length < buf_capacity);
+fac_enter(RAM);
+wait(30, 8);
+fac_leave(RAM);
+copy(4, Buffers);
+RAM_xact_index += 4;
+->> RAM;
+
+/* Buffers: */
+Buffers: xact.type = random_int(0, 2);
+chain_enter(buf[xact.type]);
+
+/* CPUs: */
+inject("CPU xact", 0, 0, 0, 3) {type = 0};
+xact.type = it;
+it++;
+FromBuffers:
+wait_until(CPU[xact.type].curplaces == 1 && buf[xact.type].length > 0);
+chain_leave(buf[xact.type], 1, CPUs);
+->> FromBuffers;
+
+CPUs: fac_enter(CPU[xact.type]);
+CPU_xact_indexes[xact.type] = xact.index;
+wait(5 * (xact.type + 1), 4);
+fac_leave(CPU[xact.type]);
+->| Cleaning, 0.05;
+Trash: reject(1);
+
+/* Cleaning mechanism: */
+Cleaning: it = 0;
+loop_times(it, 3)
+{
+	output("length of buffer "+to_str(it)+" = "+to_str(buf[it].length));
+	chain_pick(buf[it], chxact.index > xact.index, 20, Trash);
+	if(CPU_xact_indexes[it] > xact.index)
+	{
+		fac_irrupt(CPU[it], 1, true, Trash);
+		fac_goaway(CPU[it]);
+	}
+}
+if(RAM_xact_index > xact.index)
+{
+	fac_irrupt(RAM, 1, true, RAM);
+	RAM_xact_index += 4;
+	fac_goaway(RAM);
+}
+->> Trash;
+
+}}

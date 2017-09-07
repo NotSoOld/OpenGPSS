@@ -198,8 +198,12 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 	# (fac, 1, True, '', xact.p1) <-- in addition, save elapsed time to xact.p1
 	# (fac, 1, False) <-- flush to irrupt chain and save elapsed time
 	# (fac, 1, False, ...) <-- prohibited!
+	global xact
 	if fid not in facilities.keys():
 		errors.print_error(43, xact.curblk+1, [fid])
+	global futureChain
+	global currentChain
+	global tempCurrentChain
 	if xact.index in facilities[fid].busyxacts:
 		errors.print_error(47, xact.curblk+1)
 	if mark != '':
@@ -232,6 +236,7 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 				found = True
 				break
 		if found:
+			print 'deleting xact from CEC', ir_index, currentChain[i].index, currentChain[i].cond
 			if eject:
 				xa = copy.deepcopy(currentChain[i])
 				xa.cond = 'canmove'
@@ -249,11 +254,12 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 					xact = xa
 					parser.parseAssignment(elapsedto)
 					xact = oldxact
-				currentChain.append(xa)
+				tempCurrentChain.append(xa)
 			else:
 				facilities[fid].irruptch.append([copy.deepcopy(currentChain[i]), 
 				                               0, ir_vol])
-			del currentChain[i]
+			currentChain[i].cond = 'irrupted'
+			currentChain[i].index = -1
 			continue
 			
 		found = False
@@ -262,7 +268,10 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 				found = True
 				break
 		if found:
+			print 'deleting xact from FEC', ir_index
 			if eject:
+				#xxa = futureChain.pop(i)
+				#xa = xxa[1]
 				xa = copy.deepcopy(futureChain[i][1])
 				xa.cond = 'canmove'
 				if mark == '':
@@ -272,6 +281,7 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 				# additionally parse assignment here 
 				# (elapsed time = futureChain[i][0] - ints['curticks'])
 				if elapsedto != []:
+					#elapsed = xxa[0] - ints['curticks'].value
 					elapsed = futureChain[i][0] - ints['curticks'].value
 					elapsedto += [['eq', ''], ['number', elapsed], ['eocl', '']]
 					# We need 'xa' for assignment:
@@ -281,11 +291,13 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 					xact = xa
 					parser.parseAssignment(elapsedto)
 					xact = oldxact
-				currentChain.append(xa)
+				tempCurrentChain.append(xa)
 			else:
+				xa = futureChain.pop(i)
 				facilities[fid].irruptch.append(
-				     [copy.deepcopy(futureChain[i][1]),
-				     futureChain[i][0] - ints['curticks'].value, ir_vol])
+					#[xa[1], xa[0] - ints['curticks'].value, ir_vol])
+				    [copy.deepcopy(futureChain[i][1]),
+				    futureChain[i][0] - ints['curticks'].value, ir_vol])
 			del futureChain[i]
 			continue
 			
@@ -314,7 +326,7 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 						xact = xa
 						parser.parseAssignment(elapsedto)
 						xact = oldxact
-					currentChain.append(xa)
+					tempCurrentChain.append(xa)
 				else:
 					facilities[fid].irruptch.append(
 					          [copy.deepcopy(chains[ch].xacts[i]), 0, ir_vol])
@@ -323,6 +335,7 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 				break
 	# Add irrupting xact to facility (will always succeed).
 	fac_enter(fid, vol)
+	print "after:", futureChain
 		
 def fac_goaway(fid):
 	if fid not in facilities.keys():
@@ -346,7 +359,7 @@ def fac_goaway(fid):
 		if facilities[fid].curplaces < xainfo[2][0]:
 			continue
 		if xainfo[1] == 0:
-			currentChain.append(copy.deepcopy(xainfo[0]))
+			tempCurrentChain.append(copy.deepcopy(xainfo[0]))
 		else:
 			futureChain.append([xainfo[1], copy.deepcopy(xainfo[0])])
 		facilities[fid].busyxacts[xainfo[0].index] = xainfo[2]
@@ -445,8 +458,12 @@ def chain_pick(chid, cond, cnt, toblk=''):
 			errors.print_error(30, xact.curblk+1, [toblk])
 	move()
 	global chxact
+	foundSomething = False
+	cond.append(['eocl', ''])
 	while True:
 		if len(chains[chid].xacts) == 0:
+			break
+		if cnt == 0:
 			break
 		for temp_chxa in chains[chid].xacts:
 			chxact = copy.deepcopy(temp_chxa)
@@ -463,8 +480,11 @@ def chain_pick(chid, cond, cnt, toblk=''):
 				else:
 					xa.curblk = xact.curblk
 				tempCurrentChain.append(xa)
+				foundSomething = True
 				break
-		if cnt == 0:
+		if foundSomething:
+			continue
+		else:
 			break
 	chxact = None		
 			
@@ -480,14 +500,18 @@ def chain_find(chid, index_expr, cnt, toblk):
 		if marks[toblk].block == -1:
 			errors.print_error(30, xact.curblk+1, [toblk])
 	move()
+	foundSomething = False
 	while True:
 		if len(chains[chid].xacts) == 0:
+			break
+		if cnt == 0:
 			break
 		index = -1
 		if type(index_expr) is int:
 			index = index_expr
 		else:
 			parser.pos = 0
+			index_expr.append(['eocl', ''])
 			parser.tokline = index_expr
 			index = parser.parseExpression()
 		for chxa in chains[chid].xacts:
@@ -502,8 +526,11 @@ def chain_find(chid, index_expr, cnt, toblk):
 				else:
 					xa.curblk = xact.curblk
 				tempCurrentChain.append(xa)
+				foundSomething = True
 				break
-		if cnt == 0:
+		if foundSomething:
+			continue
+		else:
 			break
 	
 def if_block(cond):
@@ -875,6 +902,8 @@ def start_interpreter(filepath):
 							interrupt = True
 						elif xact.cond == 'flush':
 							flush = True
+						elif xact.cond == 'irrupt' or xact.cond == 'waiting':
+							cxact.index = -1
 						break
 				if flush:
 					currentChain = []

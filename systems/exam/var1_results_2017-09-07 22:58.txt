@@ -1,0 +1,175 @@
+
+
+SIMULATION RESULTS OF SYSTEM /media/notsoold/Shared/coding/python/opengpss/systems/exam/var1.ogps
+
+Simulation finished at 2017-09-07 22:58
+
+
+
+-------- Generated program: --------
+(line index, current xacts, total executions, line of code)
+
+01           fac RAM;
+02           fac CPU[3];
+03           chain buf[3];
+04           int RAM_xact_index = 4;
+05           int CPU_xact_indexes[3] = 4;
+06           int buf_capacity = 20;
+07           int it = 0;
+08           mark RAM;
+09           mark Buffers;
+10           mark CPUs;
+11           mark FromBuffers;
+12           mark Cleaning;
+13           mark Trash;
+14           exitwhen(curticks >= 10000);
+15           {{
+16     0307  inject("RAM xact", 0, 0, 0, 1) {type = 0, priority = 1};
+17     0364  RAM: wait_until(buf[0].length < buf_capacity && buf[1].length < buf_capacity && buf[2].length < buf_capacity);
+18     0364  fac_enter(RAM);
+19  1  0364  wait(30, 8);
+20     0306  fac_leave(RAM);
+21     0306  copy(4, Buffers);
+22     0306  RAM_xact_index += 4;
+23           ->> RAM;
+24     1224  Buffers: xact.type = random_int(0, 2);
+25     1224  chain_enter(buf[xact.type]);
+26     0003  inject("CPU xact", 0, 0, 0, 3) {type = 0};
+27     0003  xact.type = it;
+28  3  1227  it++;
+29     1224  FromBuffers: wait_until(CPU[xact.type].curplaces == 1 && buf[xact.type].length > 0);
+30     1224  chain_leave(buf[xact.type], 1, CPUs);
+31  1        ->> FromBuffers;
+32     1223  CPUs: fac_enter(CPU[xact.type]);
+33     1223  CPU_xact_indexes[xact.type] = xact.index;
+34  3  1223  wait(5 * (xact.type + 1), 4);
+35     1192  fac_leave(CPU[xact.type]);
+36     1192  ->| Cleaning, 0.05;
+37     1279  Trash: reject(1);
+38     0059  Cleaning: it = 0;
+39     0176  loop_times(it, 3)
+40     0176  {
+41     0176     output("length of buffer " + to_str(it) + " = " + to_str(buf[it].length));
+42     0176     chain_pick(buf[it], chxact.index > xact.index, 20, Trash);
+43     0049     if(CPU_xact_indexes[it] > xact.index)
+44     0049     {
+45     0049        fac_irrupt(CPU[it], 1, true, Trash);
+46     0049        fac_goaway(CPU[it]);
+47     0176     }
+48     0059  }
+49     0059  if(RAM_xact_index > xact.index)
+50     0059  {
+51     0059     fac_irrupt(RAM, 1, true, RAM);
+52     0059     RAM_xact_index += 4;
+53     0059     fac_goaway(RAM);
+54     0059  }
+55           ->> Trash;
+56           }}
+
+
+Simulation time: 10000 beats
+
+
+-------- Integer variables: --------
+
+Name                  Value
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+RAM_xact_index        1464
+buf_capacity          20
+curticks              10000
+injected              1228
+it                    3
+rejected              1220
+
+CPU_xact_indexes   [ 1224, 1226, 1227 ]
+
+
+
+
+-------- Facilities: --------
+                                                           Busyness       Busyness       Current xacts
+Name       Places    Max xacts    Auto queued   Enters     (weighted)     (unweighted)   (index: [vol, enter time])
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+CPU[0]     1         1            True          407        0.201          0.201          {1224: [1, 9997]}
+CPU[1]     1         1            True          439        0.418          0.418          {1226: [1, 9997]}
+CPU[2]     1         1            True          426        0.595          0.595          {1227: [1, 9997]}
+RAM        1         1            True          423        1.000          1.000          {0: [1, 9996]}
+
+
+Average                                                        Availa-      Irrupted    
+processing time    Is available  Avail. time   Unavail. time   bility (%)   xacts       Irrupt chain
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+4.93               True          10000         0               100.00       0           []
+9.42               True          10000         0               100.00       0           []
+13.80              True          10000         0               100.00       0           []
+22.08              True          10000         0               100.00       0           []
+
+
+
+-------- Queues: --------
+
+Name       Enters    Zero entries   Zero entries (%)  Max length   Avg length   Current length
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+CPU[0]     407       377            92.63             3            0.09         0                  
+CPU[1]     439       400            91.12             3            0.21         0                  
+CPU[2]     427       384            89.93             4            0.31         1                  
+RAM        423       423            100.00            1            0.00         0                  
+
+
+Avg xact    Avg xact wait time      Max xact    Current queue contents
+wait time   (w/o zero entries)      wait time   [index, enter time]
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+2.09        28.33                   21          []
+4.71        53.00                   29          []
+7.25        73.52                   62          [[1225, 9997]]
+0.00        (no data)               0           []
+
+
+
+-------- User chains: --------
+
+Name       Current length     Current xacts (indexes)
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+buf[0]     0                  []
+buf[1]     0                  []
+buf[2]     0                  []
+
+
+
+-------- Marks: --------
+
+Name            Corresponding line
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+Buffers         24
+CPUs            32
+Cleaning        38
+FromBuffers     29
+RAM             17
+Trash           37
+
+
+
+-------- Future events chain: --------
+
+Move time   Xact group        Xact ID    Xact curblock    Xact status
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+10019       RAM xact          0          19               waiting
+10008       RAM xact          1227       34               waiting
+10004       RAM xact          1226       34               waiting
+10003       RAM xact          1224       34               waiting
+
+
+
+-------- Current events chain: --------
+
+Xact group    Xact ID    Xact curblock    Xact status
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+RAM xact      1225       31               blocked
+CPU xact      1          28               blocked
+CPU xact      2          28               blocked
+CPU xact      3          28               blocked
+
+
+
+
+================================================================================

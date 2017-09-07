@@ -406,7 +406,7 @@ def parseDefinition(line):
 					continue
 				else:
 					pos -= 1
-			toks.append(peek(0))
+			toks.append(copy.deepcopy(peek(0)))
 			nexttok()
 		
 		newobj = structs.ConditionalFunction(name, args, choices)
@@ -553,11 +553,14 @@ def parseBlock(line, not_first_loop=False):
 						if depth == -1:
 							consume('rparen')
 							break
+						if peek(0)[0] == 'comma' and depth == 0:
+							consume('comma')
+							break
 						toks.append(peek(0))
 						nexttok()
 					args.append(toks)
 					continue
-						
+				
 				args.append(parseExpression())
 				if peek(0)[0] == 'comma':
 					consume('comma')
@@ -858,7 +861,8 @@ def parseLogicalOr():
 	result = parseLogicalAnd()
 	while True:
 		if matchtok('or'):
-			result = result or parseLogicalAnd()
+			rh = parseLogicalAnd()
+			result = result or rh
 			continue
 		break
 	return result
@@ -867,9 +871,11 @@ def parseLogicalAnd():
 	result = parseCompEq()
 	while True:
 		if matchtok('and'):
-			result = result and parseCompEq()
+			rh = parseCompEq()
+			result = result and rh
 			continue
 		break
+		
 	return result
 	
 def parseCompEq():
@@ -1121,15 +1127,13 @@ def parsePrimaryWord(word):
 		val = interpreter.hists[word].name
 	elif word in fac_params+queue_params+xact_params+ \
 	               chain_params+hist_params+['xact', 'chxact']+ \
-	               arrays_info.keys()+matrices_info.keys():#+ \
-	               #interpreter.xact.params.keys():
+	               arrays_info.keys()+matrices_info.keys():
 		val = word
 	elif type(interpreter.xact.params.keys()) is not None and \
 	     word in interpreter.xact.params.keys():
 	    val = word
 	else:
 		errors.print_error(6, lineindex, [word])
-
 	return val
 
 def parseConditionalFunction(functionName):
@@ -1191,7 +1195,7 @@ def parseIndirect(val=''):
 	if val == '':
 		consume('indirect')
 		val = parseExpression()
-	ln = lexer.analyze(val+';\0')
+	ln = lexer.analyze(str(val)+';\0')
 	ln.pop()
 	oldline = copy.deepcopy(tokline)
 	oldpos = pos

@@ -11,7 +11,7 @@
 
 ---
 
-# Интерпретатор OpenGPSS (бета 0.4)
+# Интерпретатор OpenGPSS (релиз 1.0)
 
 *([English README](./README.md))*
 

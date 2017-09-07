@@ -1,0 +1,96 @@
+attach strings;
+
+fac KMM;
+fac CVK;
+fac ARM[3];
+fac T1;
+fac T2;
+fac T3;
+int xacts_at_terminals[3] = 0;
+mark Terminals;
+mark KILL;
+mark KMM;
+
+function terminals_priority()
+{
+	xact.group == "T1", 50 |
+	xact.group == "T2", 30 |
+	xact.group == "T3", 10
+};
+
+function terminal_time()
+{
+	random01() < 0.6, 40 |
+	1, 35
+};
+
+function kmm_time()
+{
+	xact.group == "T1", 1 |
+	xact.group == "T2" && random01() < 0.1, 3 |
+	xact.group == "T2", 2 |
+	xact.group == "T3", 4
+};
+
+function cvk_time()
+{
+	random01() < 0.5, 45 |
+	1, 40
+};
+
+exitwhen(KMM.enters_f > 500);
+{{
+
+inject("T1", 120, 50, 0, 32) {priority = 50, type = "from_arm", 
+                              arm_time = 22, arm_delta = 7};
+inject("T2", 150, 0, 0, 23) {priority = 30, type = "from_arm",
+                             arm_time = 27, arm_delta = 5};
+inject("T3", 100, 0, 140, 18) {priority = 10, type = "from_arm",
+                               arm_time = 20, arm_delta = 3};
+
+/* Terminals: */
+Terminals: fac_enter(xact.group);
+xact.priority = terminals_priority();
+xact.type = "from_arm";
+wait(terminal_time());
+fac_leave(xact.group);
+if((~(xact.group).enters_f - (1 - ~(xact.group).curplaces)) % 15 == 0)
+{
+	->> KILL;
+}
+
+/* ARMs: */
+fac_enter(ARM[to_int(strings.substr(xact.group, 1, 1)) - 1]);
+wait(xact.arm_time, xact.arm_delta);
+fac_leave(ARM[to_int(strings.substr(xact.group, 1, 1)) - 1]);
+->| Terminals, 0.7;
+
+/* KMM: */
+KMM: fac_enter(KMM);
+if(xact.type == "from_cvk")
+{
+	xact.priority = 60;
+}
+wait(kmm_time());
+fac_leave(KMM);
+->? Terminals, xact.type == "from_cvk";
+
+/* CVK: */
+fac_enter(CVK);
+xact.priority -= 10;
+xact.type = "from_cvk";
+wait(cvk_time());
+fac_leave(CVK);
+->> KMM;
+
+/* Junkyard: */
+KILL:
+if(rejected == 2)
+{
+	xacts_at_terminals[0] = T1.enters_f - (1 - T1.curplaces);
+	xacts_at_terminals[1] = T2.enters_f - (1 - T2.curplaces);
+	xacts_at_terminals[2] = T3.enters_f - (1 - T3.curplaces);
+}
+reject(1);
+
+}}

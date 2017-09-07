@@ -81,59 +81,59 @@ typedefs = [
            ]
 
 blocks = [
-          'exitwhen',     # tested
-          'inject',       # tested
-          'reject',       # tested
-          'fac_enter',    # tested
-          'fac_leave',    # tested
-          'fac_irrupt',   # implemented
-          'fac_goaway',   # implemented
-          'fac_avail',    # implemented
-          'fac_unavail',  # implemented
-          'queue_enter',  # tested
-          'queue_leave',  # tested
-          'wait',         # tested
-          'transport',    # tested
-          'transport_prob',#tested
-          'transport_if', # tested
-          'if',           # tested
-          'else_if',      # tested
-          'else',         # tested
-          'wait_until',   # tested
-          'chain_enter',  # tested
-          'chain_leave',  # tested
-          'chain_purge',  # tested
-          'chain_pick',   # implemented
-          'chain_find',   # implemented
-          'while',        # tested
-          'loop_times',   # tested
-          'copy',         # tested
-          'output',       # tested
-          'xact_report',  # tested
-          'review_cec',   # tested
-          'move',         # tested
-          'iter_next',    # tested
-          'iter_stop',    # tested
-          'interrupt',    # tested
-          'flush_cec',    # tested
-          'pause_by_user',# tested
-          'hist_sample',  # tested
-          'graph_sample'  # implemented
+          'exitwhen',
+          'inject',
+          'reject',
+          'fac_enter',
+          'fac_leave',
+          'fac_irrupt',
+          'fac_goaway',
+          'fac_avail',
+          'fac_unavail',
+          'queue_enter',
+          'queue_leave',
+          'wait',
+          'transport',
+          'transport_prob',
+          'transport_if',
+          'if',
+          'else_if',
+          'else',
+          'wait_until',
+          'chain_enter',
+          'chain_leave',
+          'chain_purge',
+          'chain_pick',
+          'chain_find',
+          'while',
+          'loop_times',
+          'copy',
+          'output',
+          'xact_report',
+          'review_cec',
+          'move',
+          'iter_next',
+          'iter_stop',
+          'interrupt',
+          'flush_cec',
+          'pause_by_user',
+          'hist_sample',
+          'graph_sample'
          ]
          
 builtins = [
-            'to_str',       # tested
-            'to_int',       # tested
-            'to_float',     # tested
-            'to_bool',      # tested
-            'random_int',   # tested
-            'random_float', # tested
-            'random01',     # tested
-            'find',         # implemented
-            'find_minmax',  # implemented
-            'abs_value',    # tested
-            'exp_distr',    # implemented
-            'round_to'      # implemented
+            'to_str',
+            'to_int',
+            'to_float',
+            'to_bool',
+            'random_int',
+            'random_float',
+            'random01',
+            'find',
+            'find_minmax',
+            'abs_value',
+            'exp_distr',
+            'round_to'
            ]
 
 pos = 0
