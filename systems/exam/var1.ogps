@@ -21,6 +21,7 @@
 fac RAM;
 fac CPU[3];
 chain buf[3];
+queue bufQueue[3];
 int RAM_xact_index = 4;
 int CPU_xact_indexes[3] = 4;
 int buf_capacity = 20;
@@ -37,18 +38,21 @@ exitwhen(curticks >= 10000);
 
 /* RAM: */
 inject("RAM xact", 0, 0, 0, 1) {type = 0, priority = 1};
-RAM: wait_until(buf[0].length < buf_capacity && 
-                buf[1].length < buf_capacity && 
-                buf[2].length < buf_capacity);
+RAM: 
+wait_until(buf[0].length < buf_capacity && 
+           buf[1].length < buf_capacity && 
+           buf[2].length < buf_capacity);
 fac_enter(RAM);
-wait(30, 8);
+wait(20, 8);
 fac_leave(RAM);
 copy(4, Buffers);
 RAM_xact_index += 4;
 ->> RAM;
 
 /* Buffers: */
-Buffers: xact.type = random_int(0, 2);
+Buffers: 
+xact.type = random_int(0, 2);
+queue_enter(bufQueue[xact.type]);
 chain_enter(buf[xact.type]);
 
 /* CPUs: */
@@ -60,15 +64,18 @@ wait_until(CPU[xact.type].curplaces == 1 && buf[xact.type].length > 0);
 chain_leave(buf[xact.type], 1, CPUs);
 ->> FromBuffers;
 
-CPUs: fac_enter(CPU[xact.type]);
+CPUs: 
+queue_leave(bufQueue[xact.type]);
+fac_enter(CPU[xact.type]);
 CPU_xact_indexes[xact.type] = xact.index;
-wait(5 * (xact.type + 1), 4);
+wait(6 * (xact.type + 1), 4);
 fac_leave(CPU[xact.type]);
 ->| Cleaning, 0.05;
 Trash: reject(1);
 
 /* Cleaning mechanism: */
-Cleaning: it = 0;
+Cleaning: 
+it = 0;
 loop_times(it, 3)
 {
 	output("length of buffer "+to_str(it)+" = "+to_str(buf[it].length));

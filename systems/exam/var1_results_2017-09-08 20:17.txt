@@ -1,0 +1,190 @@
+
+
+SIMULATION RESULTS OF SYSTEM /media/notsoold/Shared/coding/python/opengpss/systems/exam/var1.ogps
+
+Simulation finished at 2017-09-08 20:17
+
+
+
+-------- Generated program: --------
+(line index, current xacts, total executions, line of code)
+
+01           fac RAM;
+02           fac CPU[3];
+03           chain buf[3];
+04           queue bufQueue[3];
+05           int RAM_xact_index = 4;
+06           int CPU_xact_indexes[3] = 4;
+07           int buf_capacity = 20;
+08           int it = 0;
+09           mark RAM;
+10           mark Buffers;
+11           mark CPUs;
+12           mark FromBuffers;
+13           mark Cleaning;
+14           mark Trash;
+15           exitwhen(curticks >= 10000);
+16           {{
+17     0451  inject("RAM xact", 0, 0, 0, 1) {type = 0, priority = 1};
+18     0532  RAM: wait_until(buf[0].length < buf_capacity && buf[1].length < buf_capacity && buf[2].length < buf_capacity);
+19     0532  fac_enter(RAM);
+20  1  0532  wait(20, 8);
+21     0450  fac_leave(RAM);
+22     0450  copy(4, Buffers);
+23     0450  RAM_xact_index += 4;
+24           ->> RAM;
+25     1800  Buffers: xact.type = random_int(0, 2);
+26     1800  queue_enter(bufQueue[xact.type]);
+27     1800  chain_enter(buf[xact.type]);
+28     0003  inject("CPU xact", 0, 0, 0, 3) {type = 0};
+29     0003  xact.type = it;
+30  3  1788  it++;
+31     1785  FromBuffers: wait_until(CPU[xact.type].curplaces == 1 && buf[xact.type].length > 0);
+32     1785  chain_leave(buf[xact.type], 1, CPUs);
+33           ->> FromBuffers;
+34  8  1785  CPUs: queue_leave(bufQueue[xact.type]);
+35     1777  fac_enter(CPU[xact.type]);
+36     1777  CPU_xact_indexes[xact.type] = xact.index;
+37  2  1777  wait(6 * (xact.type + 1), 4);
+38     1705  fac_leave(CPU[xact.type]);
+39     1705  ->| Cleaning, 0.05;
+40     1858  Trash: reject(1);
+41     0083  Cleaning: it = 0;
+42     0249  loop_times(it, 3)
+43     0249  {
+44     0249     output("length of buffer " + to_str(it) + " = " + to_str(buf[it].length));
+45     0249     chain_pick(buf[it], chxact.index > xact.index, 20, Trash);
+46     0114     if(CPU_xact_indexes[it] > xact.index)
+47     0114     {
+48     0114        fac_irrupt(CPU[it], 1, true, Trash);
+49     0114        fac_goaway(CPU[it]);
+50     0249     }
+51     0083  }
+52     0083  if(RAM_xact_index > xact.index)
+53     0083  {
+54     0083     fac_irrupt(RAM, 1, true, RAM);
+55     0083     RAM_xact_index += 4;
+56     0083     fac_goaway(RAM);
+57     0083  }
+58           ->> Trash;
+59           }}
+
+
+Simulation time: 10000 beats
+
+
+-------- Integer variables: --------
+
+Name                  Value
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+RAM_xact_index        2136
+buf_capacity          20
+curticks              10000
+injected              1804
+it                    3
+rejected              1775
+
+CPU_xact_indexes   [ 1803, 1798, 1742 ]
+
+
+
+
+-------- Facilities: --------
+                                                           Busyness       Busyness       Current xacts
+Name       Places    Max xacts    Auto queued   Enters     (weighted)     (unweighted)   (index: [vol, enter time])
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+CPU[0]     1         1            True          681        0.360          0.360          {1803: [1, 9998]}
+CPU[1]     1         1            True          633        0.685          0.685          {}
+CPU[2]     1         1            True          577        0.978          0.978          {1742: [1, 9992]}
+RAM        1         1            True          615        0.989          0.989          {0: [1, 9996]}
+
+
+Average                                                        Availa-      Irrupted    
+processing time    Is available  Avail. time   Unavail. time   bility (%)   xacts       Irrupt chain
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+5.18               True          10000         0               100.00       0           []
+10.60              True          10000         0               100.00       0           []
+16.96              True          10000         0               100.00       0           []
+14.79              True          10000         0               100.00       0           []
+
+
+
+-------- Queues: --------
+
+Name            Enters    Zero entries   Zero entries (%)  Max length   Avg length   Current length
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+CPU[0]          683       610            89.31             3            0.18         2                  
+CPU[1]          633       524            82.78             7            0.49         0                  
+CPU[2]          583       170            29.16             22           5.36         6                  
+RAM             615       615            100.00            1            0.00         0                  
+bufQueue[0]     628       368            58.60             4            0.09         0                  
+bufQueue[1]     590       322            54.58             8            0.47         0                  
+bufQueue[2]     582       89             15.29             23           5.46         15                 
+
+
+Avg xact    Avg xact wait time      Max xact    Current queue contents
+wait time   (w/o zero entries)      wait time   [index, enter time]
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+2.67        25.62                   25          [[1802, 9998], [1801, 9998]]
+7.69        44.66                   68          []
+91.04       129.07                  404         [[1741, 9822], [1746, 9822], [1748, 9822], [1752, 9822], [1753, 9822], [1755, 9822]]
+0.00        (no data)               0           []
+1.42        3.43                    16          []
+8.01        17.63                   59          []
+93.91       111.39                  362         [[1768, 9828], [1769, 9828], [1771, 9828], [1772, 9851], [1779, 9885], [1778, 9885], [1776, 9885], [1781, 9898], [1784, 9924], [1789, 9939], [1795, 9962], [1794, 9962], [1799, 9978], [1797, 9978], [1800, 9997]]
+
+
+
+-------- User chains: --------
+
+Name       Current length     Current xacts (indexes)
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+buf[0]     0                  []
+buf[1]     0                  []
+buf[2]     15                 [1768, 1769, 1771, 1772, 1779, 1778, 1776, 1781, 1784, 1789, 1795, 1794, 1799, 1797, 1800]
+
+
+
+-------- Marks: --------
+
+Name            Corresponding line
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+Buffers         25
+CPUs            34
+Cleaning        41
+FromBuffers     31
+RAM             18
+Trash           40
+
+
+
+-------- Future events chain: --------
+
+Move time   Xact group        Xact ID    Xact curblock    Xact status
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+10012       RAM xact          1742       37               waiting
+10018       RAM xact          0          20               waiting
+10005       RAM xact          1803       37               waiting
+
+
+
+-------- Current events chain: --------
+
+Xact group    Xact ID    Xact curblock    Xact status
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+RAM xact      1755       34               blocked
+RAM xact      1753       34               blocked
+RAM xact      1752       34               blocked
+RAM xact      1748       34               blocked
+RAM xact      1746       34               blocked
+RAM xact      1741       34               blocked
+RAM xact      1801       34               blocked
+RAM xact      1802       34               blocked
+CPU xact      3          30               blocked
+CPU xact      2          30               blocked
+CPU xact      1          30               blocked
+
+
+
+
+================================================================================

@@ -229,6 +229,7 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 		# Free facility from this xact.
 		del facilities[fid].busyxacts[ir_index]
 		facilities[fid].curplaces += ir_vol[0]
+		
 		# Find this xact in one of system chains and pull it to CEC/irrput chain.
 		found = False
 		for i in range(len(currentChain)):
@@ -236,7 +237,8 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 				found = True
 				break
 		if found:
-			print 'deleting xact from CEC', ir_index, currentChain[i].index, currentChain[i].cond
+			print 'deleting xact from CEC', ir_index, \
+			      currentChain[i].index, currentChain[i].cond
 			if eject:
 				xa = copy.deepcopy(currentChain[i])
 				xa.cond = 'canmove'
@@ -256,10 +258,41 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 					xact = oldxact
 				tempCurrentChain.append(xa)
 			else:
-				facilities[fid].irruptch.append([copy.deepcopy(currentChain[i]), 
-				                               0, ir_vol])
+				facilities[fid].irruptch.append([copy.deepcopy(
+				                currentChain[i]), 0, ir_vol])
 			currentChain[i].cond = 'irrupted'
 			currentChain[i].index = -1
+			continue
+			
+		found = False
+		for i in range(len(tempCurrentChain)):
+			if tempCurrentChain[i].index == ir_index:
+				found = True
+				break
+		if found:
+			print 'deleting xact from tempCEC', ir_index, \
+			      tempCurrentChain[i].index, tempCurrentChain[i].cond
+			if eject:
+				xa = tempCurrentChain[i]
+				xa.cond = 'canmove'
+				if mark == '':
+					xa.curblk = xact.curblk + 1
+				else:
+					xa.curblk = marks[mark].block - 1
+				# additionally parse assignment here (elapsed time = 0)
+				if elapsedto != []:
+					elapsedto += [['eq', ''], ['number', 0], ['eocl', '']]
+					# We need 'xa' for assignment:
+					# (pos and tokline are corrected automatically
+					# in parseAssignment)
+					oldxact = copy.deepcopy(xact)
+					xact = xa
+					parser.parseAssignment(elapsedto)
+					xact = oldxact
+			else:
+				facilities[fid].irruptch.append([copy.deepcopy(
+				                tempCurrentChain[i]), 0, ir_vol])
+				del tempCurrentChain[i]
 			continue
 			
 		found = False
@@ -270,8 +303,6 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 		if found:
 			print 'deleting xact from FEC', ir_index
 			if eject:
-				#xxa = futureChain.pop(i)
-				#xa = xxa[1]
 				xa = copy.deepcopy(futureChain[i][1])
 				xa.cond = 'canmove'
 				if mark == '':
@@ -281,7 +312,6 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 				# additionally parse assignment here 
 				# (elapsed time = futureChain[i][0] - ints['curticks'])
 				if elapsedto != []:
-					#elapsed = xxa[0] - ints['curticks'].value
 					elapsed = futureChain[i][0] - ints['curticks'].value
 					elapsedto += [['eq', ''], ['number', elapsed], ['eocl', '']]
 					# We need 'xa' for assignment:
@@ -293,9 +323,7 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 					xact = oldxact
 				tempCurrentChain.append(xa)
 			else:
-				xa = futureChain.pop(i)
 				facilities[fid].irruptch.append(
-					#[xa[1], xa[0] - ints['curticks'].value, ir_vol])
 				    [copy.deepcopy(futureChain[i][1]),
 				    futureChain[i][0] - ints['curticks'].value, ir_vol])
 			del futureChain[i]
