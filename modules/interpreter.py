@@ -237,8 +237,6 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 				found = True
 				break
 		if found:
-			print 'deleting xact from CEC', ir_index, \
-			      currentChain[i].index, currentChain[i].cond
 			if eject:
 				xa = copy.deepcopy(currentChain[i])
 				xa.cond = 'canmove'
@@ -270,8 +268,6 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 				found = True
 				break
 		if found:
-			print 'deleting xact from tempCEC', ir_index, \
-			      tempCurrentChain[i].index, tempCurrentChain[i].cond
 			if eject:
 				xa = tempCurrentChain[i]
 				xa.cond = 'canmove'
@@ -301,7 +297,6 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 				found = True
 				break
 		if found:
-			print 'deleting xact from FEC', ir_index
 			if eject:
 				xa = copy.deepcopy(futureChain[i][1])
 				xa.cond = 'canmove'
@@ -363,7 +358,6 @@ def fac_irrupt(fid, vol=1, eject=False, mark='', elapsedto=[]):
 				break
 	# Add irrupting xact to facility (will always succeed).
 	fac_enter(fid, vol)
-	print "after:", futureChain
 		
 def fac_goaway(fid):
 	if fid not in facilities.keys():
@@ -782,16 +776,15 @@ def start_interpreter(filepath):
 	
 	toklines = parser.tocodelines(tokens)
 	toklines = parser.convertBlocks(toklines)
-	
 	logfile = None
 	if config.log_to_file:
 		name = filepath[:-5]
 		now = datetime.datetime.now()
-		print 'All logs will be saved in "' + name + \
-		      '_log_'+now.strftime("%Y-%m-%d %H:%M")+ \
-		      '.txt" file (log file can become very large!).'
+		logname = name+'_log_'+now.strftime("%Y-%m-%d %Hh%M")+'.txt'
+		print 'All logs will be saved in "' + logname + \
+		      '" file (log file can become very large!).'
 		original_stdout = sys.stdout
-		logfile = open(name+'_log_'+now.strftime("%Y-%m-%d %H:%M")+'.txt', 'w')
+		logfile = open(logname, 'w')
 		sys.stdout = logfile
 	
 	now = datetime.datetime.now()
@@ -985,13 +978,13 @@ def start_interpreter(filepath):
 		if not original_stdout:
 			original_stdout = sys.stdout
 		results_file = open(filepath[:-5]+'_results_'+ \
-		                    now.strftime("%Y-%m-%d %H:%M")+'.txt', 'w')
+		                    now.strftime("%Y-%m-%d %Hh%M")+'.txt', 'w')
 		sys.stdout = results_file
 	print_results()
 	if results_file:
 		sys.stdout = original_stdout
 		print 'Simulation finished, results are saved in "' + \
-		      filepath[:-5] + '_results_'+now.strftime("%Y-%m-%d %H:%M")+ \
+		      filepath[:-5] + '_results_'+now.strftime("%Y-%m-%d %Hh%M")+ \
 		      '.txt".'
 
 def attachFileWithFunctions(line):

@@ -15,6 +15,7 @@
 
 
 from modules import lexer, errors
+import os
 
 enable_nice_vt100_codes = True
 results_to_file = False
@@ -55,9 +56,8 @@ def load_config_file():
 	
 	conf = None
 	try:
-		# NOTE: for mobile interpreters (like QPython)
-		# you need to write full path of configuration file below!
-		conf = open('opengpss_config.cfg', 'r')
+		filepath = os.path.dirname(os.path.abspath(__file__))
+		conf = open(filepath+'/opengpss_config.cfg', 'r')
 	except IOError:
 		print 'Cannot find config file "opengpss_config.cfg", ' \
 		      'default config file will be created...'
@@ -85,9 +85,8 @@ def load_config_file():
 		i += 3
 	
 def write_config_file():
-	# NOTE: for mobile interpreters (like QPython)
-	# you need to write full path of configuration file below!
-	conf = open('opengpss_config.cfg', 'w')
+	filepath = os.path.dirname(os.path.abspath(__file__))
+	conf = open(filepath+'/opengpss_config.cfg', 'w')
 	conf.write('enable_nice_vt100_codes = ' + str(enable_nice_vt100_codes))
 	conf.write('\nresults_to_file = ' + str(results_to_file))
 	conf.write('\nlog_to_file = ' + str(log_to_file))

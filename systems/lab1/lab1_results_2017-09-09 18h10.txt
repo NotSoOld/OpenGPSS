@@ -1,0 +1,96 @@
+
+
+SIMULATION RESULTS OF SYSTEM S:\coding\python\opengpss/systems/lab1/lab1.ogps
+
+Simulation finished at 2017-09-09 18:10
+
+
+
+-------- Generated program: --------
+(line index, current xacts, total executions, line of code)
+
+1         fac RAM;
+2         exitwhen(rejected == 20);
+3         {{
+4  9  30  inject("main", 13, 3, 0, 0);
+5     21  fac_enter(RAM);
+6  1  21  wait(18);
+7     20  fac_leave(RAM);
+8     20  reject(1);
+9         }}
+
+
+Simulation time: 361 beats
+
+
+-------- Integer variables: --------
+
+Name       Value
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+curticks   361
+injected   30
+rejected   20
+
+
+
+
+-------- Facilities: --------
+                                                        Busyness       Busyness       Current xacts
+Name    Places    Max xacts    Auto queued   Enters     (weighted)     (unweighted)   (index: [vol, enter time])
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+RAM     1         1            True          21         1.000          1.000          {26: [1, 360]}
+
+
+Average                                                        Availa-      Irrupted    
+processing time    Is available  Avail. time   Unavail. time   bility (%)   xacts       Irrupt chain
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+18.00              True          361           0               100.00       0           []
+
+
+
+-------- Queues: --------
+
+Name    Enters    Zero entries   Zero entries (%)  Max length   Avg length   Current length
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+RAM     29        3              10.34             9            4.57         8                  
+
+
+Avg xact    Avg xact wait time      Max xact    Current queue contents
+wait time   (w/o zero entries)      wait time   [index, enter time]
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+48.00       56.00                   192         [[17, 208], [20, 248], [21, 258], [22, 272], [23, 288], [24, 304], [25, 318], [28, 352]]
+
+
+
+-------- User chains: --------
+
+<<NO USER CHAINS>>
+
+
+
+-------- Future events chain: --------
+
+Move time   Xact group        Xact ID    Xact curblock    Xact status
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+363         main              29         4                injected
+378         main              26         6                waiting
+
+
+
+-------- Current events chain: --------
+
+Xact group    Xact ID    Xact curblock    Xact status
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+main          28         4                blocked
+main          25         4                blocked
+main          24         4                blocked
+main          23         4                blocked
+main          22         4                blocked
+main          21         4                blocked
+main          20         4                blocked
+main          17         4                blocked
+
+
+
+
+================================================================================
